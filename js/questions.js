@@ -425,7 +425,7 @@ const questionsBank = [
     question: "في أي دولة يقع هذا المعلم السياحي الشهير (برج إيفل)؟",
     options: ["إيطاليا", "فرنسا", "إسبانيا", "ألمانيا"],
     correct: 1,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/640px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg"
+    image: "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2403,
@@ -434,7 +434,7 @@ const questionsBank = [
     question: "ما اسم هذا الأثر التاريخي الشهير الموجود في روما بإيطاليا؟",
     options: ["الكولوسيوم", "البارثينون", "قصر الحمراء", "برج بيزا"],
     correct: 0,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Colosseum_in_Rome-April_2007-1-_copie_2B.jpg/640px-Colosseum_in_Rome-April_2007-1-_copie_2B.jpg"
+    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2404,
@@ -443,7 +443,7 @@ const questionsBank = [
     question: "ما هي الدولة التي ينتمي إليها هذا العلم الوطني؟",
     options: ["الأرجنتين", "البرازيل", "كولومبيا", "المكسيك"],
     correct: 1,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/640px-Flag_of_Brazil.svg.png"
+    image: "https://flagcdn.com/w640/br.png"
   },
   {
     id: 2405,
@@ -452,7 +452,7 @@ const questionsBank = [
     question: "في أي مدينة هندية يقع ضريح (تاج محل) الشهير؟",
     options: ["نيودلهي", "مومباي", "أغرا", "كلكتا"],
     correct: 2,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/640px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg"
+    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2406,
@@ -461,7 +461,7 @@ const questionsBank = [
     question: "من هو الرسام العالمي صاحب هذه اللوحة الشهيرة (الفتاة ذات القرط اللؤلؤي)؟",
     options: ["يوهانس فيرمير", "رامبرانت", "ليوناردو دا فينشي", "فان جوخ"],
     correct: 0,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/500px-1665_Girl_with_a_Pearl_Earring.jpg"
+    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2407,
@@ -470,7 +470,7 @@ const questionsBank = [
     question: "ما اسم هذا الحيوان المميز الذي يعيش في غابات الخيزران في الصين؟",
     options: ["الباندا العملاق", "الكوالا", "الليمور", "الراكون"],
     correct: 0,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/640px-Grosser_Panda.JPG"
+    image: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef6?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2408,
@@ -479,7 +479,7 @@ const questionsBank = [
     question: "من هو أسطورة كرة القدم الأرجنتينية الظاهر في هذه الصورة وهو يرفع كأس العالم 1986؟",
     options: ["دييغو مارادونا", "ليونيل ميسي", "ماريو كيمبس", "غابرييل باتيستوتا"],
     correct: 0,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Maradona-Mundial_86_con_la_copa.JPG/600px-Maradona-Mundial_86_con_la_copa.JPG"
+    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2409,
@@ -488,7 +488,7 @@ const questionsBank = [
     question: "ما هو هذا الكوكب من كواكب المجموعة الشمسية الذي يشتهر بنظامه الحلقي البديع؟",
     options: ["المشتري", "زحل", "أورانوس", "نبتون"],
     correct: 1,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg"
+    image: "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2410,
@@ -497,7 +497,7 @@ const questionsBank = [
     question: "ما اسم هذا الجسر المعلق الشهير بلونه البرتقالي في مدينة سان فرانسيسكو؟",
     options: ["جسر البوابة الذهبية (Golden Gate)", "جسر بروكلين", "جسر البرج", "جسر هاربر"],
     correct: 0,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/640px-GoldenGateBridge-001.jpg"
+    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: 2411,
@@ -506,7 +506,7 @@ const questionsBank = [
     question: "ما اسم هذا المسجد التاريخي ذو القبة الذهبية الواقع داخل الحرم القدسي الشريف؟",
     options: ["المسجد الإبراهيمي", "مسجد قبة الصخرة", "المسجد الأموي", "مسجد القبلتين"],
     correct: 1,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Dome_of_the_Rock_2024.jpg/640px-Dome_of_the_Rock_2024.jpg"
+    image: "https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=600&q=80"
   }
 
 ];
