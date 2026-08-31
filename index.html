@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- إعدادات شاشة الموبايل والتطبيق الحقيقي ومنع التكبير العشوائي -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -10,32 +9,26 @@
     
     <title>لَو تِعرَف | لعبة الأسئلة والثقافة</title>
 
-    <!-- أيقونات التطبيق والـ PWA مع كسر الكاش -->
-    <link rel="manifest" href="./manifest.json?v=15">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=15">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=15">
+    <link rel="manifest" href="./manifest.json?v=25">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=25">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=25">
 
-    <!-- الخطوط والأيقونات الخارجية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- التنسيقات -->
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css?v=25">
 
-    <!-- مكتبات Firebase السحابية متضمنة Analytics -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
 
-    <!-- كود Vercel Analytics لتتبع الزيارات والتحليلات -->
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
-    <!-- شاشة البداية المتحركة للتطبيق Splash Screen -->
     <div id="splash-screen" class="splash-screen">
         <div class="splash-content">
             <div class="splash-logo-box">
@@ -47,7 +40,16 @@
         </div>
     </div>
 
-    <!-- إشعار Toast لفتح الإنجازات -->
+    <!-- نافذة التنبيه المخصصة للعبة -->
+    <div id="custom-modal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="custom-modal-icon" id="custom-modal-icon">💡</div>
+            <h3 id="custom-modal-title">تنبيه</h3>
+            <p id="custom-modal-msg">نص التنبيه يظهر هنا...</p>
+            <button class="btn-modal-close" onclick="closeCustomAlert()">حسناً</button>
+        </div>
+    </div>
+
     <div id="achievement-toast" class="achievement-toast">
         <div class="toast-icon-box" id="toast-icon">🏆</div>
         <div class="toast-content">
@@ -56,7 +58,6 @@
         </div>
     </div>
 
-    <!-- 1. شاشة تسجيل الدخول Auth Screen -->
     <div id="auth-screen" class="screen active">
         <div class="auth-container">
             <div class="logo-box">
@@ -77,7 +78,6 @@
         </div>
     </div>
 
-    <!-- 2. شاشة القائمة الرئيسية Main Menu -->
     <div id="main-menu" class="screen">
         <div class="header-bar">
             <div class="user-profile-widget">
@@ -90,7 +90,6 @@
             </div>
         </div>
 
-        <!-- بانر ذكي لتثبيت التطبيق PWA -->
         <div id="pwa-install-banner" class="install-banner" style="display: none;">
             <div class="install-banner-text">
                 <i class="fa-solid fa-mobile-screen-button"></i>
@@ -133,7 +132,6 @@
         </div>
     </div>
 
-    <!-- 3. شاشة اختيار أنماط اللعب Modes Screen -->
     <div id="modes-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -191,7 +189,6 @@
         </div>
     </div>
 
-    <!-- 4. شاشة بهو التحدي PvP Lobby -->
     <div id="pvp-lobby-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="switchScreen('modes-screen')"><i class="fa-solid fa-arrow-right"></i></button>
@@ -223,7 +220,6 @@
         </div>
     </div>
 
-    <!-- 5. شاشة انتظار الغرفة الجماعية -->
     <div id="pvp-waiting-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="leavePvpRoom()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -261,7 +257,6 @@
         </div>
     </div>
 
-    <!-- 6. شاشة نتائج التحدي الجماعي -->
     <div id="pvp-result-screen" class="screen">
         <div class="result-card pvp-result-card">
             <div class="result-icon" id="pvp-res-icon">🏆</div>
@@ -281,7 +276,6 @@
         </div>
     </div>
 
-    <!-- 7. شاشة انتظار باقي الأصدقاء -->
     <div id="pvp-waiting-opponent-screen" class="screen">
         <div class="pvp-waiting-opp-card">
             <div class="splash-loader" style="margin-bottom: 20px;"></div>
@@ -290,7 +284,6 @@
         </div>
     </div>
 
-    <!-- 8. شاشة لوحة المتصدرين العالمية Leaderboard Screen -->
     <div id="leaderboard-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -307,6 +300,9 @@
             </button>
             <button id="tab-lb-endless" class="lb-tab" onclick="switchLeaderboardTab('endless')">
                 <i class="fa-solid fa-fire"></i> النمط اللانهائي
+            </button>
+            <button id="tab-lb-pvp" class="lb-tab" onclick="switchLeaderboardTab('pvp')">
+                <i class="fa-solid fa-users-rays"></i> تحدي الأصدقاء
             </button>
         </div>
 
@@ -329,7 +325,6 @@
         </div>
     </div>
 
-    <!-- 9. شاشة شبكة المراحل Levels Screen -->
     <div id="levels-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -342,7 +337,6 @@
         </div>
     </div>
 
-    <!-- 10. شاشة الأقسام Categories Screen -->
     <div id="categories-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -353,7 +347,6 @@
         <div id="categories-grid" class="categories-grid"></div>
     </div>
 
-    <!-- 11. شاشة اللعب Game Screen -->
     <div id="game-screen" class="screen">
         <div class="game-top-bar">
             <button class="btn-close-game" onclick="handleNavigationBack()"><i class="fa-solid fa-xmark"></i></button>
@@ -401,7 +394,6 @@
         </div>
     </div>
 
-    <!-- 12. شاشة النتيجة العادية Result Screen -->
     <div id="result-screen" class="screen">
         <div class="result-card">
             <div class="result-icon" id="result-icon">🏆</div>
@@ -434,7 +426,6 @@
         </div>
     </div>
 
-    <!-- 13. شاشة مراجعة الأخطاء Review Screen -->
     <div id="review-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -444,7 +435,6 @@
         <div class="review-list-container" id="review-list"></div>
     </div>
 
-    <!-- 14. شاشة عجلة الحظ Wheel Screen -->
     <div id="wheel-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -470,7 +460,6 @@
         </div>
     </div>
 
-    <!-- 15. شاشة الإنجازات Achievements Screen -->
     <div id="achievements-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -484,7 +473,6 @@
         <div class="achievements-list" id="achievements-list"></div>
     </div>
 
-    <!-- 16. شاشة المتجر Shop Screen -->
     <div id="shop-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -526,7 +514,6 @@
         </div>
     </div>
 
-    <!-- 17. شاشة الإعدادات Settings Screen -->
     <div id="settings-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
@@ -567,16 +554,14 @@
         </div>
     </div>
 
-    <!-- ملفات الجافاسكريبت ومحرك الصوت -->
     <script src="./audio.js"></script>
-    <script src="./questions.js"></script>
-    <script src="./script.js"></script>
+    <script src="./questions.js?v=25"></script>
+    <script src="./script.js?v=25"></script>
 
-    <!-- تسجيل Service Worker لـ PWA -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=15')
+          navigator.serviceWorker.register('./sw.js?v=25')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
