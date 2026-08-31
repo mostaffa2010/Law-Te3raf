@@ -9,16 +9,16 @@
     
     <title>لَو تِعرَف | لعبة الأسئلة والثقافة</title>
 
-    <link rel="manifest" href="./manifest.json?v=25">
-    <link rel="apple-touch-icon" href="./icon-192.png?v=25">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=25">
+    <link rel="manifest" href="./manifest.json?v=26">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=26">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=26">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="./style.css?v=25">
+    <link rel="stylesheet" href="./style.css?v=26">
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -244,6 +244,24 @@
             </div>
 
             <div class="pvp-host-controls" id="pvp-host-controls">
+                <div id="pvp-cat-select-wrapper" style="margin-bottom: 15px; width: 100%; text-align: right;">
+                    <label style="font-size: 0.85rem; color: var(--accent-yellow); display: block; margin-bottom: 6px; font-weight: bold;">🎯 مجال أسئلة التحدي:</label>
+                    <select id="pvp-selected-category" style="width: 100%; padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); font-weight: bold; font-family: 'Cairo'; outline: none;">
+                        <option value="all" selected>🌟 جميع الأقسام (منوع)</option>
+                        <option value="إسلاميات">🕌 إسلاميات</option>
+                        <option value="رياضة وكورة">⚽ رياضة وكورة</option>
+                        <option value="علوم وفضاء">🔬 علوم وفضاء</option>
+                        <option value="تاريخ">🏛️ تاريخ وحضارات</option>
+                        <option value="جغرافيا">🌍 جغرافيا وعواصم</option>
+                        <option value="سينما وفن">🎬 سينما وفن</option>
+                        <option value="طبيعة وحيوانات">🐾 طبيعة وحيوانات</option>
+                        <option value="تكنولوجيا وألعاب">🎮 تكنولوجيا وألعاب</option>
+                        <option value="أدب ولغات">📚 أدب ولغات</option>
+                        <option value="ألغاز وذكاء">🧩 ألغاز وذكاء</option>
+                        <option value="سيارات ومحركات">🏎️ سيارات ومحركات</option>
+                        <option value="معلومات عامة">💡 معلومات عامة</option>
+                    </select>
+                </div>
                 <button id="btn-start-party-match" class="btn-start-party" onclick="hostStartPartyMatch()">
                     <i class="fa-solid fa-play"></i> بدء التحدي للجميع 🚀
                 </button>
@@ -555,13 +573,13 @@
     </div>
 
     <script src="./audio.js"></script>
-    <script src="./questions.js?v=25"></script>
-    <script src="./script.js?v=25"></script>
+    <script src="./questions.js?v=26"></script>
+    <script src="./script.js?v=26"></script>
 
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=25')
+          navigator.serviceWorker.register('./sw.js?v=26')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
