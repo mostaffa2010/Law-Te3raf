@@ -589,8 +589,13 @@ function listenToPvpRoom(code) {
 async function hostStartPartyMatch() {
     if (!gameState.pvpRoomId || !gameState.isPvpHost) return;
 
+    const catSelect = document.getElementById('pvp-selected-category');
+    const chosenCat = (catSelect && catSelect.value !== 'all') ? catSelect.value : null;
+    const freshQuestions = getSmartQuestions(10, chosenCat);
+
     try {
         await db.collection('pvp_rooms').doc(gameState.pvpRoomId).update({
+            questions: freshQuestions,
             status: 'starting'
         });
     } catch (e) {
