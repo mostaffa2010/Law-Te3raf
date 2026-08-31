@@ -1,3 +1,7 @@
+/* ==========================================================================
+   لَو تِعرَف | لعبة الأسئلة والثقافة - ملف التنسيقات الرئيسي
+   ========================================================================== */
+
 :root {
     --bg-main: #0d1117;
     --bg-card: #161b22;
@@ -34,6 +38,9 @@ html, body {
     overscroll-behavior-y: contain;
 }
 
+/* ==========================================
+   Splash Screen
+   ========================================== */
 .splash-screen {
     position: fixed;
     top: 0;
@@ -100,6 +107,9 @@ html, body {
     animation: spin 0.8s linear infinite;
 }
 
+/* ==========================================
+   Screen Layout & Header
+   ========================================== */
 .screen {
     display: none;
     width: 100%;
@@ -169,6 +179,9 @@ html, body {
     font-size: 1rem;
 }
 
+/* ==========================================
+   PWA Install Banner
+   ========================================== */
 .install-banner {
     background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(124, 58, 237, 0.2));
     border: 1px solid rgba(99, 102, 241, 0.4);
@@ -214,6 +227,9 @@ html, body {
     transform: scale(0.95);
 }
 
+/* ==========================================
+   Auth Screen
+   ========================================== */
 .auth-container {
     margin: auto;
     text-align: center;
@@ -289,6 +305,9 @@ html, body {
     margin-top: 20px;
 }
 
+/* ==========================================
+   Main Menu
+   ========================================== */
 .menu-hero-card {
     background: linear-gradient(135deg, #312e81, #1e1b4b);
     border: 1px solid rgba(99, 102, 241, 0.3);
@@ -391,6 +410,9 @@ html, body {
     border-radius: 50%;
 }
 
+/* ==========================================
+   Game Modes & PvP
+   ========================================== */
 .mode-card.pvp-mode {
     border-color: rgba(236, 72, 153, 0.6);
     background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), var(--bg-card));
@@ -766,6 +788,9 @@ html, body {
     font-size: 0.95rem;
 }
 
+/* ==========================================
+   Wheel of Fortune
+   ========================================== */
 .wheel-main-section {
     display: flex;
     flex-direction: column;
@@ -828,6 +853,9 @@ html, body {
     margin-top: 15px;
 }
 
+/* ==========================================
+   Leaderboard UI & Podium
+   ========================================== */
 .lb-tabs-wrapper {
     display: flex;
     background: var(--bg-card);
@@ -1110,6 +1138,9 @@ html, body {
     color: var(--accent-yellow);
 }
 
+/* ==========================================
+   Modes Container
+   ========================================== */
 .modes-container {
     display: flex;
     flex-direction: column;
@@ -1168,6 +1199,9 @@ html, body {
     font-weight: bold;
 }
 
+/* ==========================================
+   Levels Grid
+   ========================================== */
 .levels-scroll-container {
     flex: 1;
     overflow-y: auto;
@@ -1219,6 +1253,9 @@ html, body {
     bottom: 6px;
 }
 
+/* ==========================================
+   Categories Grid
+   ========================================== */
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1243,6 +1280,9 @@ html, body {
     font-size: 0.95rem;
 }
 
+/* ==========================================
+   Game Screen & Question Mechanics
+   ========================================== */
 .game-top-bar {
     display: flex;
     align-items: center;
@@ -1352,6 +1392,9 @@ html, body {
     pointer-events: none;
 }
 
+/* ==========================================
+   Powerups Bar
+   ========================================== */
 .powerups-bar {
     display: flex;
     gap: 8px;
@@ -1387,6 +1430,9 @@ html, body {
     color: var(--text-secondary);
 }
 
+/* ==========================================
+   Result & Review Screen
+   ========================================== */
 .result-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -1457,6 +1503,72 @@ html, body {
     color: #fff;
 }
 
+.review-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.review-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: right;
+}
+
+.review-header-tag {
+    font-size: 0.8rem;
+    color: var(--accent-purple);
+    font-weight: bold;
+}
+
+.review-card h4 {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.review-answer-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+
+.user-mistake-val {
+    color: var(--accent-red);
+    font-weight: bold;
+}
+
+.correct-answer-val {
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+/* ==========================================
+   Achievements List
+   ========================================== */
+.ach-counter-header {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent-yellow);
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+}
+
 .achievements-list {
     display: flex;
     flex-direction: column;
@@ -1520,6 +1632,9 @@ html, body {
     cursor: pointer;
 }
 
+/* ==========================================
+   Shop
+   ========================================== */
 .shop-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1555,6 +1670,9 @@ html, body {
     margin-top: auto;
 }
 
+/* ==========================================
+   Settings
+   ========================================== */
 .settings-list {
     display: flex;
     flex-direction: column;
@@ -1579,6 +1697,9 @@ html, body {
     font-weight: 700;
 }
 
+/* ==========================================
+   Achievement Toast
+   ========================================== */
 .achievement-toast {
     position: fixed;
     top: -200px;
@@ -1602,6 +1723,9 @@ html, body {
     pointer-events: auto;
 }
 
+/* ==========================================
+   Custom Modal / Alert
+   ========================================== */
 .custom-modal-overlay {
     position: fixed;
     top: 0;
@@ -1618,10 +1742,12 @@ html, body {
     visibility: hidden;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+
 .custom-modal-overlay.show {
     opacity: 1;
     visibility: visible;
 }
+
 .custom-modal-card {
     background: var(--bg-card);
     border: 1px solid var(--accent-purple);
@@ -1634,10 +1760,28 @@ html, body {
     transform: scale(0.85);
     transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.custom-modal-overlay.show .custom-modal-card { transform: scale(1); }
-.custom-modal-icon { font-size: 40px; margin-bottom: 10px; }
-.custom-modal-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
-.custom-modal-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; }
+
+.custom-modal-overlay.show .custom-modal-card { 
+    transform: scale(1); 
+}
+
+.custom-modal-icon { 
+    font-size: 40px; 
+    margin-bottom: 10px; 
+}
+
+.custom-modal-card h3 { 
+    font-size: 1.2rem; 
+    margin-bottom: 8px; 
+}
+
+.custom-modal-card p { 
+    font-size: 0.9rem; 
+    color: var(--text-secondary); 
+    line-height: 1.5; 
+    margin-bottom: 20px; 
+}
+
 .btn-modal-close {
     background: linear-gradient(135deg, var(--accent-yellow), #d97706);
     color: #000;
@@ -1650,6 +1794,19 @@ html, body {
     cursor: pointer;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+/* ==========================================
+   Keyframes & Animations
+   ========================================== */
+@keyframes spin { 
+    to { transform: rotate(360deg); } 
+}
+
+@keyframes popIn { 
+    0% { transform: scale(0.7); opacity: 0; } 
+    100% { transform: scale(1); opacity: 1; } 
+}
+
+@keyframes pulse { 
+    0%, 100% { transform: scale(1); } 
+    50% { transform: scale(1.15); } 
+}
