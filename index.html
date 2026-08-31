@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <!-- إعدادات شاشة الموبايل والتطبيق الحقيقي ومنع التكبير العشوائي -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d1117">
+    
+    <title>لَو تِعرَف | لعبة الأسئلة والثقافة</title>
+
+    <!-- أيقونات التطبيق والـ PWA مع كسر الكاش -->
+    <link rel="manifest" href="./manifest.json?v=15">
+    <link rel="apple-touch-icon" href="./icon-192.png?v=15">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=15">
+
+    <!-- الخطوط والأيقونات الخارجية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- التنسيقات -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- مكتبات Firebase السحابية متضمنة Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+
+    <!-- كود Vercel Analytics لتتبع الزيارات والتحليلات -->
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+    <!-- شاشة البداية المتحركة للتطبيق Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo-box">
+                <i class="fa-solid fa-brain splash-icon"></i>
+            </div>
+            <h1 class="splash-title">لَو تِعرَف</h1>
+            <p class="splash-subtitle">رحلة المعرفة والتحدي</p>
+            <div class="splash-loader"></div>
+        </div>
+    </div>
+
+    <!-- إشعار Toast لفتح الإنجازات -->
+    <div id="achievement-toast" class="achievement-toast">
+        <div class="toast-icon-box" id="toast-icon">🏆</div>
+        <div class="toast-content">
+            <span class="toast-tag">إنجاز جديد تم تحقيقه!</span>
+            <h4 id="toast-name">قاهر المراحل</h4>
+        </div>
+    </div>
+
+    <!-- 1. شاشة تسجيل الدخول Auth Screen -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-container">
+            <div class="logo-box">
+                <i class="fa-solid fa-brain main-logo"></i>
+            </div>
+            <h1 class="app-title">لَو تِعرَف</h1>
+            <p class="app-subtitle">اختبر معلوماتك، نافس أصحابك أونلاين، وافتح كل المراحل!</p>
+
+            <div class="auth-actions">
+                <button class="btn-google" onclick="loginWithGoogle()">
+                    <i class="fa-brands fa-google"></i> الدخول بحساب Google
+                </button>
+                <button class="btn-guest" onclick="loginAsGuest()">
+                    <i class="fa-solid fa-user-ninja"></i> اللعب كضيف
+                </button>
+            </div>
+            <p class="auth-note">سجّل دخولك لحفظ مستواك وتحدي أصدقائك أونلاين.</p>
+        </div>
+    </div>
+
+    <!-- 2. شاشة القائمة الرئيسية Main Menu -->
+    <div id="main-menu" class="screen">
+        <div class="header-bar">
+            <div class="user-profile-widget">
+                <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
+                <span id="user-name">لاعب</span>
+            </div>
+            <div class="header-coins" onclick="openShopScreen()">
+                <i class="fa-solid fa-coins"></i>
+                <span id="header-coins-val">50</span>
+            </div>
+        </div>
+
+        <!-- بانر ذكي لتثبيت التطبيق PWA -->
+        <div id="pwa-install-banner" class="install-banner" style="display: none;">
+            <div class="install-banner-text">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>ثبّت اللعبة على هاتفك لتجربة أسرع بدون متصفح!</span>
+            </div>
+            <button id="btn-pwa-install" class="install-btn" onclick="installAppPWA()">تثبيت الآن</button>
+        </div>
+
+        <div class="menu-hero-card">
+            <h2>مرحباً بك في لَو تِعرَف!</h2>
+            <p>تحديات جماعية مع أصدقائك، مراحل متجددة، وأقسام ثقافية منوعة.</p>
+            <button class="btn-primary-play" onclick="switchScreen('modes-screen')">
+                <i class="fa-solid fa-play"></i> ابدأ اللعب
+            </button>
+        </div>
+
+        <div class="menu-grid-buttons">
+            <div class="menu-action-card" onclick="openLeaderboardScreen()">
+                <i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i>
+                <span>المتصدرين</span>
+            </div>
+            <div class="menu-action-card" onclick="openAchievementsScreen()">
+                <div class="badge-count" id="achievements-badge" style="display: none;">0</div>
+                <i class="fa-solid fa-trophy" style="color: #eab308;"></i>
+                <span>الإنجازات</span>
+            </div>
+            <div class="menu-action-card" onclick="openWheelScreen()">
+                <div class="badge-dot" id="wheel-badge" style="display: none;"></div>
+                <i class="fa-solid fa-dharmachakra" style="color: #ec4899;"></i>
+                <span>عجلة الحظ</span>
+            </div>
+            <div class="menu-action-card" onclick="openShopScreen()">
+                <i class="fa-solid fa-store" style="color: #06b6d4;"></i>
+                <span>المتجر</span>
+            </div>
+            <div class="menu-action-card menu-card-wide" onclick="openSettingsScreen()">
+                <i class="fa-solid fa-gear" style="color: #a855f7;"></i>
+                <span>الإعدادات</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. شاشة اختيار أنماط اللعب Modes Screen -->
+    <div id="modes-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>اختر نمط اللعب</h3>
+            <div class="header-coins" onclick="openShopScreen()">
+                <i class="fa-solid fa-coins"></i>
+                <span id="score-display">50</span>
+            </div>
+        </div>
+
+        <div class="modes-container">
+            <div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
+                <div class="mode-icon pvp-icon-wrap">
+                    <i class="fa-solid fa-users-rays"></i>
+                </div>
+                <div class="mode-info">
+                    <h4>تحدي الأصدقاء أونلاين ⚔️</h4>
+                    <p>أنشئ غرفة بكود سري، واجمع كل أصحابك في تحدٍ حماسي واحد!</p>
+                </div>
+                <div class="pvp-new-badge">جماعي 🔥</div>
+            </div>
+
+            <div class="mode-card primary-mode" onclick="startLevelMode()">
+                <div class="mode-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <div class="mode-info">
+                    <h4>رحلة المراحل</h4>
+                    <p>تدرج في الصعوبة واجمع النجوم لفتح المراحل القادمة.</p>
+                </div>
+            </div>
+
+            <div class="mode-card" onclick="startEndlessMode()">
+                <div class="mode-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;"><i class="fa-solid fa-fire"></i></div>
+                <div class="mode-info">
+                    <h4>النمط اللانهائي</h4>
+                    <p>3 فرص فقط.. إلى أي مدى تستطيع الصمود بدون خطأ؟</p>
+                </div>
+            </div>
+
+            <div class="mode-card" onclick="openCategoriesScreen()">
+                <div class="mode-icon" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;"><i class="fa-solid fa-shapes"></i></div>
+                <div class="mode-info">
+                    <h4>تدريب الأقسام</h4>
+                    <p>اختر مجالك المفضل: كورة، إسلاميات، علوم، سينما وغيرها.</p>
+                </div>
+            </div>
+
+            <div class="mode-card" onclick="openDailyChallenge()">
+                <div class="mode-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="mode-info">
+                    <h4>التحدي اليومي</h4>
+                    <p>سؤال يومي بجوائز مضاعفة وسلسلة أيام متتالية.</p>
+                </div>
+                <div class="daily-badge" id="daily-status-badge">متاح</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. شاشة بهو التحدي PvP Lobby -->
+    <div id="pvp-lobby-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="switchScreen('modes-screen')"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>تحدي الأصدقاء أونلاين ⚔️</h3>
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div class="pvp-lobby-content">
+            <div class="pvp-action-card">
+                <i class="fa-solid fa-plus-circle pvp-card-icon" style="color: #10b981;"></i>
+                <h4>إنشاء غرفة جديدة</h4>
+                <p>احصل على كود الغرفة وشاركه مع أصحابك (شخص أو أكثر) للدخول معاً.</p>
+                <button class="btn-pvp-create" onclick="createPvpRoom()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء غرفة
+                </button>
+            </div>
+
+            <div class="pvp-separator"><span>أو</span></div>
+
+            <div class="pvp-action-card">
+                <i class="fa-solid fa-right-to-bracket pvp-card-icon" style="color: #ec4899;"></i>
+                <h4>الانضمام لغرفة صديق</h4>
+                <p>اكتب كود الغرفة المكوّن من 5 أرقام لدخول التحدي الجماعي.</p>
+                <div class="pvp-join-input-box">
+                    <input type="number" id="pvp-room-code-input" placeholder="مثال: 58291" maxlength="5">
+                    <button class="btn-pvp-join" onclick="joinPvpRoom()">انضمام</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. شاشة انتظار الغرفة الجماعية -->
+    <div id="pvp-waiting-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="leavePvpRoom()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>غرفة التحدي الجماعي</h3>
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div class="pvp-waiting-box">
+            <div class="pvp-code-display-card">
+                <span>كود الغرفة للمشاركة</span>
+                <h2 id="pvp-display-code">-----</h2>
+                <button class="btn-copy-code" onclick="copyPvpCode()">
+                    <i class="fa-regular fa-copy"></i> نسخ الكود للمشاركة
+                </button>
+            </div>
+
+            <div class="pvp-party-wrapper">
+                <div class="pvp-party-header">
+                    <h4>اللاعبون المتصلون (<span id="pvp-player-count">1</span>)</h4>
+                </div>
+                <div class="pvp-players-grid" id="pvp-players-grid"></div>
+            </div>
+
+            <div class="pvp-host-controls" id="pvp-host-controls">
+                <button id="btn-start-party-match" class="btn-start-party" onclick="hostStartPartyMatch()">
+                    <i class="fa-solid fa-play"></i> بدء التحدي للجميع 🚀
+                </button>
+                <p class="pvp-wait-sub" id="pvp-wait-sub">شارك الكود مع أصدقائك، واضغط زر البدء عندما يجتمع الجميع!</p>
+            </div>
+
+            <div id="pvp-countdown-box" class="pvp-countdown-box" style="display: none;">
+                <p>اكتمل الاستعداد! ينطلق التحدي خلال:</p>
+                <div class="countdown-num" id="pvp-countdown-val">3</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. شاشة نتائج التحدي الجماعي -->
+    <div id="pvp-result-screen" class="screen">
+        <div class="result-card pvp-result-card">
+            <div class="result-icon" id="pvp-res-icon">🏆</div>
+            <h2 id="pvp-res-title">لوحة أبطال التحدي!</h2>
+            <p id="pvp-res-message">انتهت المبارزة وإليك ترتيب اللاعبين حسب السرعة والنقاط:</p>
+
+            <div class="pvp-group-results-list" id="pvp-group-results-list"></div>
+
+            <div class="pvp-reward-badge" id="pvp-reward-badge" style="display: none;">
+                <i class="fa-solid fa-coins"></i> جائزة المركز الأول: +50 عملة ذهبية!
+            </div>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="switchScreen('modes-screen')">القائمة الرئيسية</button>
+                <button class="btn-primary" onclick="openPvpLobbyScreen()">تحدٍ جديد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. شاشة انتظار باقي الأصدقاء -->
+    <div id="pvp-waiting-opponent-screen" class="screen">
+        <div class="pvp-waiting-opp-card">
+            <div class="splash-loader" style="margin-bottom: 20px;"></div>
+            <h3>أحسنت! أنهيت أسئلتك بنجاح 🎯</h3>
+            <p>في انتظار انتهاء باقي الأصدقاء في الغرفة لعرض لوحة التتويج وإعلان الفائزين...</p>
+        </div>
+    </div>
+
+    <!-- 8. شاشة لوحة المتصدرين العالمية Leaderboard Screen -->
+    <div id="leaderboard-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>لوحة المتصدرين 🏆</h3>
+            <div class="header-coins" onclick="openShopScreen()">
+                <i class="fa-solid fa-coins"></i>
+                <span id="lb-coins-display">50</span>
+            </div>
+        </div>
+
+        <div class="lb-tabs-wrapper">
+            <button id="tab-lb-stars" class="lb-tab active" onclick="switchLeaderboardTab('stars')">
+                <i class="fa-solid fa-star"></i> أبطال المراحل
+            </button>
+            <button id="tab-lb-endless" class="lb-tab" onclick="switchLeaderboardTab('endless')">
+                <i class="fa-solid fa-fire"></i> النمط اللانهائي
+            </button>
+            <button id="tab-lb-pvp" class="lb-tab" onclick="switchLeaderboardTab('pvp')">
+                <i class="fa-solid fa-users-rays"></i> تحدي الأصدقاء
+            </button>
+        </div>
+
+        <div class="podium-container" id="podium-container"></div>
+
+        <div class="leaderboard-list-scroll">
+            <div class="leaderboard-list" id="leaderboard-list">
+                <div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الترتيب العالمي...</div>
+            </div>
+        </div>
+
+        <div class="my-rank-footer" id="my-rank-footer">
+            <div class="my-rank-badge" id="my-rank-pos">#--</div>
+            <img class="my-rank-avatar" id="my-rank-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="My Avatar">
+            <div class="my-rank-info">
+                <span class="my-rank-name" id="my-rank-name">ترتيبي الحالي</span>
+                <span class="my-rank-sub" id="my-rank-sub">المستوى --</span>
+            </div>
+            <div class="my-rank-score" id="my-rank-val">0 ⭐</div>
+        </div>
+    </div>
+
+    <!-- 9. شاشة شبكة المراحل Levels Screen -->
+    <div id="levels-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>رحلة المراحل</h3>
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div class="levels-scroll-container">
+            <div id="levels-grid" class="levels-grid"></div>
+        </div>
+    </div>
+
+    <!-- 10. شاشة الأقسام Categories Screen -->
+    <div id="categories-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>اختر القسم</h3>
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div id="categories-grid" class="categories-grid"></div>
+    </div>
+
+    <!-- 11. شاشة اللعب Game Screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-top-bar">
+            <button class="btn-close-game" onclick="handleNavigationBack()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="game-progress-label" id="question-progress-label">
+                السؤال <span id="current-q-num">1</span> من <span id="total-q-num">10</span>
+            </div>
+
+            <div class="lives-box" id="lives-container">
+                <i class="fa-solid fa-star active-star"></i>
+                <i class="fa-solid fa-star active-star"></i>
+                <i class="fa-solid fa-star active-star"></i>
+            </div>
+        </div>
+
+        <div class="timer-wrapper">
+            <div class="timer-circle">
+                <span id="timer-count">15</span>
+            </div>
+        </div>
+
+        <div class="question-container">
+            <span class="category-pill" id="q-category">عام</span>
+            <h3 id="question-text">نص السؤال يظهر هنا بالتفصيل؟</h3>
+        </div>
+
+        <div class="options-grid" id="options-grid"></div>
+
+        <div class="powerups-bar" id="game-powerups-bar">
+            <button class="btn-powerup" id="btn-5050" onclick="use5050()">
+                <i class="fa-solid fa-divide"></i>
+                <span class="powerup-title">حذف إجابتين</span>
+                <span class="powerup-badge" id="badge-5050">20 عملة</span>
+            </button>
+            <button class="btn-powerup" id="btn-time" onclick="useAddTime()">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="powerup-title">+10 ثواني</span>
+                <span class="powerup-badge" id="badge-time">15 عملة</span>
+            </button>
+            <button class="btn-powerup" id="btn-skip" onclick="useSkipQuestion()">
+                <i class="fa-solid fa-forward-step"></i>
+                <span class="powerup-title">تخطي</span>
+                <span class="powerup-badge" id="badge-skip">30 عملة</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 12. شاشة النتيجة العادية Result Screen -->
+    <div id="result-screen" class="screen">
+        <div class="result-card">
+            <div class="result-icon" id="result-icon">🏆</div>
+            <h2 id="result-title">مبروك الفوز!</h2>
+            <p id="result-message">لقد اجتزت هذه المرحلة بنجاح!</p>
+
+            <div class="result-stars" id="res-stars-wrapper">
+                <span id="res-stars">⭐⭐⭐</span>
+            </div>
+
+            <div class="result-stats-row">
+                <div class="stat-box">
+                    <span>صحيحة</span>
+                    <b id="res-correct" style="color: #10b981;">0</b>
+                </div>
+                <div class="stat-box">
+                    <span>خاطئة</span>
+                    <b id="res-wrong" style="color: #ef4444;">0</b>
+                </div>
+            </div>
+
+            <button class="btn-review-mistakes" id="review-mistakes-btn" onclick="openReviewScreen()" style="display: none;">
+                <i class="fa-solid fa-book-open"></i> مراجعة الأخطاء
+            </button>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="switchScreen('modes-screen')">القائمة</button>
+                <button class="btn-primary" onclick="restartGame()">إعادة المحاولة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. شاشة مراجعة الأخطاء Review Screen -->
+    <div id="review-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>مراجعة الأخطاء</h3>
+            <div style="width: 35px;"></div>
+        </div>
+        <div class="review-list-container" id="review-list"></div>
+    </div>
+
+    <!-- 14. شاشة عجلة الحظ Wheel Screen -->
+    <div id="wheel-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>عجلة الحظ اليومية 🎡</h3>
+            <div class="header-coins">
+                <i class="fa-solid fa-coins"></i>
+                <span id="wheel-coins-display">0</span>
+            </div>
+        </div>
+
+        <div class="wheel-main-section">
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheel-canvas" width="320" height="320"></canvas>
+            </div>
+
+            <button id="spin-btn" class="btn-spin-rectangular" onclick="spinLuckyWheel()">
+                <i class="fa-solid fa-dharmachakra"></i>
+                <span id="spin-btn-text">تدوير مجاني</span>
+            </button>
+            
+            <p class="wheel-status-note" id="wheel-status-text">لديك لفة مجانية متاحة اليوم!</p>
+        </div>
+    </div>
+
+    <!-- 15. شاشة الإنجازات Achievements Screen -->
+    <div id="achievements-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>سجل الإنجازات</h3>
+            <div class="header-coins">
+                <i class="fa-solid fa-coins"></i>
+                <span id="ach-coins-display">0</span>
+            </div>
+        </div>
+        <div class="ach-counter-header" id="ach-unlocked-count">إجمالي المستويات المحققة: 0</div>
+        <div class="achievements-list" id="achievements-list"></div>
+    </div>
+
+    <!-- 16. شاشة المتجر Shop Screen -->
+    <div id="shop-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>متجر المساعدات</h3>
+            <div class="header-coins">
+                <i class="fa-solid fa-coins"></i>
+                <span id="shop-coins-display">0</span>
+            </div>
+        </div>
+
+        <div class="shop-grid">
+            <div class="shop-card">
+                <i class="fa-solid fa-divide shop-icon"></i>
+                <h4>حذف إجابتين (50:50)</h4>
+                <p>مخزونك: <b id="inv-5050">0</b></p>
+                <button class="btn-buy" onclick="buyItem('hint5050', 20)"><i class="fa-solid fa-coins"></i> 20</button>
+            </div>
+
+            <div class="shop-card">
+                <i class="fa-solid fa-clock-rotate-left shop-icon"></i>
+                <h4>إضافة 10 ثواني</h4>
+                <p>مخزونك: <b id="inv-time">0</b></p>
+                <button class="btn-buy" onclick="buyItem('addTime', 15)"><i class="fa-solid fa-coins"></i> 15</button>
+            </div>
+
+            <div class="shop-card">
+                <i class="fa-solid fa-forward-step shop-icon"></i>
+                <h4>تخطي السؤال</h4>
+                <p>مخزونك: <b id="inv-skip">0</b></p>
+                <button class="btn-buy" onclick="buyItem('skip', 30)"><i class="fa-solid fa-coins"></i> 30</button>
+            </div>
+
+            <div class="shop-card free-reward-card">
+                <i class="fa-solid fa-gift shop-icon" style="color: #10b981;"></i>
+                <h4>هدية يومية مجانية</h4>
+                <p>احصل على 30 عملة ذهبية</p>
+                <button id="claim-reward-btn" class="btn-buy free-btn" onclick="claimFreeReward()">استلام مجاناً</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. شاشة الإعدادات Settings Screen -->
+    <div id="settings-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>الإعدادات</h3>
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div class="settings-list">
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span>المؤثرات الصوتية</span>
+                </div>
+                <input type="checkbox" id="setting-sound" checked onchange="toggleSoundSetting(this.checked)">
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <span>الاهتزاز عند اللمس</span>
+                </div>
+                <input type="checkbox" id="setting-vibrate" checked onchange="toggleVibrateSetting(this.checked)">
+            </div>
+
+            <div class="setting-item btn-danger-item" onclick="resetAllProgress()">
+                <div class="setting-info">
+                    <i class="fa-solid fa-trash-can" style="color: #ef4444;"></i>
+                    <span style="color: #ef4444; font-weight: bold;">إعادة ضبط التقدم بالكامل</span>
+                </div>
+            </div>
+
+            <div class="setting-item" onclick="logoutCurrentUser()">
+                <div class="setting-info">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>تسجيل الخروج</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ملفات الجافاسكريبت ومحرك الصوت -->
+    <script src="./audio.js"></script>
+    <script src="./questions.js"></script>
+    <script src="./script.js"></script>
+
+    <!-- تسجيل Service Worker لـ PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=15')
+            .then(reg => console.log('SW Registered successfully:', reg))
+            .catch(err => console.log('SW Registration error:', err));
+        });
+      }
+    </script>
+</body>
+</html>
