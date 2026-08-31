@@ -252,7 +252,8 @@ function parseSheetCSV(text) {
             difficulty: parseInt(cols[2]) || 1,
             question: cols[3],
             options: [cols[4] || '', cols[5] || '', cols[6] || '', cols[7] || ''],
-            correct: parseInt(cols[8]) || 0
+            correct: parseInt(cols[8]) || 0,
+            image: cols[9] ? cols[9].trim() : ''
         });
     }
     return questions;

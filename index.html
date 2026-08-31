@@ -55,6 +55,15 @@
         </div>
     </div>
 
+    <!-- نافذة تكبير الصورة المخصصة -->
+    <div id="image-zoom-modal" class="custom-modal-overlay" onclick="closeImageZoomModal()">
+        <div class="image-zoom-card" onclick="event.stopPropagation()">
+            <img id="image-zoom-img" src="" alt="تكبير الصورة">
+            <button class="btn-close-zoom" onclick="closeImageZoomModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
+
     <!-- نافذة التأكيد المخصصة للعبة (Custom Confirm Dialog) -->
     <div id="custom-confirm-modal" class="custom-modal-overlay">
         <div class="custom-modal-card">
@@ -420,6 +429,12 @@
 
         <div class="question-container">
             <span class="category-pill" id="q-category">عام</span>
+            
+            <div class="question-image-wrapper" id="question-image-box" style="display: none;">
+                <img id="question-img" src="" alt="صورة السؤال" onclick="openImageZoomModal()">
+                <button class="img-zoom-btn" onclick="openImageZoomModal()"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+
             <h3 id="question-text">نص السؤال يظهر هنا بالتفصيل؟</h3>
         </div>
 

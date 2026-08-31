@@ -525,7 +525,8 @@ function parseSheetCSV(text) {
             difficulty: parseInt(cols[2]) || 1,
             question: cols[3],
             options: [cols[4] || '', cols[5] || '', cols[6] || '', cols[7] || ''],
-            correct: parseInt(cols[8]) || 0
+            correct: parseInt(cols[8]) || 0,
+            image: cols[9] ? cols[9].trim() : ''
         });
     }
     return questions;
@@ -926,6 +927,18 @@ function loadQuestion() {
     document.getElementById('q-category').innerText = q.category;
     document.getElementById('question-text').innerText = q.question;
 
+    const imgBox = document.getElementById('question-image-box');
+    const imgElem = document.getElementById('question-img');
+    if (q.image && q.image.trim().startsWith('http')) {
+        if (imgElem) {
+            imgElem.src = q.image.trim();
+        }
+        if (imgBox) imgBox.style.display = 'block';
+    } else {
+        if (imgBox) imgBox.style.display = 'none';
+        if (imgElem) imgElem.src = '';
+    }
+
     renderLivesDisplay();
     startTimer();
     updatePowerupButtons();
@@ -1035,6 +1048,7 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
         gameState.sessionMistakes.push({
             question: q.question,
             category: q.category,
+            image: q.image || '',
             userAnswer: isTimeout ? 'انتهى الوقت دون إجابة' : (selectedIndex !== null ? q.options[selectedIndex] : 'لم يتم الاختيار'),
             correctAnswer: q.options[q.correct]
         });
@@ -1180,8 +1194,12 @@ function openReviewScreen() {
         gameState.sessionMistakes.forEach((item, index) => {
             const card = document.createElement('div');
             card.className = 'review-card';
+            const imgHtml = (item.image && item.image.startsWith('http')) 
+                ? `<div class="review-img-box"><img src="${item.image}" alt="صورة السؤال" onclick="openImageZoomModal('${item.image}')"></div>` 
+                : '';
             card.innerHTML = `
                 <div class="review-header-tag"><i class="fa-solid fa-shapes"></i> ${item.category} (سؤال ${index + 1})</div>
+                ${imgHtml}
                 <h4>${item.question}</h4>
                 <div class="review-answer-row">
                     <div><i class="fa-solid fa-xmark" style="color: var(--accent-red);"></i> إجابتك: <span class="user-mistake-val">${item.userAnswer}</span></div>
@@ -1284,6 +1302,26 @@ function useSkipQuestion() {
     document.getElementById('btn-skip').disabled = true;
 
     proceedNext();
+}
+
+
+function openImageZoomModal(customSrc = null) {
+    const modal = document.getElementById('image-zoom-modal');
+    const zoomImg = document.getElementById('image-zoom-img');
+    const qImg = document.getElementById('question-img');
+
+    const src = customSrc || (qImg ? qImg.src : '');
+    if (!src) return;
+
+    if (zoomImg) zoomImg.src = src;
+    if (modal) modal.classList.add('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function closeImageZoomModal() {
+    const modal = document.getElementById('image-zoom-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
 
 

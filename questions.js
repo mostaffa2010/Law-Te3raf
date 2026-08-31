@@ -415,5 +415,98 @@ const questionsBank = [
     question: "من هي أول زوجات النبي محمد صلى الله عليه وسلم؟",
     options: ["عائشة بنت أبي بكر", "خديجة بنت خويلد", "حفصة بنت عمر", "سودة بنت زمعة"],
     correct: 1
+  },
+
+  // --- أسئلة مصورة تجريبية (Visual Questions) ---
+  {
+    id: 2402,
+    category: "جغرافيا",
+    difficulty: 2,
+    question: "في أي دولة يقع هذا المعلم السياحي الشهير (برج إيفل)؟",
+    options: ["إيطاليا", "فرنسا", "إسبانيا", "ألمانيا"],
+    correct: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/640px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg"
+  },
+  {
+    id: 2403,
+    category: "تاريخ",
+    difficulty: 3,
+    question: "ما اسم هذا الأثر التاريخي الشهير الموجود في روما بإيطاليا؟",
+    options: ["الكولوسيوم", "البارثينون", "قصر الحمراء", "برج بيزا"],
+    correct: 0,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Colosseum_in_Rome-April_2007-1-_copie_2B.jpg/640px-Colosseum_in_Rome-April_2007-1-_copie_2B.jpg"
+  },
+  {
+    id: 2404,
+    category: "جغرافيا",
+    difficulty: 2,
+    question: "ما هي الدولة التي ينتمي إليها هذا العلم الوطني؟",
+    options: ["الأرجنتين", "البرازيل", "كولومبيا", "المكسيك"],
+    correct: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/640px-Flag_of_Brazil.svg.png"
+  },
+  {
+    id: 2405,
+    category: "تاريخ",
+    difficulty: 3,
+    question: "في أي مدينة هندية يقع ضريح (تاج محل) الشهير؟",
+    options: ["نيودلهي", "مومباي", "أغرا", "كلكتا"],
+    correct: 2,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/640px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg"
+  },
+  {
+    id: 2406,
+    category: "سينما وفن",
+    difficulty: 5,
+    question: "من هو الرسام العالمي صاحب هذه اللوحة الشهيرة (الفتاة ذات القرط اللؤلؤي)؟",
+    options: ["يوهانس فيرمير", "رامبرانت", "ليوناردو دا فينشي", "فان جوخ"],
+    correct: 0,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/500px-1665_Girl_with_a_Pearl_Earring.jpg"
+  },
+  {
+    id: 2407,
+    category: "طبيعة وحيوانات",
+    difficulty: 1,
+    question: "ما اسم هذا الحيوان المميز الذي يعيش في غابات الخيزران في الصين؟",
+    options: ["الباندا العملاق", "الكوالا", "الليمور", "الراكون"],
+    correct: 0,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/640px-Grosser_Panda.JPG"
+  },
+  {
+    id: 2408,
+    category: "رياضة وكورة",
+    difficulty: 2,
+    question: "من هو أسطورة كرة القدم الأرجنتينية الظاهر في هذه الصورة وهو يرفع كأس العالم 1986؟",
+    options: ["دييغو مارادونا", "ليونيل ميسي", "ماريو كيمبس", "غابرييل باتيستوتا"],
+    correct: 0,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Maradona-Mundial_86_con_la_copa.JPG/600px-Maradona-Mundial_86_con_la_copa.JPG"
+  },
+  {
+    id: 2409,
+    category: "علوم وفضاء",
+    difficulty: 2,
+    question: "ما هو هذا الكوكب من كواكب المجموعة الشمسية الذي يشتهر بنظامه الحلقي البديع؟",
+    options: ["المشتري", "زحل", "أورانوس", "نبتون"],
+    correct: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/640px-Saturn_during_Equinox.jpg"
+  },
+  {
+    id: 2410,
+    category: "جغرافيا",
+    difficulty: 3,
+    question: "ما اسم هذا الجسر المعلق الشهير بلونه البرتقالي في مدينة سان فرانسيسكو؟",
+    options: ["جسر البوابة الذهبية (Golden Gate)", "جسر بروكلين", "جسر البرج", "جسر هاربر"],
+    correct: 0,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/640px-GoldenGateBridge-001.jpg"
+  },
+  {
+    id: 2411,
+    category: "إسلاميات",
+    difficulty: 2,
+    question: "ما اسم هذا المسجد التاريخي ذو القبة الذهبية الواقع داخل الحرم القدسي الشريف؟",
+    options: ["المسجد الإبراهيمي", "مسجد قبة الصخرة", "المسجد الأموي", "مسجد القبلتين"],
+    correct: 1,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Dome_of_the_Rock_2024.jpg/640px-Dome_of_the_Rock_2024.jpg"
   }
+
 ];
