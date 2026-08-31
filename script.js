@@ -1,10 +1,5 @@
-// ==========================================================================
-// script.js - المحرك البرمجي الشامل للعبة "لَو تِعرَف"
-// ==========================================================================
-
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
 
-// ---------------- تهيئة Firebase السحابية ---------------- //
 const firebaseConfig = {
   apiKey: "AIzaSyDELtkkAkxym1CospHaGdLt6TNCEKZAc1A",
   authDomain: "law-te3raf.firebaseapp.com",
@@ -26,11 +21,8 @@ if (typeof firebase.analytics === 'function') {
 }
 
 let currentUser = null;
-
-// مصفوفة المراحل المتوازنة الثابتة
 let structuredLevelsBank = [];
 
-// حالة اللعبة العامة
 let gameState = {
     currentScreen: 'auth-screen',
     mode: 'levels',
@@ -49,14 +41,33 @@ let gameState = {
     sessionCorrectStreak: 0,
     sessionMistakes: [],
     leaderboardTab: 'stars',
-    // بيانات نمط التحدي الجماعي PvP
     pvpRoomId: null,
     isPvpHost: false,
     pvpUnsubscribe: null,
     pvpRoomData: null
 };
 
-// دالة موحدة لضمان جلب بنك الأسئلة الحالي من الشيت
+function showCustomAlert(message, title = 'تنبيه', icon = '💡') {
+    const modal = document.getElementById('custom-modal');
+    const titleElem = document.getElementById('custom-modal-title');
+    const msgElem = document.getElementById('custom-modal-msg');
+    const iconElem = document.getElementById('custom-modal-icon');
+    if (!modal) {
+        window.alert(message);
+        return;
+    }
+    if (titleElem) titleElem.innerText = title;
+    if (msgElem) msgElem.innerText = message;
+    if (iconElem) iconElem.innerText = icon;
+    modal.classList.add('show');
+}
+
+function closeCustomAlert() {
+    const modal = document.getElementById('custom-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
 function getActiveQuestionsBank() {
     if (window.questionsBank && window.questionsBank.length > 0) {
         return window.questionsBank;
@@ -76,7 +87,6 @@ function getActiveQuestionsBank() {
     return window.questionsBank || [];
 }
 
-// خوارزمية الخلط العشوائي الحقيقية (Fisher-Yates Shuffle)
 function shuffleArray(array) {
     let arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -101,7 +111,6 @@ function getTodayString() {
     return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 }
 
-// عجلة الحظ
 const WHEEL_SECTORS = [
     { label: "15 عملة", type: "coins", value: 15, color: "#3b82f6" },
     { label: "50:50", type: "item", value: "hint5050", color: "#8b5cf6" },
@@ -116,7 +125,6 @@ const WHEEL_SECTORS = [
 let isWheelSpinning = false;
 let wheelCurrentAngle = 0;
 
-// نظام الإنجازات (كل إنجاز له سقف مستويات، وبعده يفضل "مكتمل" بلا مكافآت إضافية)
 const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
@@ -129,7 +137,6 @@ const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_shopper', name: 'تاجر الأدوات', desc: 'اشترِ وسائل مساعدة من المتجر لدعم رحلتك', icon: '🛍️', stat: 'itemsPurchased', baseGoal: 3, stepGoal: 5, baseReward: 15, stepReward: 8, maxLevel: 5 }
 ];
 
-// بيانات تقدم اللاعب
 let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     unlockedLevel: 1,
     levelStars: {},
@@ -155,7 +162,6 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
 function getAchGoal(ach, level) { return ach.baseGoal + (level * ach.stepGoal); }
 function getAchReward(ach, level) { return ach.baseReward + (level * ach.stepReward); }
 
-// طور اللانهاية: أي سؤال اتشاف، ميظهرش تاني لنفس اللاعب إلا بعد 5 أيام
 const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
 
 function getEndlessQuestionQueue() {
@@ -164,7 +170,6 @@ function getEndlessQuestionQueue() {
     const fullBank = getActiveQuestionsBank();
     const now = Date.now();
 
-    // تنضيف أي تواريخ قديمة أكتر من 5 أيام عشان الملف ميكبرش من غير داعي
     Object.keys(userProgress.endlessSeenAt).forEach(id => {
         if (now - userProgress.endlessSeenAt[id] > ENDLESS_REPEAT_COOLDOWN_MS) {
             delete userProgress.endlessSeenAt[id];
@@ -172,8 +177,6 @@ function getEndlessQuestionQueue() {
     });
 
     const fresh = fullBank.filter(q => !userProgress.endlessSeenAt[q.id]);
-
-    // لو بنك الأسئلة (أو الفلتر) قليل جدًا، نكمّل بالأقدم ظهورًا الأول عشان الجولة متقفش
     const stale = fullBank
         .filter(q => userProgress.endlessSeenAt[q.id])
         .sort((a, b) => userProgress.endlessSeenAt[a.id] - userProgress.endlessSeenAt[b.id]);
@@ -195,8 +198,6 @@ const CATEGORY_STYLES = {
     'سيارات ومحركات': { icon: 'fa-solid fa-car-side', color: '#ef4444' },
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
-
-// ---------------- المزامنة والحفظ في Firestore ---------------- //
 
 function saveProgress() {
     localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
@@ -234,10 +235,6 @@ async function loadCloudProgress(uid) {
     }
 }
 
-// ---------------- خوارزمية بناء المراحل المتوازنة الثابتة ---------------- //
-
-// بذرة ثابتة للعشوائية الحتمية — نفس النتيجة عند كل اللاعبين طول ما البذرة ثابتة.
-// تحذير: متغيرش الرقم ده أبدًا بعد ما اللعبة تنزل للاعبين، غير ده هيغيّر توزيع كل المراحل عندهم كلهم.
 const LEVEL_BUILD_SEED = 20260831;
 
 function mulberry32(seed) {
@@ -258,15 +255,12 @@ function deterministicShuffle(arr, rand) {
     return a;
 }
 
-// أنواع المراحل: سهلة / متوسطة / صعبة، بتتكرر بالدورة على طول تسلسل المراحل
 const LEVEL_DIFFICULTY_TIERS = [
-    { min: 1, max: 5 },  // سهلة
-    { min: 3, max: 8 },  // متوسطة
-    { min: 5, max: 10 }, // صعبة
+    { min: 1, max: 5 },
+    { min: 3, max: 8 },
+    { min: 5, max: 10 },
 ];
 
-// خوارزمية التوزيع الأساسية: بتاخد مجموعة أسئلة (كلها لسه ملهاش مرحلة) وتبنيلها مراحل جديدة،
-// بادئة من نوع المرحلة (tier) اللي المفروض يجي بعد آخر مرحلة موجودة فعلاً (startLevelIndex)
 function assignQuestionsToTierLevels(questionsList, startLevelIndex, questionsPerLevel = 10) {
     if (!questionsList || questionsList.length === 0) return [];
 
@@ -325,8 +319,6 @@ function assignQuestionsToTierLevels(questionsList, startLevelIndex, questionsPe
     return levels;
 }
 
-// بناء المراحل النهائي: المراحل "المجمّدة" (جايه من Firestore، مصدر حقيقة واحد لكل اللاعبين)
-// بتفضل زي ما هي حرفيًا، وأي أسئلة جديدة لسه ملهاش مرحلة بتتجمع منها مراحل إضافية جديدة
 function buildDeterministicLevelsBank(questionsList, frozenSource, questionsPerLevel = 10) {
     if (!questionsList || questionsList.length === 0) return [];
 
@@ -340,7 +332,7 @@ function buildDeterministicLevelsBank(questionsList, frozenSource, questionsPerL
     source.forEach(idList => {
         const levelQuestions = idList
             .map(id => questionsById.get(id))
-            .filter(Boolean); // لو سؤال اتشال من الشيت نفسه، بيتجاهل بدل ما يبوظ المرحلة
+            .filter(Boolean);
         idList.forEach(id => usedIds.add(id));
         frozenLevels.push(levelQuestions);
     });
@@ -351,10 +343,6 @@ function buildDeterministicLevelsBank(questionsList, frozenSource, questionsPerL
     return [...frozenLevels, ...newLevels];
 }
 
-// المزامنة التلقائية: بتقرا آخر نسخة "مجمّدة" من Firestore، ولو فيه أسئلة جديدة كفاية
-// لمرحلة كاملة أو أكتر، بتجمّدها هي نفسها بأمان (transaction بتمنع أي تعارض لو أكتر
-// من لاعب فتح اللعبة في نفس اللحظة بالظبط) وترجّع النسخة النهائية المحدّثة.
-// ده بيحصل تلقائي من غير أي تدخل — أول لاعب يفتح اللعبة بعد إضافة أسئلة جديدة هو اللي "يقفلها".
 async function syncLevelsBankWithCloud(liveQuestions, questionsPerLevel = 10) {
     const docRef = db.collection('system').doc('levelsBank');
 
@@ -366,13 +354,11 @@ async function syncLevelsBankWithCloud(liveQuestions, questionsPerLevel = 10) {
         cloudFrozen.forEach(idList => idList.forEach(id => usedIds.add(id)));
         const newQuestionsCount = liveQuestions.filter(q => !usedIds.has(q.id)).length;
 
-        // مفيش أسئلة جديدة كفاية لمرحلة كاملة → مفيش داعي نكتب على Firestore خالص
         if (Math.floor(newQuestionsCount / questionsPerLevel) === 0) {
             localStorage.setItem('cached_levels_bank', JSON.stringify(cloudFrozen));
             return cloudFrozen;
         }
 
-        // فيه أسئلة جديدة كفاية، نجمّدها بأمان جوه transaction
         const finalFrozen = await db.runTransaction(async (tx) => {
             const freshSnap = await tx.get(docRef);
             const freshFrozen = (freshSnap.exists && Array.isArray(freshSnap.data().levels)) ? freshSnap.data().levels : [];
@@ -383,7 +369,7 @@ async function syncLevelsBankWithCloud(liveQuestions, questionsPerLevel = 10) {
             const freshNewQuestions = liveQuestions.filter(q => !freshUsedIds.has(q.id));
             const newLevels = assignQuestionsToTierLevels(freshNewQuestions, freshFrozen.length, questionsPerLevel);
 
-            if (newLevels.length === 0) return freshFrozen; // حد تاني سبقنا وجمدها فعلاً
+            if (newLevels.length === 0) return freshFrozen;
 
             const updated = [...freshFrozen, ...newLevels.map(lvl => lvl.map(q => q.id))];
             tx.set(docRef, { levels: updated, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -393,7 +379,6 @@ async function syncLevelsBankWithCloud(liveQuestions, questionsPerLevel = 10) {
         localStorage.setItem('cached_levels_bank', JSON.stringify(finalFrozen));
         return finalFrozen;
     } catch (err) {
-        console.log('⚠️ تعذّرت مزامنة المراحل مع Firestore، هنستخدم آخر نسخة معروفة محليًا:', err);
         const cached = localStorage.getItem('cached_levels_bank');
         return cached ? JSON.parse(cached) : [];
     }
@@ -414,10 +399,6 @@ function getExactLevelQuestions(levelNumber) {
     return getSmartQuestions(10);
 }
 
-// ==========================================================================
-// محرك غرف التحدي الجماعي Multiplayer Party Battle
-// ==========================================================================
-
 function openPvpLobbyScreen() {
     switchScreen('pvp-lobby-screen');
 }
@@ -428,7 +409,7 @@ function generateRoomCode() {
 
 async function createPvpRoom() {
     if (!currentUser) {
-        alert('يرجى تسجيل الدخول أولاً لتحدي أصدقائك!');
+        showCustomAlert('يرجى تسجيل الدخول أولاً لتحدي أصدقائك!', 'تنبيه', '🔒');
         return;
     }
 
@@ -464,13 +445,13 @@ async function createPvpRoom() {
         openWaitingRoomUI(roomCode, true);
         listenToPvpRoom(roomCode);
     } catch (e) {
-        alert('حدث خطأ أثناء إنشاء الغرفة: ' + e.message);
+        showCustomAlert('حدث خطأ أثناء إنشاء الغرفة: ' + e.message, 'خطأ', '⚠️');
     }
 }
 
 async function joinPvpRoom() {
     if (!currentUser) {
-        alert('يرجى تسجيل الدخول أولاً!');
+        showCustomAlert('يرجى تسجيل الدخول أولاً!', 'تنبيه', '🔒');
         return;
     }
 
@@ -478,7 +459,7 @@ async function joinPvpRoom() {
     const roomCode = input ? input.value.trim() : '';
 
     if (!roomCode || roomCode.length !== 5) {
-        alert('يرجى إدخال كود غرفة صحيح مكون من 5 أرقام!');
+        showCustomAlert('يرجى إدخال كود غرفة صحيح مكون من 5 أرقام!', 'تنبيه', '🔢');
         return;
     }
 
@@ -487,13 +468,13 @@ async function joinPvpRoom() {
         const docSnap = await docRef.get();
 
         if (!docSnap.exists) {
-            alert('الغرفة غير موجودة! تأكد من صحة الكود من صديقك.');
+            showCustomAlert('الغرفة غير موجودة! تأكد من صحة الكود من صديقك.', 'خطأ', '❌');
             return;
         }
 
         const data = docSnap.data();
         if (data.status !== 'waiting') {
-            alert('عذراً، بدأت هذه المباراة بالفعل ولا يمكن الانضمام إليها الآن!');
+            showCustomAlert('عذراً، بدأت هذه المباراة بالفعل ولا يمكن الانضمام إليها الآن!', 'تنبيه', '⏳');
             return;
         }
 
@@ -518,7 +499,7 @@ async function joinPvpRoom() {
         openWaitingRoomUI(roomCode, gameState.isPvpHost);
         listenToPvpRoom(roomCode);
     } catch (e) {
-        alert('خطأ أثناء الانضمام للغرفة: ' + e.message);
+        showCustomAlert('خطأ أثناء الانضمام للغرفة: ' + e.message, 'خطأ', '⚠️');
     }
 }
 
@@ -548,9 +529,9 @@ function copyPvpCode() {
     const code = gameState.pvpRoomId;
     if (navigator.clipboard) {
         navigator.clipboard.writeText(code);
-        alert(`تم نسخ الكود [ ${code} ]! شاركه مع أصدقائك الآن.`);
+        showCustomAlert(`تم نسخ الكود [ ${code} ]! شاركه مع أصدقائك الآن.`, 'تم النسخ', '📋');
     } else {
-        alert(`كود الغرفة هو: ${code}`);
+        showCustomAlert(`كود الغرفة هو: ${code}`, 'كود الغرفة', '🔑');
     }
 }
 
@@ -559,7 +540,7 @@ function listenToPvpRoom(code) {
 
     gameState.pvpUnsubscribe = db.collection('pvp_rooms').doc(code).onSnapshot((doc) => {
         if (!doc.exists) {
-            alert('تم إغلاق الغرفة من قِبل المضيف.');
+            showCustomAlert('تم إغلاق الغرفة من قِبل المضيف.', 'الغرفة مغلقة', '🚪');
             leavePvpRoom();
             return;
         }
@@ -598,7 +579,8 @@ function listenToPvpRoom(code) {
             triggerPvpCountdown(data);
         }
 
-        if (playersList.length > 0 && playersList.every(p => p.finished === true)) {
+        const allFinished = playersList.length > 0 && playersList.every(p => p.finished === true);
+        if (allFinished || data.status === 'finished') {
             renderGroupPvpResults(playersList);
         }
     });
@@ -612,7 +594,7 @@ async function hostStartPartyMatch() {
             status: 'starting'
         });
     } catch (e) {
-        alert('خطأ أثناء بدء التحدي: ' + e.message);
+        showCustomAlert('خطأ أثناء بدء التحدي: ' + e.message, 'خطأ', '⚠️');
     }
 }
 
@@ -671,6 +653,16 @@ async function updatePvpPlayerFinalScore() {
         updateObj[`players.${myUid}.finished`] = true;
 
         await db.collection('pvp_rooms').doc(gameState.pvpRoomId).update(updateObj);
+
+        const snap = await db.collection('pvp_rooms').doc(gameState.pvpRoomId).get();
+        if (snap.exists) {
+            const data = snap.data();
+            const playersList = Object.values(data.players || {});
+            if (playersList.length > 0 && playersList.every(p => p.finished === true)) {
+                await db.collection('pvp_rooms').doc(gameState.pvpRoomId).update({ status: 'finished' });
+                renderGroupPvpResults(playersList);
+            }
+        }
     } catch (e) {
         console.error('Error submitting score:', e);
     }
@@ -682,7 +674,6 @@ function renderGroupPvpResults(playersList) {
 
     switchScreen('pvp-result-screen');
 
-    // الترتيب: حسب الإجابات الصحيحة أولاً، ثم السرعة (النقاط) عند التساوي
     const sorted = [...playersList].sort((a, b) => {
         const aCorrect = a.correctCount !== undefined ? a.correctCount : 0;
         const bCorrect = b.correctCount !== undefined ? b.correctCount : 0;
@@ -761,8 +752,6 @@ function leavePvpRoom() {
     switchScreen('modes-screen');
 }
 
-// ---------------- إدارة لوحة المتصدرين Global Leaderboard ---------------- //
-
 function openLeaderboardScreen() {
     switchScreen('leaderboard-screen');
     fetchAndRenderLeaderboard();
@@ -773,7 +762,8 @@ function switchLeaderboardTab(tab) {
     document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
     
     if (tab === 'stars') document.getElementById('tab-lb-stars').classList.add('active');
-    else document.getElementById('tab-lb-endless').classList.add('active');
+    else if (tab === 'endless') document.getElementById('tab-lb-endless').classList.add('active');
+    else if (tab === 'pvp') document.getElementById('tab-lb-pvp').classList.add('active');
 
     fetchAndRenderLeaderboard();
 }
@@ -786,8 +776,10 @@ async function fetchAndRenderLeaderboard() {
     listContainer.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الترتيب العالمي...</div>';
     if (podiumContainer) podiumContainer.innerHTML = '';
 
-    const isStarsTab = (gameState.leaderboardTab === 'stars');
-    const sortField = isStarsTab ? 'totalStars' : 'highScore';
+    const tab = gameState.leaderboardTab;
+    let sortField = 'totalStars';
+    if (tab === 'endless') sortField = 'highScore';
+    else if (tab === 'pvp') sortField = 'pvpWins';
 
     try {
         const snapshot = await db.collection('users')
@@ -804,7 +796,8 @@ async function fetchAndRenderLeaderboard() {
                 photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
                 totalStars: d.totalStars || 0,
                 unlockedLevel: d.unlockedLevel || 1,
-                highScore: d.highScore || 0
+                highScore: d.highScore || 0,
+                pvpWins: d.pvpWins || 0
             });
         });
 
@@ -815,18 +808,24 @@ async function fetchAndRenderLeaderboard() {
                 photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
                 totalStars: calculateTotalStars(),
                 unlockedLevel: userProgress.unlockedLevel || 1,
-                highScore: userProgress.highScore || 0
+                highScore: userProgress.highScore || 0,
+                pvpWins: userProgress.pvpWins || 0
             });
         }
 
-        renderLeaderboardUI(players, isStarsTab);
+        renderLeaderboardUI(players, tab);
     } catch (error) {
-        console.error('Leaderboard Fetch Error:', error);
         listContainer.innerHTML = '<div class="lb-loading" style="color: var(--accent-red);">تعذر تحميل قائمة المتصدرين حالياً.</div>';
     }
 }
 
-function renderLeaderboardUI(players, isStarsTab) {
+function formatLeaderboardScore(p, tab) {
+    if (tab === 'stars') return `${p.totalStars} ⭐`;
+    if (tab === 'endless') return `${p.highScore} نقطة`;
+    return `${p.pvpWins || 0} فوز ⚔️`;
+}
+
+function renderLeaderboardUI(players, tab) {
     const podiumContainer = document.getElementById('podium-container');
     const listContainer = document.getElementById('leaderboard-list');
     listContainer.innerHTML = '';
@@ -839,7 +838,7 @@ function renderLeaderboardUI(players, isStarsTab) {
         let podiumHtml = '';
 
         if (top2) {
-            const val2 = isStarsTab ? `${top2.totalStars} ⭐` : `${top2.highScore} نقطة`;
+            const val2 = formatLeaderboardScore(top2, tab);
             podiumHtml += `
                 <div class="podium-item podium-second">
                     <div class="podium-avatar-box">
@@ -853,7 +852,7 @@ function renderLeaderboardUI(players, isStarsTab) {
             `;
         }
 
-        const val1 = isStarsTab ? `${top1.totalStars} ⭐` : `${top1.highScore} نقطة`;
+        const val1 = formatLeaderboardScore(top1, tab);
         podiumHtml += `
             <div class="podium-item podium-first">
                 <div class="podium-avatar-box">
@@ -867,7 +866,7 @@ function renderLeaderboardUI(players, isStarsTab) {
         `;
 
         if (top3) {
-            const val3 = isStarsTab ? `${top3.totalStars} ⭐` : `${top3.highScore} نقطة`;
+            const val3 = formatLeaderboardScore(top3, tab);
             podiumHtml += `
                 <div class="podium-item podium-third">
                     <div class="podium-avatar-box">
@@ -889,8 +888,10 @@ function renderLeaderboardUI(players, isStarsTab) {
         restPlayers.forEach((p, idx) => {
             const rank = idx + 4;
             const isMe = currentUser && (p.uid === currentUser.uid);
-            const scoreText = isStarsTab ? `${p.totalStars} ⭐` : `${p.highScore} نقطة`;
-            const subText = isStarsTab ? `وصل للمرحلة ${p.unlockedLevel}` : `إجمالي النجوم: ${p.totalStars}`;
+            const scoreText = formatLeaderboardScore(p, tab);
+            let subText = `إجمالي النجوم: ${p.totalStars}`;
+            if (tab === 'stars') subText = `وصل للمرحلة ${p.unlockedLevel}`;
+            else if (tab === 'pvp') subText = `انتصارات الغرف: ${p.pvpWins || 0}`;
 
             const card = document.createElement('div');
             card.className = `lb-item-card ${isMe ? 'is-current-user' : ''}`;
@@ -907,10 +908,10 @@ function renderLeaderboardUI(players, isStarsTab) {
         });
     }
 
-    updateMyRankFooter(players, isStarsTab);
+    updateMyRankFooter(players, tab);
 }
 
-function updateMyRankFooter(players, isStarsTab) {
+function updateMyRankFooter(players, tab) {
     const posElem = document.getElementById('my-rank-pos');
     const nameElem = document.getElementById('my-rank-name');
     const avatarElem = document.getElementById('my-rank-avatar');
@@ -927,16 +928,17 @@ function updateMyRankFooter(players, isStarsTab) {
     if (nameElem) nameElem.innerText = currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت');
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
-    if (isStarsTab) {
+    if (tab === 'stars') {
         if (subElem) subElem.innerText = `وصلت للمرحلة ${userProgress.unlockedLevel || 1}`;
         if (valElem) valElem.innerText = `${calculateTotalStars()} ⭐`;
-    } else {
+    } else if (tab === 'endless') {
         if (subElem) subElem.innerText = `أعلى سكور صمود`;
         if (valElem) valElem.innerText = `${userProgress.highScore || 0} نقطة`;
+    } else if (tab === 'pvp') {
+        if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
+        if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
     }
 }
-
-// ---------------- إدارة المصادقة ---------------- //
 
 auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -965,14 +967,14 @@ function loginWithGoogle() {
         if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
             auth.signInWithRedirect(provider);
         } else {
-            alert('خطأ في تسجيل الدخول: ' + error.message);
+            showCustomAlert('خطأ في تسجيل الدخول: ' + error.message, 'خطأ', '⚠️');
         }
     });
 }
 
 function loginAsGuest() {
     auth.signInAnonymously().catch((error) => {
-        alert('خطأ أثناء الدخول كضيف: ' + error.message);
+        showCustomAlert('خطأ أثناء الدخول كضيف: ' + error.message, 'خطأ', '⚠️');
     });
 }
 
@@ -990,8 +992,6 @@ function updateUserProfileUI(user) {
     if (nameElem) nameElem.innerText = user.isAnonymous ? 'ضيف اللعبة' : (user.displayName || 'لاعب');
     if (avatarElem) avatarElem.src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 }
-
-// ---------------- التنقل وإدارة زر الرجوع الذكي ---------------- //
 
 function switchScreen(screenId, pushToHistory = true) {
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
@@ -1052,7 +1052,6 @@ window.addEventListener('popstate', () => {
 document.addEventListener('DOMContentLoaded', async () => {
     history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
 
-    // دعم إظهار بانر التثبيت على أجهزة iOS Safari
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS && !window.navigator.standalone) {
         const banner = document.getElementById('pwa-install-banner');
@@ -1068,8 +1067,6 @@ function hideSplashScreenNow() {
     const splash = document.getElementById('splash-screen');
     if (splash) splash.classList.add('hide');
 }
-
-// ---------------- الإعدادات وعجلة الحظ ---------------- //
 
 function openSettingsScreen() { switchScreen('settings-screen'); }
 
@@ -1095,7 +1092,7 @@ function resetAllProgress() {
         localStorage.removeItem('law_ta3raf_progress');
         localStorage.removeItem('cached_questions_bank');
         if (currentUser) db.collection('users').doc(currentUser.uid).delete();
-        alert('تمت إعادة ضبط اللعبة!');
+        showCustomAlert('تمت إعادة ضبط اللعبة!', 'تم الضبط', '🔄');
         location.reload();
     }
 }
@@ -1169,7 +1166,7 @@ function spinLuckyWheel() {
     const isFree = userProgress.lastWheelDate !== getTodayString();
     if (!isFree) {
         if (userProgress.coins < 25) {
-            alert('تحتاج 25 عملة للتدوير الإضافي!');
+            showCustomAlert('تحتاج 25 عملة للتدوير الإضافي!', 'رصيد غير كافٍ', '🪙');
             return;
         }
         userProgress.coins -= 25;
@@ -1231,17 +1228,15 @@ function giveWheelReward(sector) {
 
     if (sector.type === "coins") {
         userProgress.coins += sector.value;
-        alert(`🎉 مبروك! فزت بـ ${sector.value} عملة ذهبية!`);
+        showCustomAlert(`فزت بـ ${sector.value} عملة ذهبية!`, 'مبروك!', '🎉');
     } else if (sector.type === "item") {
         userProgress.inventory[sector.value] = (userProgress.inventory[sector.value] || 0) + 1;
-        alert(`🎉 مبروك! فزت بوسيلة مساعدة: [${sector.label}] في مخزونك!`);
+        showCustomAlert(`فزت بوسيلة مساعدة: [${sector.label}] في مخزونك!`, 'مبروك!', '🎁');
     }
 
     saveProgress();
     updateHeaderStats();
 }
-
-// ---------------- الإنجازات ---------------- //
 
 function checkAllAchievements() {
     let newlyUnlocked = false;
@@ -1369,8 +1364,6 @@ function claimAchievementReward(achId, rewardAmount) {
     updateAchievementBadge();
 }
 
-// ---------------- جلب الأسئلة وتوليد المراحل من الشيت ---------------- //
-
 function getTotalAvailableLevels() {
     const bank = getActiveQuestionsBank();
     if (!structuredLevelsBank || structuredLevelsBank.length === 0) {
@@ -1395,14 +1388,12 @@ async function loadQuestionsFromPublishedSheet() {
 
             const frozenBank = await syncLevelsBankWithCloud(parsedQuestions);
             structuredLevelsBank = buildDeterministicLevelsBank(parsedQuestions, frozenBank);
-            console.log(`✅ تم تحميل ${parsedQuestions.length} سؤال من الشيت السحابي بنجاح! (${structuredLevelsBank.length} مرحلة)`);
             
             if (gameState.currentScreen === 'levels-screen' || document.getElementById('levels-grid')) {
                 renderLevelsGrid();
             }
         }
     } catch (err) {
-        console.log('Using cached bank:', err);
         const cached = localStorage.getItem('cached_questions_bank');
         if (cached) {
             window.questionsBank = JSON.parse(cached);
@@ -1464,8 +1455,6 @@ function getSmartQuestions(count = 10, categoryFilter = null) {
 
     return selected;
 }
-
-// ---------------- أنماط اللعب ---------------- //
 
 function startLevelMode() {
     renderLevelsGrid();
@@ -1529,7 +1518,6 @@ function startEndlessMode() {
     const pwrBar = document.getElementById('game-powerups-bar');
     if (pwrBar) pwrBar.style.display = 'flex';
 
-    const fullBank = getActiveQuestionsBank();
     gameState.questions = getEndlessQuestionQueue();
     
     switchScreen('game-screen');
@@ -1593,7 +1581,7 @@ function checkDailyStatus() {
 
 function openDailyChallenge() {
     if (userProgress.lastDailyDate === getTodayString()) {
-        alert('لقد أنجزت تحدي اليوم بالفعل! عُد غداً لتحدٍ وجائزة جديدة.');
+        showCustomAlert('لقد أنجزت تحدي اليوم بالفعل! عُد غداً لتحدٍ وجائزة جديدة.', 'التحدي اليومي', '⏳');
         return;
     }
 
@@ -1614,8 +1602,6 @@ function openDailyChallenge() {
     switchScreen('game-screen');
     loadQuestion();
 }
-
-// ---------------- إدارة السؤال والمؤقت ---------------- //
 
 function loadQuestion() {
     gameState.isAnswered = false;
@@ -1795,8 +1781,6 @@ function proceedNext() {
     }, 1200);
 }
 
-// ---------------- النتائج والمراجعة ---------------- //
-
 async function finishGameSession() {
     if (gameState.mode === 'pvp') {
         await updatePvpPlayerFinalScore();
@@ -1945,8 +1929,6 @@ function restartGame() {
     else switchScreen('modes-screen');
 }
 
-// ---------------- وسائل المساعدة والمتجر ---------------- //
-
 function updatePowerupButtons() {
     const btn50 = document.getElementById('btn-5050');
     const btnTime = document.getElementById('btn-time');
@@ -2055,7 +2037,7 @@ function updateShopDisplay() {
 
 function buyItem(itemKey, cost, quantity = 1) {
     if (userProgress.coins < cost) {
-        alert('رصيدك من العملات غير كافٍ!');
+        showCustomAlert('رصيدك من العملات غير كافٍ!', 'تنبيه', '🪙');
         return;
     }
 
@@ -2074,7 +2056,7 @@ function buyItem(itemKey, cost, quantity = 1) {
 function claimFreeReward() {
     const today = getTodayString();
     if (userProgress.lastFreeRewardDate === today) {
-        alert('لقد استلمت هديتك المجانية لليوم بالفعل! عُد غداً لهدية جديدة.');
+        showCustomAlert('لقد استلمت هديتك المجانية لليوم بالفعل! عُد غداً لهدية جديدة.', 'هدية المتجر', '⏳');
         return;
     }
 
@@ -2086,10 +2068,8 @@ function claimFreeReward() {
 
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
 
-    alert('🎉 مبروك! استلمت 30 عملة ذهبية كهدية يومية!');
+    showCustomAlert('استلمت 30 عملة ذهبية كهدية يومية!', 'مبروك!', '🎉');
 }
-
-// ---------------- إدارة PWA و Splash Screen ---------------- //
 
 let deferredInstallPrompt = null;
 
