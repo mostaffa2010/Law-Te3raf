@@ -55,6 +55,31 @@
         </div>
     </div>
 
+    <!-- نافذة التأكيد المخصصة للعبة (Custom Confirm Dialog) -->
+    <div id="custom-confirm-modal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="custom-modal-icon" id="custom-confirm-icon">⚠️</div>
+            <h3 id="custom-confirm-title">تأكيد الإجراء</h3>
+            <p id="custom-confirm-msg">هل أنت متأكد من هذا الإجراء؟</p>
+            <div class="custom-modal-actions">
+                <button class="btn-modal-cancel" id="custom-confirm-cancel-btn" onclick="closeCustomConfirm(false)">إلغاء</button>
+                <button class="btn-modal-confirm" id="custom-confirm-ok-btn" onclick="closeCustomConfirm(true)">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة اختيار قسم التحدي الجماعي المخصصة (Custom Category Selector) -->
+    <div id="pvp-category-modal" class="custom-modal-overlay">
+        <div class="custom-modal-card pvp-category-modal-card">
+            <div class="custom-modal-icon">🎯</div>
+            <h3>مجال أسئلة التحدي</h3>
+            <p>اختر القسم الذي ترغب في أن تدور حوله أسئلة الغرفة:</p>
+            <div class="pvp-categories-list" id="pvp-categories-list"></div>
+            <button class="btn-modal-close" style="margin-top: 15px;" onclick="closePvpCategoryModal()">إغلاق</button>
+        </div>
+    </div>
+
+
     <!-- إشعار تحقيق الإنجازات (Toast) -->
     <div id="achievement-toast" class="achievement-toast">
         <div class="toast-icon-box" id="toast-icon">🏆</div>
@@ -255,23 +280,13 @@
             </div>
 
             <div class="pvp-host-controls" id="pvp-host-controls">
-                <div id="pvp-cat-select-wrapper" style="margin-bottom: 15px; width: 100%; text-align: right;">
-                    <label style="font-size: 0.85rem; color: var(--accent-yellow); display: block; margin-bottom: 6px; font-weight: bold;">🎯 مجال أسئلة التحدي:</label>
-                    <select id="pvp-selected-category" style="width: 100%; padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color); font-weight: bold; font-family: 'Cairo'; outline: none;">
-                        <option value="all" selected>🌟 جميع الأقسام (منوع)</option>
-                        <option value="إسلاميات">🕌 إسلاميات</option>
-                        <option value="رياضة وكورة">⚽ رياضة وكورة</option>
-                        <option value="علوم وفضاء">🔬 علوم وفضاء</option>
-                        <option value="تاريخ">🏛️ تاريخ وحضارات</option>
-                        <option value="جغرافيا">🌍 جغرافيا وعواصم</option>
-                        <option value="سينما وفن">🎬 سينما وفن</option>
-                        <option value="طبيعة وحيوانات">🐾 طبيعة وحيوانات</option>
-                        <option value="تكنولوجيا وألعاب">🎮 تكنولوجيا وألعاب</option>
-                        <option value="أدب ولغات">📚 أدب ولغات</option>
-                        <option value="ألغاز وذكاء">🧩 ألغاز وذكاء</option>
-                        <option value="سيارات ومحركات">🏎️ سيارات ومحركات</option>
-                        <option value="معلومات عامة">💡 معلومات عامة</option>
-                    </select>
+                <div id="pvp-cat-select-wrapper" class="pvp-cat-select-wrapper">
+                    <label class="pvp-cat-label">🎯 مجال أسئلة التحدي:</label>
+                    <div class="pvp-cat-custom-trigger" id="pvp-cat-custom-trigger" onclick="openPvpCategoryModal()">
+                        <span id="pvp-cat-selected-label">🌟 جميع الأقسام (منوع)</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <input type="hidden" id="pvp-selected-category" value="all">
                 </div>
                 <button id="btn-start-party-match" class="btn-start-party" onclick="hostStartPartyMatch()">
                     <i class="fa-solid fa-play"></i> بدء التحدي للجميع 🚀

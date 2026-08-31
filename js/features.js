@@ -552,12 +552,12 @@ function installAppPWA() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     if (isIOS) {
-        alert('لتثبيت اللعبة على الآيفون:\n1. اضغط على زر المشاركة (Share ⎋) أسفل المتصفح.\n2. اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen).');
+        showCustomAlert('لتثبيت اللعبة على الآيفون:\n1. اضغط على زر المشاركة (Share ⎋) أسفل المتصفح.\n2. اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen).', 'تثبيت اللعبة', '📲');
         return;
     }
 
     if (!deferredInstallPrompt) {
-        alert('يمكنك تثبيت التطبيق من قائمة المتصفح (الثلاث نقاط) -> "تثبيت التطبيق"');
+        showCustomAlert('يمكنك تثبيت التطبيق من قائمة المتصفح (الثلاث نقاط) -> "تثبيت التطبيق"', 'تثبيت التطبيق', '💡');
         return;
     }
     

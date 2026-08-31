@@ -216,3 +216,54 @@ async function loadCloudProgress(uid) {
         console.log('Error loading cloud progress:', e);
     }
 }
+
+
+let currentConfirmCallback = null;
+let currentCancelCallback = null;
+
+function showCustomConfirm(message, onConfirm, onCancel = null, title = 'تأكيد الإجراء', confirmText = 'نعم', cancelText = 'إلغاء', icon = '⚠️') {
+    const modal = document.getElementById('custom-confirm-modal');
+    const titleElem = document.getElementById('custom-confirm-title');
+    const msgElem = document.getElementById('custom-confirm-msg');
+    const iconElem = document.getElementById('custom-confirm-icon');
+    const okBtn = document.getElementById('custom-confirm-ok-btn');
+    const cancelBtn = document.getElementById('custom-confirm-cancel-btn');
+
+    currentConfirmCallback = onConfirm;
+    currentCancelCallback = onCancel;
+
+    if (!modal) {
+        if (window.confirm(message)) {
+            if (onConfirm) onConfirm();
+        } else {
+            if (onCancel) onCancel();
+        }
+        return;
+    }
+
+    if (titleElem) titleElem.innerText = title;
+    if (msgElem) msgElem.innerText = message;
+    if (iconElem) iconElem.innerText = icon;
+    if (okBtn) okBtn.innerText = confirmText;
+    if (cancelBtn) cancelBtn.innerText = cancelText;
+
+    modal.classList.add('show');
+}
+
+function closeCustomConfirm(isConfirmed) {
+    const modal = document.getElementById('custom-confirm-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+
+    if (isConfirmed) {
+        if (typeof currentConfirmCallback === 'function') {
+            currentConfirmCallback();
+        }
+    } else {
+        if (typeof currentCancelCallback === 'function') {
+            currentCancelCallback();
+        }
+    }
+    currentConfirmCallback = null;
+    currentCancelCallback = null;
+}

@@ -1810,3 +1810,154 @@ html, body {
     0%, 100% { transform: scale(1); } 
     50% { transform: scale(1.15); } 
 }
+
+
+/* ==========================================
+   Custom Confirm Modal & Action Buttons
+   ========================================== */
+.custom-modal-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-modal-cancel {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-modal-cancel:active {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.btn-modal-confirm {
+    flex: 1;
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
+    border: none;
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    transition: transform 0.2s;
+}
+
+.btn-modal-confirm:active {
+    transform: scale(0.96);
+}
+
+/* ==========================================
+   Custom Category Picker for PvP
+   ========================================== */
+.pvp-cat-select-wrapper {
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: right;
+}
+
+.pvp-cat-label {
+    font-size: 0.85rem;
+    color: var(--accent-yellow);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.pvp-cat-custom-trigger {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid var(--border-color);
+    font-weight: bold;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.pvp-cat-custom-trigger:active {
+    border-color: var(--accent-purple);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.pvp-cat-custom-trigger i {
+    font-size: 0.8rem;
+    color: var(--accent-yellow);
+}
+
+.pvp-category-modal-card {
+    max-width: 360px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.pvp-categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 50vh;
+    margin-top: 10px;
+    padding-right: 4px;
+}
+
+.pvp-cat-option-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pvp-cat-option-item:active {
+    transform: scale(0.98);
+}
+
+.pvp-cat-option-item.selected {
+    border-color: var(--accent-yellow);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(22, 27, 34, 0.8));
+}
+
+.pvp-cat-option-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pvp-cat-option-icon {
+    font-size: 1.2rem;
+}
+
+.pvp-cat-option-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.pvp-cat-radio {
+    color: var(--accent-yellow);
+    font-size: 1rem;
+}
+
+.pvp-cat-option-item:not(.selected) .pvp-cat-radio {
+    color: rgba(255, 255, 255, 0.2);
+}

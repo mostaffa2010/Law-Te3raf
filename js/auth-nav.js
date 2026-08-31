@@ -39,10 +39,20 @@ function loginAsGuest() {
 }
 
 function logoutCurrentUser() {
-    auth.signOut().then(() => {
-        localStorage.removeItem('law_ta3raf_progress');
-        switchScreen('auth-screen', false);
-    });
+    showCustomConfirm(
+        'هل ترغب حقاً في تسجيل الخروج من حسابك الحالي؟',
+        () => {
+            auth.signOut().then(() => {
+                localStorage.removeItem('law_ta3raf_progress');
+                switchScreen('auth-screen', false);
+            });
+        },
+        null,
+        'تسجيل الخروج',
+        'تسجيل الخروج',
+        'إلغاء',
+        '🚪'
+    );
 }
 
 function updateUserProfileUI(user) {
@@ -80,12 +90,20 @@ function handleNavigationBack() {
     const current = gameState.currentScreen;
 
     if (current === 'game-screen') {
-        if (confirm('هل تريد حقاً مغادرة الجولة الحالية؟')) {
-            if (gameState.mode === 'pvp') leavePvpRoom();
-            else switchScreen('modes-screen', false);
-        } else {
-            history.pushState({ screen: 'game-screen' }, "", "#game-screen");
-        }
+        showCustomConfirm(
+            'هل تريد حقاً مغادرة الجولة الحالية؟ ستفقد تقدمك في هذه الجولة.',
+            () => {
+                if (gameState.mode === 'pvp') leavePvpRoom();
+                else switchScreen('modes-screen', false);
+            },
+            () => {
+                history.pushState({ screen: 'game-screen' }, "", "#game-screen");
+            },
+            'مغادرة الجولة',
+            'نعم، خروج',
+            'البقاء في اللعبة',
+            '🚪'
+        );
     } else if (current === 'pvp-waiting-screen' || current === 'pvp-lobby-screen' || current === 'pvp-result-screen' || current === 'pvp-waiting-opponent-screen') {
         leavePvpRoom();
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
@@ -95,11 +113,19 @@ function handleNavigationBack() {
     } else if (current === 'review-screen') {
         switchScreen('result-screen', false);
     } else if (current === 'main-menu') {
-        if (confirm('هل ترغب في إغلاق اللعبة والخروج؟')) {
-            history.back();
-        } else {
-            history.pushState({ screen: 'main-menu' }, "", "#main-menu");
-        }
+        showCustomConfirm(
+            'هل ترغب في إغلاق اللعبة والخروج؟',
+            () => {
+                history.back();
+            },
+            () => {
+                history.pushState({ screen: 'main-menu' }, "", "#main-menu");
+            },
+            'إغلاق اللعبة',
+            'خروج',
+            'إلغاء',
+            '👋'
+        );
     } else {
         switchScreen('main-menu', false);
     }
@@ -136,11 +162,19 @@ function toggleVibrateSetting(enabled) {
 }
 
 function resetAllProgress() {
-    if (confirm('⚠️ تحذير: هل أنت متأكد من حذف كل تقدمك وإعادة اللعبة كأنك حملتها للتو؟')) {
-        localStorage.removeItem('law_ta3raf_progress');
-        localStorage.removeItem('cached_questions_bank');
-        if (currentUser) db.collection('users').doc(currentUser.uid).delete();
-        showCustomAlert('تمت إعادة ضبط اللعبة!', 'تم الضبط', '🔄');
-        location.reload();
-    }
+    showCustomConfirm(
+        '⚠️ تحذير: هل أنت متأكد من حذف كل تقدمك وإعادة اللعبة كأنك حملتها للتو؟ لن تتمكن من استرجاع هذا التقدم.',
+        () => {
+            localStorage.removeItem('law_ta3raf_progress');
+            localStorage.removeItem('cached_questions_bank');
+            if (currentUser) db.collection('users').doc(currentUser.uid).delete();
+            showCustomAlert('تمت إعادة ضبط اللعبة بالكامل بنجاح!', 'تم الضبط', '🔄');
+            setTimeout(() => location.reload(), 1200);
+        },
+        null,
+        'إعادة ضبط التقدم',
+        'حذف وضبط',
+        'إلغاء',
+        '⚠️'
+    );
 }

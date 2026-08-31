@@ -357,3 +357,63 @@ function leavePvpRoom() {
     gameState.isPvpHost = false;
     switchScreen('modes-screen');
 }
+
+
+const PVP_CATEGORIES = [
+    { id: 'all', name: 'جميع الأقسام (منوع)', icon: '🌟' },
+    { id: 'إسلاميات', name: 'إسلاميات', icon: '🕌' },
+    { id: 'رياضة وكورة', name: 'رياضة وكورة', icon: '⚽' },
+    { id: 'علوم وفضاء', name: 'علوم وفضاء', icon: '🔬' },
+    { id: 'تاريخ', name: 'تاريخ وحضارات', icon: '🏛️' },
+    { id: 'جغرافيا', name: 'جغرافيا وعواصم', icon: '🌍' },
+    { id: 'سينما وفن', name: 'سينما وفن', icon: '🎬' },
+    { id: 'طبيعة وحيوانات', name: 'طبيعة وحيوانات', icon: '🐾' },
+    { id: 'تكنولوجيا وألعاب', name: 'تكنولوجيا وألعاب', icon: '🎮' },
+    { id: 'أدب ولغات', name: 'أدب ولغات', icon: '📚' },
+    { id: 'ألغاز وذكاء', name: 'ألغاز وذكاء', icon: '🧩' },
+    { id: 'سيارات ومحركات', name: 'سيارات ومحركات', icon: '🏎️' },
+    { id: 'معلومات عامة', name: 'معلومات عامة', icon: '💡' }
+];
+
+function openPvpCategoryModal() {
+    const modal = document.getElementById('pvp-category-modal');
+    const listElem = document.getElementById('pvp-categories-list');
+    const currentVal = document.getElementById('pvp-selected-category') ? document.getElementById('pvp-selected-category').value : 'all';
+
+    if (listElem) {
+        listElem.innerHTML = '';
+        PVP_CATEGORIES.forEach(cat => {
+            const isSelected = (cat.id === currentVal);
+            const item = document.createElement('div');
+            item.className = `pvp-cat-option-item ${isSelected ? 'selected' : ''}`;
+            item.innerHTML = `
+                <div class="pvp-cat-option-info">
+                    <span class="pvp-cat-option-icon">${cat.icon}</span>
+                    <span class="pvp-cat-option-name">${cat.name}</span>
+                </div>
+                <i class="fa-solid ${isSelected ? 'fa-circle-dot' : 'fa-circle'} pvp-cat-radio"></i>
+            `;
+            item.onclick = () => selectPvpCategory(cat.id, `${cat.icon} ${cat.name}`);
+            listElem.appendChild(item);
+        });
+    }
+
+    if (modal) modal.classList.add('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function closePvpCategoryModal() {
+    const modal = document.getElementById('pvp-category-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function selectPvpCategory(catId, catLabel) {
+    const hiddenInput = document.getElementById('pvp-selected-category');
+    const triggerLabel = document.getElementById('pvp-cat-selected-label');
+
+    if (hiddenInput) hiddenInput.value = catId;
+    if (triggerLabel) triggerLabel.innerText = catLabel;
+
+    closePvpCategoryModal();
+}
