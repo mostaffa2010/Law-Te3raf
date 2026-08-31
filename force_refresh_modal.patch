@@ -1,0 +1,31 @@
+diff --git a/index.html b/index.html
+--- a/index.html
++++ b/index.html
+@@ -19,7 +19,7 @@
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     
+     <!-- التنسيقات -->
+-    <link rel="stylesheet" href="./style.css">
++    <link rel="stylesheet" href="./style.css?v=20">
+ 
+     <!-- مكتبات Firebase السحابية متضمنة Analytics -->
+     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+@@ -406,8 +406,8 @@
+ 
+     <!-- ملفات الجافاسكريبت ومحرك الصوت -->
+     <script src="./audio.js"></script>
+-    <script src="./questions.js"></script>
+-    <script src="./script.js"></script>
++    <script src="./questions.js?v=20"></script>
++    <script src="./script.js?v=20"></script>
+ 
+     <!-- تسجيل Service Worker لـ PWA -->
+     <script>
+@@ -415,7 +415,7 @@
+       if ('serviceWorker' in navigator) {
+         window.addEventListener('load', () => {
+-          navigator.serviceWorker.register('./sw.js?v=15')
++          navigator.serviceWorker.register('./sw.js?v=20')
+             .then(reg => console.log('SW Registered successfully:', reg))
+             .catch(err => console.log('SW Registration error:', err));
+         });
