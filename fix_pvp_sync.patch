@@ -1,0 +1,34 @@
+diff --git a/script.js b/script.js
+--- a/script.js
++++ b/script.js
+@@ -406,8 +406,12 @@ function listenToPvpRoom(code) {
+             triggerPvpCountdown(data);
+         }
+ 
+-        if (playersList.length > 0 && playersList.every(p => p.finished === true)) {
++        const allFinished = playersList.length > 0 && playersList.every(p => p.finished === true);
++        if (allFinished) {
+             renderGroupPvpResults(playersList);
++        } else if (data.status === 'finished') {
++            renderGroupPvpResults(playersList);
+         }
+     });
+ }
+@@ -467,6 +471,20 @@ async function updatePvpPlayerFinalScore() {
+         updateObj[`players.${myUid}.finished`] = true;
+ 
+         await db.collection('pvp_rooms').doc(gameState.pvpRoomId).update(updateObj);
++
++        // التحقق مما إذا كان الجميع قد أنهى لتحديث حالة الغرفة بالكامل
++        const snap = await db.collection('pvp_rooms').doc(gameState.pvpRoomId).get();
++        if (snap.exists) {
++            const data = snap.data();
++            const playersList = Object.values(data.players || {});
++            if (playersList.length > 0 && playersList.every(p => p.finished === true)) {
++                await db.collection('pvp_rooms').doc(gameState.pvpRoomId).update({ status: 'finished' });
++                renderGroupPvpResults(playersList);
++            }
++        }
+     } catch (e) {
+         console.error('Error submitting score:', e);
+     }
