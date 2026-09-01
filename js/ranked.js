@@ -1,3 +1,26 @@
+// دالة حساب القوة الترتيبية للرانك لترتيب لوحة المتصدرين بدقة فائقة
+function calculateRankSortWeight(prog) {
+    if (!prog) return 0;
+    const rankTier = prog.rankTier || 'iron';
+    const tierConfig = (typeof RANKS_CONFIG !== 'undefined') ? (RANKS_CONFIG.find(r => r.id === rankTier) || RANKS_CONFIG[0]) : { tier: 1, divisions: 3 };
+    const tierNum = tierConfig.tier || 1;
+    
+    // دوريات القمة (Master, Grandmaster, Challenger) تعتمد على نقاط الـ LP
+    if (tierConfig.isApex) {
+        const lp = prog.rankLP || 0;
+        return (tierNum * 1000000) + lp;
+    }
+    
+    // الدوريات العادية من الحديدي للماسي
+    const totalDivs = tierConfig.divisions || 3;
+    const currentDiv = (prog.rankDivision !== undefined) ? prog.rankDivision : totalDivs;
+    const divScore = Math.max(0, totalDivs - currentDiv);
+    const stars = prog.rankStars || 0;
+    
+    return (tierNum * 10000) + (divScore * 100) + stars;
+}
+window.calculateRankSortWeight = calculateRankSortWeight;
+
 // js/ranked.js - محرك دوريات التصنيف المتدرج (Ranked Divisions) والمواسم الشهرية والبحث السريع 1v1
 
 var RANKS_CONFIG = window.RANKS_CONFIG = [

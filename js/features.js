@@ -33,49 +33,89 @@ async function fetchAndRenderLeaderboard() {
     if (podiumContainer) podiumContainer.innerHTML = '';
 
     const tab = gameState.leaderboardTab || 'ranked';
-    let sortField = 'rankedWins';
-    if (tab === 'endless') sortField = 'highScore';
-    else if (tab === 'pvp') sortField = 'pvpWins';
+    let sortField = (tab === 'ranked') ? 'rankWeight' : ((tab === 'endless') ? 'highScore' : 'pvpWins');
 
     try {
-        if (!db) throw new Error('No DB connection');
-
-        const snapshot = await db.collection('users')
-            .orderBy(sortField, 'desc')
-            .limit(50)
-            .get();
-
         let players = [];
-        snapshot.forEach(doc => {
-            const d = doc.data();
-            players.push({
-                uid: doc.id,
-                name: d.name || 'لاعب',
-                photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                rankTier: (d.progress && d.progress.rankTier) || d.rankTier || 'iron',
-                rankStars: (d.progress && d.progress.rankStars !== undefined) ? d.progress.rankStars : (d.rankStars || 0),
-                rankedWins: d.rankedWins || 0,
-                highScore: d.highScore || 0,
-                pvpWins: d.pvpWins || 0
-            });
-        });
+        if (typeof db !== 'undefined' && db) {
+            try {
+                const snapshot = await db.collection('users')
+                    .orderBy(sortField, 'desc')
+                    .limit(50)
+                    .get();
 
-        if (players.length === 0 && currentUser) {
-            players.push({
-                uid: currentUser.uid,
-                name: currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب'),
-                photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                rankTier: userProgress.rankTier || 'iron',
-                rankStars: userProgress.rankStars || 0,
-                rankedWins: userProgress.rankedWins || 0,
-                highScore: userProgress.highScore || 0,
-                pvpWins: userProgress.pvpWins || 0
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    players.push({
+                        uid: doc.id,
+                        name: d.name || 'لاعب',
+                        photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                        rankTier: (d.progress && d.progress.rankTier) || d.rankTier || 'iron',
+                        rankDivision: (d.progress && d.progress.rankDivision !== undefined) ? d.progress.rankDivision : (d.rankDivision !== undefined ? d.rankDivision : 3),
+                        rankStars: (d.progress && d.progress.rankStars !== undefined) ? d.progress.rankStars : (d.rankStars || 0),
+                        rankLP: (d.progress && d.progress.rankLP !== undefined) ? d.progress.rankLP : (d.rankLP || 0),
+                        rankedWins: d.rankedWins || (d.progress && d.progress.rankedWins) || 0,
+                        highScore: d.highScore || (d.progress && d.progress.highScore) || 0,
+                        pvpWins: d.pvpWins || (d.progress && d.progress.pvpWins) || 0
+                    });
+                });
+            } catch (dbErr) {
+                // في حال عدم اكتمال فهرس Firestore، جلب المستخدمين وترتيبهم محلياً بدقة
+                const fallbackSnap = await db.collection('users').limit(60).get();
+                fallbackSnap.forEach(doc => {
+                    const d = doc.data();
+                    players.push({
+                        uid: doc.id,
+                        name: d.name || 'لاعب',
+                        photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                        rankTier: (d.progress && d.progress.rankTier) || d.rankTier || 'iron',
+                        rankDivision: (d.progress && d.progress.rankDivision !== undefined) ? d.progress.rankDivision : (d.rankDivision !== undefined ? d.rankDivision : 3),
+                        rankStars: (d.progress && d.progress.rankStars !== undefined) ? d.progress.rankStars : (d.rankStars || 0),
+                        rankLP: (d.progress && d.progress.rankLP !== undefined) ? d.progress.rankLP : (d.rankLP || 0),
+                        rankedWins: d.rankedWins || (d.progress && d.progress.rankedWins) || 0,
+                        highScore: d.highScore || (d.progress && d.progress.highScore) || 0,
+                        pvpWins: d.pvpWins || (d.progress && d.progress.pvpWins) || 0
+                    });
+                });
+            }
+        }
+
+        // التأكد من وجود اللاعب الحالي في اللائحة
+        if (currentUser) {
+            const exists = players.some(p => p.uid === currentUser.uid);
+            if (!exists) {
+                players.push({
+                    uid: currentUser.uid,
+                    name: currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب'),
+                    photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                    rankTier: userProgress.rankTier || 'iron',
+                    rankDivision: userProgress.rankDivision || 3,
+                    rankStars: userProgress.rankStars || 0,
+                    rankLP: userProgress.rankLP || 0,
+                    rankedWins: userProgress.rankedWins || 0,
+                    highScore: userProgress.highScore || 0,
+                    pvpWins: userProgress.pvpWins || 0
+                });
+            }
+        }
+
+        // الترتيب المنطقي الصارم حسب التبويب المختار
+        if (tab === 'ranked') {
+            players.sort((a, b) => {
+                const weightA = (typeof calculateRankSortWeight === 'function') ? calculateRankSortWeight(a) : 0;
+                const weightB = (typeof calculateRankSortWeight === 'function') ? calculateRankSortWeight(b) : 0;
+                if (weightB !== weightA) return weightB - weightA;
+                return (b.rankedWins || 0) - (a.rankedWins || 0);
             });
+        } else if (tab === 'endless') {
+            players.sort((a, b) => (b.highScore || 0) - (a.highScore || 0));
+        } else if (tab === 'pvp') {
+            players.sort((a, b) => (b.pvpWins || 0) - (a.pvpWins || 0));
         }
 
         renderLeaderboardUI(players, tab);
     } catch (error) {
-        // عرض الترتيب المحلي للمستخدم في حال تعذر الاتصال
+        console.error("Leaderboard fetch error:", error);
         const localPlayers = [];
         if (currentUser) {
             localPlayers.push({
@@ -83,7 +123,9 @@ async function fetchAndRenderLeaderboard() {
                 name: currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت'),
                 photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
                 rankTier: userProgress.rankTier || 'iron',
+                rankDivision: userProgress.rankDivision || 3,
                 rankStars: userProgress.rankStars || 0,
+                rankLP: userProgress.rankLP || 0,
                 rankedWins: userProgress.rankedWins || 0,
                 highScore: userProgress.highScore || 0,
                 pvpWins: userProgress.pvpWins || 0
