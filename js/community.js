@@ -19,10 +19,9 @@ function openSuggestQuestionModal() {
     const modal = document.getElementById('suggest-question-modal');
     if (!modal) return;
 
-    // ملء اسم الكاتب تلقائياً باسم اللاعب المسجل
     const authorInput = document.getElementById('suggest-author-input');
     if (authorInput) {
-        authorInput.value = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : (userProgress.equippedTitle ? `${userProgress.equippedTitle}` : '');
+        authorInput.value = (typeof currentUser !== 'undefined' && currentUser && !currentUser.isAnonymous) ? currentUser.displayName : ((typeof userProgress !== 'undefined' && userProgress.equippedTitle) ? userProgress.equippedTitle : '');
     }
 
     modal.classList.add('show');
@@ -35,7 +34,6 @@ function closeSuggestQuestionModal() {
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
 
-// نافذة اختيار القسم المخصصة
 function openSuggestCategoryPicker() {
     const modal = document.getElementById('suggest-cat-picker-modal');
     const list = document.getElementById('suggest-cat-picker-list');
@@ -80,7 +78,6 @@ function selectSuggestCategory(catId, catName, catIcon, catColor) {
     closeSuggestCategoryPicker();
 }
 
-// نافذة اختيار مستوى الصعوبة المخصصة
 function openSuggestDiffPicker() {
     const modal = document.getElementById('suggest-diff-picker-modal');
     if (!modal) return;
@@ -155,7 +152,6 @@ async function submitSuggestedQuestion() {
             });
         }
 
-        // مكافأة فورية 20 عملة لتشجيع المساهمة
         userProgress.coins = (userProgress.coins || 0) + 20;
         saveProgress();
         updateHeaderStats();
@@ -164,7 +160,6 @@ async function submitSuggestedQuestion() {
 
         closeSuggestQuestionModal();
 
-        // تصفير الحقول
         if (qInput) qInput.value = '';
         if (opt1Input) opt1Input.value = '';
         if (opt2Input) opt2Input.value = '';
@@ -183,7 +178,7 @@ async function submitSuggestedQuestion() {
     }
 }
 
-// --- إدارة لوحة المشرف السرية (Admin Panel) ---
+// --- إدارة لوحة المشرف السرية (Admin Dashboard) ---
 const ADMIN_EMAILS = ['mostaffa201021@gmail.com'];
 
 function isCurrentUserAdmin() {
@@ -203,9 +198,258 @@ function openAdminPanelScreen() {
         return;
     }
     switchScreen('admin-panel-screen');
-    fetchAndRenderAdminQuestions();
+    switchAdminTab('questions');
 }
 
+let activeAdminTab = 'questions';
+
+function switchAdminTab(tabName) {
+    activeAdminTab = tabName;
+    document.querySelectorAll('.adm-sub-tab').forEach(t => t.classList.remove('active'));
+
+    const btn = document.getElementById(`adm-tab-${tabName}`);
+    if (btn) btn.classList.add('active');
+
+    const secQuestions = document.getElementById('adm-sec-questions');
+    const secPrices = document.getElementById('adm-sec-prices');
+    const secCustomPrices = document.getElementById('adm-sec-custom-prices');
+    const secAnnounce = document.getElementById('adm-sec-announcement');
+
+    if (secQuestions) secQuestions.style.display = (tabName === 'questions') ? 'block' : 'none';
+    if (secPrices) secPrices.style.display = (tabName === 'prices') ? 'block' : 'none';
+    if (secCustomPrices) secCustomPrices.style.display = (tabName === 'custom-prices') ? 'block' : 'none';
+    if (secAnnounce) secAnnounce.style.display = (tabName === 'announcement') ? 'block' : 'none';
+
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+
+    if (tabName === 'questions') fetchAndRenderAdminQuestions();
+    if (tabName === 'prices') loadAdminPricesForm();
+    if (tabName === 'custom-prices') loadAdminCustomPricesForm();
+    if (tabName === 'announcement') loadAdminAnnouncementForm();
+}
+
+function loadAdminPricesForm() {
+    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+    setVal('adm-price-5050', p.hint5050 || 20);
+    setVal('adm-price-time', p.addTime || 15);
+    setVal('adm-price-skip', p.skip || 30);
+    setVal('adm-reward-daily', p.dailyFreeReward || 30);
+    setVal('adm-price-wheel', p.wheelExtraSpin || 25);
+}
+
+function loadAdminCustomPricesForm() {
+    const cp = (window.APP_CONFIG && window.APP_CONFIG.customPrices) || {};
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+    setVal('adm-price-av-detective', cp.av_detective || 400);
+    setVal('adm-price-av-viking', cp.av_viking || 600);
+    setVal('adm-price-av-samurai', cp.av_samurai || 800);
+    setVal('adm-price-av-pharaoh', cp.av_pharaoh || 1000);
+    setVal('adm-price-av-astro', cp.av_astro || 1200);
+    setVal('adm-price-av-gladiator', cp.av_gladiator || 1400);
+    setVal('adm-price-av-pirate', cp.av_pirate || 1600);
+    setVal('adm-price-av-alchemist', cp.av_alchemist || 1800);
+    setVal('adm-price-av-wizard', cp.av_wizard || 2000);
+    setVal('adm-price-av-lion', cp.av_lion || 2500);
+
+    setVal('adm-price-frame-neon', cp.frame_cyber_neon || 500);
+    setVal('adm-price-frame-laurel', cp.frame_royal_laurel || 800);
+    setVal('adm-price-frame-dragon', cp.frame_dragon_fire || 1000);
+
+    setVal('adm-price-title-mastermind', cp.title_mastermind || 300);
+    setVal('adm-price-title-puzzle', cp.title_puzzle_king || 500);
+    setVal('adm-price-title-sniper', cp.title_sniper || 600);
+}
+
+function loadAdminAnnouncementForm() {
+    const txtInput = document.getElementById('adm-announce-text');
+    const chkInput = document.getElementById('adm-announce-active');
+
+    if (txtInput) txtInput.value = (window.APP_CONFIG && window.APP_CONFIG.announcement) || '';
+    if (chkInput) chkInput.checked = !!(window.APP_CONFIG && window.APP_CONFIG.announcementActive);
+}
+
+// دالة حفظ الإعدادات مع الحفظ الفوري المضمون
+async function persistGlobalConfig(configData) {
+    try {
+        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+    } catch (e) {}
+
+    if (typeof db !== 'undefined' && db) {
+        try {
+            await db.collection('app_config').doc('settings').set(configData, { merge: true });
+        } catch (err1) {
+            try {
+                await db.collection('users').doc('global_config').set(configData, { merge: true });
+            } catch (err2) {
+                console.warn("Firestore sync fallback:", err2);
+            }
+        }
+    }
+}
+
+async function saveAdminPrices() {
+    const getVal = (id, def) => { const el = document.getElementById(id); return el ? parseInt(el.value) || def : def; };
+
+    const newPrices = {
+        hint5050: getVal('adm-price-5050', 20),
+        addTime: getVal('adm-price-time', 15),
+        skip: getVal('adm-price-skip', 30),
+        dailyFreeReward: getVal('adm-reward-daily', 30),
+        wheelExtraSpin: getVal('adm-price-wheel', 25)
+    };
+
+    if (!window.APP_CONFIG) window.APP_CONFIG = {};
+    window.APP_CONFIG.prices = newPrices;
+
+    await persistGlobalConfig({ prices: newPrices });
+
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم حفظ وتطبيق أسعار المتجر والمساعدات بنجاح!', 'تم الحفظ', '🪙');
+}
+
+async function saveAdminCustomPrices() {
+    const getVal = (id, def) => { const el = document.getElementById(id); return el ? parseInt(el.value) || def : def; };
+
+    const newCustomPrices = {
+        av_detective: getVal('adm-price-av-detective', 400),
+        av_viking: getVal('adm-price-av-viking', 600),
+        av_samurai: getVal('adm-price-av-samurai', 800),
+        av_pharaoh: getVal('adm-price-av-pharaoh', 1000),
+        av_astro: getVal('adm-price-av-astro', 1200),
+        av_gladiator: getVal('adm-price-av-gladiator', 1400),
+        av_pirate: getVal('adm-price-av-pirate', 1600),
+        av_alchemist: getVal('adm-price-av-alchemist', 1800),
+        av_wizard: getVal('adm-price-av-wizard', 2000),
+        av_lion: getVal('adm-price-av-lion', 2500),
+        frame_cyber_neon: getVal('adm-price-frame-neon', 500),
+        frame_royal_laurel: getVal('adm-price-frame-laurel', 800),
+        frame_dragon_fire: getVal('adm-price-frame-dragon', 1000),
+        title_mastermind: getVal('adm-price-title-mastermind', 300),
+        title_puzzle_king: getVal('adm-price-title-puzzle', 500),
+        title_sniper: getVal('adm-price-title-sniper', 600)
+    };
+
+    if (!window.APP_CONFIG) window.APP_CONFIG = {};
+    window.APP_CONFIG.customPrices = newCustomPrices;
+
+    await persistGlobalConfig({ customPrices: newCustomPrices });
+
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم حفظ وتطبيق أسعار الأفاتارات والإطارات والألقاب بنجاح!', 'تم الحفظ', '🎨');
+}
+
+async function saveAdminAnnouncement() {
+    const txtInput = document.getElementById('adm-announce-text');
+    const chkInput = document.getElementById('adm-announce-active');
+
+    const announceText = txtInput ? txtInput.value.trim() : '';
+    const isActive = chkInput ? chkInput.checked : false;
+
+    if (!window.APP_CONFIG) window.APP_CONFIG = {};
+    window.APP_CONFIG.announcement = announceText;
+    window.APP_CONFIG.announcementActive = isActive;
+
+    await persistGlobalConfig({
+        announcement: announceText,
+        announcementActive: isActive
+    });
+
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم نشر وتفعيل شريط الإعلان لجميع اللاعبين بنجاح!', 'تم النشر', '📢');
+}
+
+function applyLiveConfigUpdates() {
+    if (!window.APP_CONFIG) return;
+
+    // 1. تحديث أسعار الأفاتارات في AVATARS_DB
+    if (window.AVATARS_DB && window.APP_CONFIG.customPrices) {
+        window.AVATARS_DB.forEach(av => {
+            if (window.APP_CONFIG.customPrices[av.id] !== undefined) {
+                av.price = window.APP_CONFIG.customPrices[av.id];
+                av.unlockDesc = `متجر: ${toArabicNumerals(av.price)} عملة`;
+            }
+        });
+    }
+
+    // 2. تحديث أسعار الإطارات في FRAMES_DB
+    if (window.FRAMES_DB && window.APP_CONFIG.customPrices) {
+        window.FRAMES_DB.forEach(fr => {
+            if (window.APP_CONFIG.customPrices[fr.id] !== undefined) {
+                fr.price = window.APP_CONFIG.customPrices[fr.id];
+                fr.unlockDesc = `متجر: ${toArabicNumerals(fr.price)} عملة`;
+            }
+        });
+    }
+
+    // 3. تحديث أسعار الألقاب في TITLES_DB
+    if (window.TITLES_DB && window.APP_CONFIG.customPrices) {
+        window.TITLES_DB.forEach(ti => {
+            if (window.APP_CONFIG.customPrices[ti.id] !== undefined) {
+                ti.price = window.APP_CONFIG.customPrices[ti.id];
+                ti.unlockDesc = `متجر: ${toArabicNumerals(ti.price)} عملة`;
+            }
+        });
+    }
+
+    // 4. تحديث شريط الإعلانات في القائمة الرئيسية
+    const banner = document.getElementById('global-live-announcement-banner');
+    const bannerText = document.getElementById('global-announcement-text');
+    if (banner && bannerText) {
+        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
+            bannerText.innerText = window.APP_CONFIG.announcement.trim();
+            banner.style.display = 'flex';
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+
+    // 5. تحديث أسعار متجر المساعدات
+    if (typeof updateShopDisplay === 'function') updateShopDisplay();
+}
+
+function initLiveConfigListener() {
+    try {
+        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
+        if (cachedConfig) {
+            const parsed = JSON.parse(cachedConfig);
+            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
+            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
+            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
+            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
+            applyLiveConfigUpdates();
+        }
+    } catch (e) {}
+
+    if (typeof db === 'undefined' || !db) return;
+
+    const handleConfigDoc = (doc) => {
+        if (doc && doc.exists) {
+            const data = doc.data();
+            if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
+            if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
+            if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
+            if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
+
+            try {
+                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+            } catch (e) {}
+
+            applyLiveConfigUpdates();
+        }
+    };
+
+    db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
+        db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
+    });
+}
+
+// جلب وعرض الأسئلة المقترحة في اللوحة
 async function fetchAndRenderAdminQuestions() {
     const feed = document.getElementById('admin-questions-feed');
     const countPending = document.getElementById('admin-stat-pending');
@@ -234,9 +478,9 @@ async function fetchAndRenderAdminQuestions() {
             else pending++;
         });
 
-        if (countPending) countPending.innerText = pending;
-        if (countApproved) countApproved.innerText = approved;
-        if (countRejected) countRejected.innerText = rejected;
+        if (countPending) countPending.innerText = toArabicNumerals(pending);
+        if (countApproved) countApproved.innerText = toArabicNumerals(approved);
+        if (countRejected) countRejected.innerText = toArabicNumerals(rejected);
 
         if (questions.length === 0) {
             feed.innerHTML = '<div class="lb-loading">لا توجد أي أسئلة مقترحة حالياً.</div>';
@@ -261,7 +505,7 @@ async function fetchAndRenderAdminQuestions() {
                 <div class="admin-q-header">
                     <div class="admin-q-cat-box">
                         <i class="${catStyle.icon}" style="color: ${catStyle.color};"></i>
-                        <span>${q.category || 'عام'} (صعوبة: ${q.difficulty || 5})</span>
+                        <span>${q.category || 'عام'} (صعوبة: ${toArabicNumerals(q.difficulty || 5)})</span>
                     </div>
                     ${statusBadge}
                 </div>
@@ -293,7 +537,7 @@ async function fetchAndRenderAdminQuestions() {
 
     } catch (err) {
         console.error("Admin fetch error:", err);
-        feed.innerHTML = '<div class="lb-loading">تعذر جلب الأسئلة أو لا توجد صلاحيات كافية.</div>';
+        feed.innerHTML = '<div class="lb-loading">تعذر جلب الأسئلة من السيرفر حالياً.</div>';
     }
 }
 
@@ -408,366 +652,4 @@ async function copyAllApprovedAsTSV() {
     } catch (e) {
         console.error(e);
     }
-}
-
-
-// --- محرك لوحة التحكم والإعدادات الحية للمشرف (Admin Dashboard Controller) ---
-
-let activeAdminTab = 'questions';
-
-function switchAdminTab(tabName) {
-    activeAdminTab = tabName;
-    document.querySelectorAll('.adm-sub-tab').forEach(t => t.classList.remove('active'));
-
-    const btn = document.getElementById(`adm-tab-${tabName}`);
-    if (btn) btn.classList.add('active');
-
-    const secQuestions = document.getElementById('adm-sec-questions');
-    const secPrices = document.getElementById('adm-sec-prices');
-    const secCustomPrices = document.getElementById('adm-sec-custom-prices');
-    const secAnnounce = document.getElementById('adm-sec-announcement');
-
-    if (secQuestions) secQuestions.style.display = (tabName === 'questions') ? 'block' : 'none';
-    if (secPrices) secPrices.style.display = (tabName === 'prices') ? 'block' : 'none';
-    if (secCustomPrices) secCustomPrices.style.display = (tabName === 'custom-prices') ? 'block' : 'none';
-    if (secAnnounce) secAnnounce.style.display = (tabName === 'announcement') ? 'block' : 'none';
-
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
-
-    if (tabName === 'questions') fetchAndRenderAdminQuestions();
-    if (tabName === 'prices') loadAdminPricesForm();
-    if (tabName === 'custom-prices') loadAdminCustomPricesForm();
-    if (tabName === 'announcement') loadAdminAnnouncementForm();
-}
-
-function loadAdminPricesForm() {
-    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
-    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-
-    setVal('adm-price-5050', p.hint5050 || 20);
-    setVal('adm-price-time', p.addTime || 15);
-    setVal('adm-price-skip', p.skip || 30);
-    setVal('adm-reward-daily', p.dailyFreeReward || 30);
-    setVal('adm-price-wheel', p.wheelExtraSpin || 25);
-}
-
-function loadAdminCustomPricesForm() {
-    const cp = (window.APP_CONFIG && window.APP_CONFIG.customPrices) || {};
-    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-
-    // Avatars
-    setVal('adm-price-av-detective', cp.av_detective || 400);
-    setVal('adm-price-av-viking', cp.av_viking || 600);
-    setVal('adm-price-av-samurai', cp.av_samurai || 800);
-    setVal('adm-price-av-pharaoh', cp.av_pharaoh || 1000);
-    setVal('adm-price-av-astro', cp.av_astro || 1200);
-    setVal('adm-price-av-gladiator', cp.av_gladiator || 1400);
-    setVal('adm-price-av-pirate', cp.av_pirate || 1600);
-    setVal('adm-price-av-alchemist', cp.av_alchemist || 1800);
-    setVal('adm-price-av-wizard', cp.av_wizard || 2000);
-    setVal('adm-price-av-lion', cp.av_lion || 2500);
-
-    // Frames
-    setVal('adm-price-frame-neon', cp.frame_cyber_neon || 500);
-    setVal('adm-price-frame-laurel', cp.frame_royal_laurel || 800);
-    setVal('adm-price-frame-dragon', cp.frame_dragon_fire || 1000);
-
-    // Titles
-    setVal('adm-price-title-mastermind', cp.title_mastermind || 300);
-    setVal('adm-price-title-puzzle', cp.title_puzzle_king || 500);
-    setVal('adm-price-title-sniper', cp.title_sniper || 600);
-}
-
-function loadAdminAnnouncementForm() {
-    const txtInput = document.getElementById('adm-announce-text');
-    const chkInput = document.getElementById('adm-announce-active');
-
-    if (txtInput) txtInput.value = (window.APP_CONFIG && window.APP_CONFIG.announcement) || '';
-    if (chkInput) chkInput.checked = !!(window.APP_CONFIG && window.APP_CONFIG.announcementActive);
-}
-
-// دالة حفظ الإعدادات في التخزين المحلي وفولباك فايرستور
-async function persistGlobalConfig(configData) {
-    // 1. الحفظ الفوري محلياً لضمان العمل دائماً 100%
-    try {
-        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
-    } catch (e) {}
-
-    // 2. الحفظ في فايرستور مع فولباك آمن لمجموعة users المفتوحة
-    if (typeof db !== 'undefined' && db) {
-        try {
-            await db.collection('app_config').doc('settings').set(configData, { merge: true });
-        } catch (err1) {
-            console.warn("Retrying config save to users/global_config fallback:", err1);
-            try {
-                await db.collection('users').doc('global_config').set(configData, { merge: true });
-            } catch (err2) {
-                console.warn("Firestore config save permission restricted, saved locally:", err2);
-            }
-        }
-    }
-}
-
-async function saveAdminPrices() {
-    const getVal = (id, def) => { const el = document.getElementById(id); return el ? parseInt(el.value) || def : def; };
-
-    const newPrices = {
-        hint5050: getVal('adm-price-5050', 20),
-        addTime: getVal('adm-price-time', 15),
-        skip: getVal('adm-price-skip', 30),
-        dailyFreeReward: getVal('adm-reward-daily', 30),
-        wheelExtraSpin: getVal('adm-price-wheel', 25)
-    };
-
-    if (!window.APP_CONFIG) window.APP_CONFIG = {};
-    window.APP_CONFIG.prices = newPrices;
-
-    await persistGlobalConfig({ prices: newPrices });
-
-    applyLiveConfigUpdates();
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-    showCustomAlert('✨ تم حفظ وتطبيق أسعار المتجر والمساعدات بنجاح!', 'تم الحفظ', '🪙');
-}
-
-async function saveAdminCustomPrices() {
-    const getVal = (id, def) => { const el = document.getElementById(id); return el ? parseInt(el.value) || def : def; };
-
-    const newCustomPrices = {
-        av_detective: getVal('adm-price-av-detective', 400),
-        av_viking: getVal('adm-price-av-viking', 600),
-        av_samurai: getVal('adm-price-av-samurai', 800),
-        av_pharaoh: getVal('adm-price-av-pharaoh', 1000),
-        av_astro: getVal('adm-price-av-astro', 1200),
-        av_gladiator: getVal('adm-price-av-gladiator', 1400),
-        av_pirate: getVal('adm-price-av-pirate', 1600),
-        av_alchemist: getVal('adm-price-av-alchemist', 1800),
-        av_wizard: getVal('adm-price-av-wizard', 2000),
-        av_lion: getVal('adm-price-av-lion', 2500),
-        frame_cyber_neon: getVal('adm-price-frame-neon', 500),
-        frame_royal_laurel: getVal('adm-price-frame-laurel', 800),
-        frame_dragon_fire: getVal('adm-price-frame-dragon', 1000),
-        title_mastermind: getVal('adm-price-title-mastermind', 300),
-        title_puzzle_king: getVal('adm-price-title-puzzle', 500),
-        title_sniper: getVal('adm-price-title-sniper', 600)
-    };
-
-    if (!window.APP_CONFIG) window.APP_CONFIG = {};
-    window.APP_CONFIG.customPrices = newCustomPrices;
-
-    await persistGlobalConfig({ customPrices: newCustomPrices });
-
-    applyLiveConfigUpdates();
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-    showCustomAlert('✨ تم حفظ وتطبيق أسعار الأفاتارات والإطارات والألقاب بنجاح!', 'تم الحفظ', '🎨');
-}
-
-async function saveAdminAnnouncement() {
-    const txtInput = document.getElementById('adm-announce-text');
-    const chkInput = document.getElementById('adm-announce-active');
-
-    const announceText = txtInput ? txtInput.value.trim() : '';
-    const isActive = chkInput ? chkInput.checked : false;
-
-    if (!window.APP_CONFIG) window.APP_CONFIG = {};
-    window.APP_CONFIG.announcement = announceText;
-    window.APP_CONFIG.announcementActive = isActive;
-
-    await persistGlobalConfig({
-        announcement: announceText,
-        announcementActive: isActive
-    });
-
-    applyLiveConfigUpdates();
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-    showCustomAlert('✨ تم نشر وتفعيل شريط الإعلان لجميع اللاعبين بنجاح!', 'تم النشر', '📢');
-}
-
-// تحميل ومزامنة الإعدادات على الفور
-
-// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة بالكامل
-function applyLiveConfigUpdates() {
-    if (!window.APP_CONFIG) return;
-
-    // 1. تحديث أسعار الأفاتارات في AVATARS_DB
-    if (typeof AVATARS_DB !== 'undefined' && Array.isArray(AVATARS_DB) && window.APP_CONFIG.customPrices) {
-        AVATARS_DB.forEach(av => {
-            if (window.APP_CONFIG.customPrices[av.id] !== undefined) {
-                av.price = window.APP_CONFIG.customPrices[av.id];
-                if (av.type === 'shop') {
-                    av.unlockDesc = `متجر: ${toArabicNumerals(av.price)} عملة`;
-                }
-            }
-        });
-    }
-
-    // 2. تحديث أسعار الإطارات في FRAMES_DB
-    if (typeof FRAMES_DB !== 'undefined' && Array.isArray(FRAMES_DB) && window.APP_CONFIG.customPrices) {
-        FRAMES_DB.forEach(fr => {
-            if (window.APP_CONFIG.customPrices[fr.id] !== undefined) {
-                fr.price = window.APP_CONFIG.customPrices[fr.id];
-                if (fr.type === 'shop') {
-                    fr.unlockDesc = `متجر: ${toArabicNumerals(fr.price)} عملة`;
-                }
-            }
-        });
-    }
-
-    // 3. تحديث أسعار الألقاب في TITLES_DB
-    if (typeof TITLES_DB !== 'undefined' && Array.isArray(TITLES_DB) && window.APP_CONFIG.customPrices) {
-        TITLES_DB.forEach(ti => {
-            if (window.APP_CONFIG.customPrices[ti.id] !== undefined) {
-                ti.price = window.APP_CONFIG.customPrices[ti.id];
-                if (ti.type === 'shop') {
-                    ti.unlockDesc = `متجر: ${toArabicNumerals(ti.price)} عملة`;
-                }
-            }
-        });
-    }
-
-    // 4. تحديث وإظهار شريط الإعلانات في القائمة الرئيسية
-    const banner = document.getElementById('global-live-announcement-banner');
-    const bannerText = document.getElementById('global-announcement-text');
-    if (banner && bannerText) {
-        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
-            bannerText.innerText = window.APP_CONFIG.announcement.trim();
-            banner.style.display = 'flex';
-        } else {
-            banner.style.display = 'none';
-        }
-    }
-
-    // 5. تحديث أسعار متجر المساعدات
-    if (typeof updateShopDisplay === 'function') updateShopDisplay();
-
-    // 6. تحديث متجر التخصيص إن كان مفتوحاً
-    if (typeof renderCustomizationContent === 'function') {
-        const customSec = document.getElementById('profile-custom-section');
-        if (customSec && customSec.style.display !== 'none') {
-            renderCustomizationContent();
-        }
-    }
-}
-
-function initLiveConfigListener() {
-    // استرجاع الإعدادات المحفوظة محلياً أولاً
-    try {
-        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
-        if (cachedConfig) {
-            const parsed = JSON.parse(cachedConfig);
-            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
-            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
-            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
-            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
-            applyLiveConfigUpdates();
-        }
-    } catch (e) {}
-
-    if (typeof db === 'undefined' || !db) return;
-
-    // الاستماع عبر app_config أو users/global_config
-    const handleConfigDoc = (doc) => {
-        if (doc && doc.exists) {
-            const data = doc.data();
-            if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
-            if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
-            if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
-            if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
-
-            try {
-                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
-            } catch (e) {}
-
-            applyLiveConfigUpdates();
-        }
-    };
-
-    db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
-        db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
-    });
-}
-
-// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة
-function applyLiveConfigUpdates() {
-    if (!window.APP_CONFIG) return;
-
-    // 1. تحديث شريط الإعلانات في القائمة الرئيسية
-    const banner = document.getElementById('global-live-announcement-banner');
-    const bannerText = document.getElementById('global-announcement-text');
-    if (banner && bannerText) {
-        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
-            bannerText.innerText = window.APP_CONFIG.announcement.trim();
-            banner.style.display = 'flex';
-        } else {
-            banner.style.display = 'none';
-        }
-    }
-
-    // 2. تحديث أسعار متجر المساعدات
-    if (typeof updateShopDisplay === 'function') {
-        updateShopDisplay();
-    }
-
-    // 3. تحديث شاشات التخصيص إن كانت مفتوحة
-    const customSec = document.getElementById('profile-custom-section');
-    if (customSec && customSec.style.display !== 'none' && typeof renderCustomizationContent === 'function') {
-        renderCustomizationContent();
-    }
-}
-window.applyLiveConfigUpdates = applyLiveConfigUpdates;
-
-async function persistGlobalConfig(configData) {
-    try {
-        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
-    } catch (e) {}
-
-    if (typeof db !== 'undefined' && db) {
-        try {
-            await db.collection('app_config').doc('settings').set(configData, { merge: true });
-        } catch (err1) {
-            console.warn("Retrying config save to users/global_config fallback:", err1);
-            try {
-                await db.collection('users').doc('global_config').set(configData, { merge: true });
-            } catch (err2) {
-                console.warn("Firestore config save fallback locally:", err2);
-            }
-        }
-    }
-}
-
-function initLiveConfigListener() {
-    try {
-        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
-        if (cachedConfig) {
-            const parsed = JSON.parse(cachedConfig);
-            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
-            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
-            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
-            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
-            applyLiveConfigUpdates();
-        }
-    } catch (e) {}
-
-    if (typeof db === 'undefined' || !db) return;
-
-    const handleConfigDoc = (doc) => {
-        if (doc && doc.exists) {
-            const data = doc.data();
-            if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
-            if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
-            if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
-            if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
-
-            try {
-                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
-            } catch (e) {}
-
-            applyLiveConfigUpdates();
-        }
-    };
-
-    try {
-        db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
-            db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
-        });
-    } catch (e) {}
 }

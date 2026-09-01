@@ -582,31 +582,40 @@ function renderDailyQuests(list) {
         const card = document.createElement('div');
         card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isClaimed ? 'maxed' : ''}`;
 
-        let claimBtnHtml = '';
+        let actionBtnHtml = '';
         if (isClaimed) {
-            claimBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
+            actionBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
         } else if (canClaim) {
-            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimDailyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام (${toArabicNumerals(quest.reward)} عملة)</button>`;
-        } else {
-            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${toArabicNumerals(quest.reward)} عملة</span>`;
+            actionBtnHtml = `<button class="ach-claim-btn" onclick="claimDailyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام</button>`;
         }
 
         card.innerHTML = `
-            <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
-                <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
-            </div>
-            <div class="ach-info-box">
-                <div class="ach-title-row">
-                    <h4>${quest.title}</h4>
-                    ${claimBtnHtml}
+            <div class="ach-top-row">
+                <div class="ach-title-with-icon">
+                    <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
+                        <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
+                    </div>
+                    <div class="ach-title-texts">
+                        <h4>${quest.title}</h4>
+                        <span class="ach-level-badge daily-badge">مهمة يومية</span>
+                    </div>
                 </div>
-                <div class="ach-desc">${quest.desc}</div>
+                ${actionBtnHtml}
+            </div>
+
+            <p class="ach-desc">${quest.desc || ''}</p>
+
+            <div class="ach-progress-section">
                 <div class="ach-progress-container">
                     <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${quest.color || 'var(--accent-green)'};"></div>
                 </div>
+                <div class="ach-progress-meta">
+                    <span class="ach-ratio-text">${toArabicNumerals(Math.min(currentVal, targetGoal))} / ${toArabicNumerals(targetGoal)}</span>
+                    <span class="ach-percent-text">${toArabicNumerals(progressPercent)}%</span>
+                </div>
             </div>
-            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
         `;
+
         list.appendChild(card);
     });
 }
@@ -624,31 +633,40 @@ function renderWeeklyQuests(list) {
         const card = document.createElement('div');
         card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isClaimed ? 'maxed' : ''}`;
 
-        let claimBtnHtml = '';
+        let actionBtnHtml = '';
         if (isClaimed) {
-            claimBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
+            actionBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
         } else if (canClaim) {
-            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimWeeklyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام (${toArabicNumerals(quest.reward)} عملة)</button>`;
-        } else {
-            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${toArabicNumerals(quest.reward)} عملة</span>`;
+            actionBtnHtml = `<button class="ach-claim-btn" onclick="claimWeeklyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام</button>`;
         }
 
         card.innerHTML = `
-            <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
-                <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
-            </div>
-            <div class="ach-info-box">
-                <div class="ach-title-row">
-                    <h4>${quest.title}</h4>
-                    ${claimBtnHtml}
+            <div class="ach-top-row">
+                <div class="ach-title-with-icon">
+                    <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
+                        <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
+                    </div>
+                    <div class="ach-title-texts">
+                        <h4>${quest.title}</h4>
+                        <span class="ach-level-badge weekly-badge">مهمة أسبوعية</span>
+                    </div>
                 </div>
-                <div class="ach-desc">${quest.desc}</div>
+                ${actionBtnHtml}
+            </div>
+
+            <p class="ach-desc">${quest.desc || ''}</p>
+
+            <div class="ach-progress-section">
                 <div class="ach-progress-container">
-                    <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${quest.color || 'var(--accent-green)'};"></div>
+                    <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${quest.color || 'var(--accent-purple)'};"></div>
+                </div>
+                <div class="ach-progress-meta">
+                    <span class="ach-ratio-text">${toArabicNumerals(Math.min(currentVal, targetGoal))} / ${toArabicNumerals(targetGoal)}</span>
+                    <span class="ach-percent-text">${toArabicNumerals(progressPercent)}%</span>
                 </div>
             </div>
-            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
         `;
+
         list.appendChild(card);
     });
 }
@@ -671,31 +689,40 @@ function renderLifetimeAchievements(list) {
         const card = document.createElement('div');
         card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isMaxed ? 'maxed' : ''}`;
 
-        let claimBtnHtml = '';
+        let actionBtnHtml = '';
         if (isMaxed) {
-            claimBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
+            actionBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
         } else if (canClaim) {
-            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام (${lvlData.rewardName || (lvlData.reward + ' عملة')})</button>`;
-        } else {
-            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${lvlData.rewardName || (lvlData.reward + ' عملة')}</span>`;
+            actionBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام</button>`;
         }
 
         card.innerHTML = `
-            <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
-                <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
-            </div>
-            <div class="ach-info-box">
-                <div class="ach-title-row">
-                    <h4>${ach.title || ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)})`}</small></h4>
-                    ${claimBtnHtml}
+            <div class="ach-top-row">
+                <div class="ach-title-with-icon">
+                    <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
+                        <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
+                    </div>
+                    <div class="ach-title-texts">
+                        <h4>${ach.title || ach.name}</h4>
+                        <span class="ach-level-badge">${isMaxed ? 'المستوى الأقصى 👑' : `المستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)}`}</span>
+                    </div>
                 </div>
-                <div class="ach-desc">${descText}</div>
+                ${actionBtnHtml}
+            </div>
+
+            <p class="ach-desc">${descText}</p>
+
+            <div class="ach-progress-section">
                 <div class="ach-progress-container">
                     <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${ach.color || 'var(--accent-green)'};"></div>
                 </div>
+                <div class="ach-progress-meta">
+                    <span class="ach-ratio-text">${toArabicNumerals(Math.min(currentVal, targetGoal))} / ${toArabicNumerals(targetGoal)}</span>
+                    <span class="ach-percent-text">${toArabicNumerals(progressPercent)}%</span>
+                </div>
             </div>
-            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
         `;
+
         list.appendChild(card);
     });
 }

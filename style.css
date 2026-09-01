@@ -1482,83 +1482,161 @@ html, body {
     font-weight: bold;
 }
 
+
 /* ==========================================
-   Achievements List
+   Clean Modern Achievement & Quest Cards
    ========================================== */
-.ach-counter-header {
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 14px;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    color: var(--accent-yellow);
-    font-size: 0.9rem;
-    margin-bottom: 14px;
-}
-
-.achievements-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-}
-
 .achievement-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 14px;
+    border-radius: 18px;
+    padding: 16px 14px;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 10px;
+    text-align: right;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
 }
 
 .achievement-card.completed {
     border-color: var(--accent-yellow);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), var(--bg-card));
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.achievement-card.maxed {
+    border-color: rgba(16, 185, 129, 0.4);
+    opacity: 0.9;
+}
+
+.ach-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ach-title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .ach-icon-box {
-    font-size: 28px;
-}
-
-.ach-info-box {
-    flex: 1;
-}
-
-.ach-title-row {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.ach-title-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ach-title-texts h4 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.ach-level-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+}
+
+.ach-level-badge.daily-badge {
+    color: var(--accent-green);
+}
+
+.ach-level-badge.weekly-badge {
+    color: var(--accent-purple);
 }
 
 .ach-desc {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
-    margin-bottom: 6px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.ach-progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
 }
 
 .ach-progress-container {
-    background: rgba(255, 255, 255, 0.1);
-    height: 6px;
-    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    height: 8px;
+    border-radius: 4px;
     overflow: hidden;
+    width: 100%;
 }
 
 .ach-progress-bar {
-    background: var(--accent-purple);
     height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.ach-progress-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.ach-ratio-text {
+    color: var(--accent-yellow);
+    font-weight: 800;
+}
+
+.ach-percent-text {
+    color: var(--text-secondary);
 }
 
 .ach-claim-btn {
-    background: var(--accent-yellow);
-    color: #000;
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
     border: none;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-weight: bold;
+    padding: 7px 14px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.82rem;
     cursor: pointer;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.15s ease;
 }
+
+.ach-claim-btn:active {
+    transform: scale(0.95);
+}
+
+.ach-maxed-badge {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: var(--accent-green);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 8px;
+}
+
 
 /* ==========================================
    Shop
