@@ -91,6 +91,19 @@ function loadQuestion() {
     document.getElementById('q-category').innerText = q.category;
     document.getElementById('question-text').innerText = q.question;
 
+    // إظهار شارة تكريم صاحب السؤال إذا كان مقترحاً من أحد اللاعبين
+    const authorBadge = document.getElementById('q-author-badge');
+    const authorNameElem = document.getElementById('q-author-name');
+    if (authorBadge && authorNameElem) {
+        if (q.author && q.author.trim() !== '' && q.author.trim() !== '-') {
+            authorNameElem.innerText = q.author.trim();
+            authorBadge.style.display = 'inline-flex';
+        } else {
+            authorBadge.style.display = 'none';
+        }
+    }
+
+
     const imgBox = document.getElementById('question-image-box');
     const imgElem = document.getElementById('question-img');
     if (q.image && q.image.trim().startsWith('http')) {

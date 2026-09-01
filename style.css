@@ -3937,3 +3937,176 @@ img[src*="frame_challenger_crown"] {
     z-index: 99999999;
     display: none;
 }
+
+
+/* ==========================================
+   Community Suggest Questions Modal & Author Badge
+   ========================================== */
+.question-author-badge {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(99, 102, 241, 0.2));
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    animation: popIn 0.3s ease;
+}
+
+.btn-suggest-question-hero {
+    margin-top: 10px;
+    width: 100%;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px dashed rgba(245, 158, 11, 0.5);
+    border-radius: 14px;
+    color: var(--accent-yellow);
+    padding: 9px 14px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-suggest-question-hero:active {
+    transform: scale(0.98);
+    background: rgba(245, 158, 11, 0.22);
+}
+
+.suggest-modal-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--accent-yellow);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(245, 158, 11, 0.3);
+    border-radius: 26px;
+    padding: 20px 16px;
+    max-width: 440px;
+    width: 95%;
+    max-height: 88vh;
+    overflow-y: auto;
+    text-align: right;
+    animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.suggest-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.suggest-title-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.suggest-title-box h4 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.btn-close-suggest {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: #ffffff;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.suggest-modal-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 10px 0 14px;
+}
+
+.suggest-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.suggest-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+}
+
+.suggest-field label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.suggest-field input, .suggest-field textarea, .suggest-field select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: inherit;
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.suggest-field input:focus, .suggest-field textarea:focus, .suggest-field select:focus {
+    border-color: var(--accent-yellow);
+    outline: none;
+}
+
+.suggest-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.suggest-options-group {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--border-color);
+    border-radius: 14px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-submit-suggest {
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    border: none;
+    color: #000000;
+    font-size: 0.92rem;
+    font-weight: 800;
+    padding: 12px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    transition: transform 0.15s ease;
+}
+
+.btn-submit-suggest:active {
+    transform: scale(0.97);
+}

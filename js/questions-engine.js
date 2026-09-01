@@ -78,7 +78,8 @@ function parseSheetCSV(text) {
             question: cols[3],
             options: [cols[4] || '', cols[5] || '', cols[6] || '', cols[7] || ''],
             correct: parseInt(cols[8]) || 0,
-            image: cols[9] ? cols[9].trim() : ''
+            image: cols[9] ? cols[9].trim() : '',
+            author: cols[10] ? cols[10].trim() : ''
         });
     }
     return questions;

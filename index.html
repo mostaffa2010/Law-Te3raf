@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=46">
+    <link rel="stylesheet" href="./style.css?v=47">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -184,6 +184,9 @@
             <p>تحديات جماعية مع أصدقائك، مراحل متجددة، وأقسام ثقافية منوعة.</p>
             <button class="btn-primary-play" onclick="switchScreen('modes-screen')">
                 <i class="fa-solid fa-play"></i> ابدأ اللعب
+            </button>
+            <button class="btn-suggest-question-hero" onclick="openSuggestQuestionModal()">
+                <i class="fa-solid fa-lightbulb"></i> اقترح سؤالاً واكسب عملات 💡
             </button>
         </div>
 
@@ -476,6 +479,11 @@
                 <button class="img-zoom-btn" onclick="openImageZoomModal()"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
             </div>
 
+                        <!-- شارة تكريم صاحب السؤال المقترح -->
+            <div class="question-author-badge" id="q-author-badge" style="display: none;">
+                <i class="fa-solid fa-lightbulb"></i> سؤال مقترح من: <b id="q-author-name">لاعب</b>
+            </div>
+
             <h3 id="question-text">نص السؤال يظهر هنا بالتفصيل؟</h3>
         </div>
 
@@ -722,17 +730,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=46"></script>
-    <script src="./js/audio.js?v=46"></script>
-    <script src="./js/questions-engine.js?v=46"></script>
-    <script src="./js/ranked.js?v=46"></script>
-    <script src="./js/effects.js?v=46"></script>
-    <script src="./js/game.js?v=46"></script>
-    <script src="./js/pvp.js?v=46"></script>
-    <script src="./js/customization.js?v=46"></script>
-    <script src="./js/features.js?v=46"></script>
-    <script src="./js/auth-nav.js?v=46"></script>
-    <script src="./js/app.js?v=46"></script>
+    <script src="./js/config.js?v=47"></script>
+    <script src="./js/audio.js?v=47"></script>
+    <script src="./js/questions-engine.js?v=47"></script>
+    <script src="./js/ranked.js?v=47"></script>
+    <script src="./js/effects.js?v=47"></script>
+    <script src="./js/game.js?v=47"></script>
+    <script src="./js/pvp.js?v=47"></script>
+    <script src="./js/community.js?v=47"></script>
+    <script src="./js/customization.js?v=47"></script>
+    <script src="./js/features.js?v=47"></script>
+    <script src="./js/auth-nav.js?v=47"></script>
+    <script src="./js/app.js?v=47"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -750,7 +759,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=46')
+          navigator.serviceWorker.register('./sw.js?v=47')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -969,17 +978,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=46"></script>
-    <script src="./js/audio.js?v=46"></script>
-    <script src="./js/questions-engine.js?v=46"></script>
-    <script src="./js/ranked.js?v=46"></script>
-    <script src="./js/effects.js?v=46"></script>
-    <script src="./js/game.js?v=46"></script>
-    <script src="./js/pvp.js?v=46"></script>
-    <script src="./js/customization.js?v=46"></script>
-    <script src="./js/features.js?v=46"></script>
-    <script src="./js/auth-nav.js?v=46"></script>
-    <script src="./js/app.js?v=46"></script>
+    <script src="./js/config.js?v=47"></script>
+    <script src="./js/audio.js?v=47"></script>
+    <script src="./js/questions-engine.js?v=47"></script>
+    <script src="./js/ranked.js?v=47"></script>
+    <script src="./js/effects.js?v=47"></script>
+    <script src="./js/game.js?v=47"></script>
+    <script src="./js/pvp.js?v=47"></script>
+    <script src="./js/community.js?v=47"></script>
+    <script src="./js/customization.js?v=47"></script>
+    <script src="./js/features.js?v=47"></script>
+    <script src="./js/auth-nav.js?v=47"></script>
+    <script src="./js/app.js?v=47"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -997,7 +1007,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=46')
+          navigator.serviceWorker.register('./sw.js?v=47')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -1196,6 +1206,88 @@
                         <i class="fa-solid fa-floppy-disk"></i> حفظ وتطبيق المظهر الجديد 💾
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- نافذة اقترح سؤالاً وشارك المجتمع -->
+    <div id="suggest-question-modal" class="custom-modal-overlay" onclick="closeSuggestQuestionModal()">
+        <div class="suggest-modal-card" onclick="event.stopPropagation()">
+            <div class="suggest-modal-header">
+                <div class="suggest-title-box">
+                    <i class="fa-solid fa-lightbulb" style="color: var(--accent-yellow);"></i>
+                    <h4>اقترح سؤالاً جديداً 💡</h4>
+                </div>
+                <button class="btn-close-suggest" onclick="closeSuggestQuestionModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <p class="suggest-modal-sub">اكتب سؤالاً مفيداً وسينضم لشيت اللعبة الرسمي باسمك ليظهر لجميع اللاعبين (+20 عملة هدية فورية)!</p>
+
+            <div class="suggest-form">
+                <div class="suggest-field">
+                    <label>📝 نص السؤال:</label>
+                    <textarea id="suggest-q-text" rows="2" placeholder="اكتب نص السؤال بوضوح هنا..."></textarea>
+                </div>
+
+                <div class="suggest-row-2">
+                    <div class="suggest-field">
+                        <label>🎯 القسم / المجال:</label>
+                        <select id="suggest-cat-select">
+                            <option value="إسلاميات">🕌 إسلاميات</option>
+                            <option value="رياضة وكورة">⚽ رياضة وكورة</option>
+                            <option value="علوم وفضاء">🔬 علوم وفضاء</option>
+                            <option value="تاريخ">📜 تاريخ</option>
+                            <option value="جغرافيا">🗺️ جغرافيا</option>
+                            <option value="سينما وفن">🎬 سينما وفن</option>
+                            <option value="طبيعة وحيوانات">🐾 طبيعة وحيوانات</option>
+                            <option value="تكنولوجيا وألعاب">💻 تكنولوجيا وألعاب</option>
+                            <option value="أدب ولغات">📖 أدب ولغات</option>
+                            <option value="سيارات ومحركات">🚗 سيارات ومحركات</option>
+                            <option value="ألغاز وذكاء">🧩 ألغاز وذكاء</option>
+                            <option value="معلومات عامة" selected>🌍 معلومات عامة</option>
+                        </select>
+                    </div>
+
+                    <div class="suggest-field">
+                        <label>⚖️ مستوى الصعوبة:</label>
+                        <select id="suggest-diff-select">
+                            <option value="2">سهل (مستوى 2)</option>
+                            <option value="4" selected>متوسط (مستوى 4)</option>
+                            <option value="6">فوق المتوسط (مستوى 6)</option>
+                            <option value="8">صعب (مستوى 8)</option>
+                            <option value="9">محترفين (مستوى 9)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="suggest-options-group">
+                    <div class="suggest-field">
+                        <label style="color: var(--accent-green);">✅ الإجابة الصحيحة (الخيار الأول):</label>
+                        <input type="text" id="suggest-opt1" placeholder="اكتب الإجابة الصحيحة هنا...">
+                    </div>
+                    <div class="suggest-field">
+                        <label style="color: var(--accent-red);">❌ خيار خاطئ 1:</label>
+                        <input type="text" id="suggest-opt2" placeholder="خيار خاطئ أول...">
+                    </div>
+                    <div class="suggest-field">
+                        <label style="color: var(--accent-red);">❌ خيار خاطئ 2:</label>
+                        <input type="text" id="suggest-opt3" placeholder="خيار خاطئ ثانٍ...">
+                    </div>
+                    <div class="suggest-field">
+                        <label style="color: var(--accent-red);">❌ خيار خاطئ 3:</label>
+                        <input type="text" id="suggest-opt4" placeholder="خيار خاطئ ثالث...">
+                    </div>
+                </div>
+
+                <div class="suggest-field">
+                    <label>✍️ اسمك أو لقبك (ليظهر بجوار السؤال):</label>
+                    <input type="text" id="suggest-author-input" placeholder="اسمك الذي سيظهر للاعبين...">
+                </div>
+
+                <button class="btn-submit-suggest" id="btn-submit-suggest" onclick="submitSuggestedQuestion()">
+                    <i class="fa-solid fa-paper-plane"></i> إرسال السؤال للمراجعة (+20 عملة) 🚀
+                </button>
             </div>
         </div>
     </div>

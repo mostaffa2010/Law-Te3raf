@@ -116,7 +116,8 @@ function handleNavigationBack() {
         { id: 'image-zoom-modal', closeFn: closeImageZoomModal },
         { id: 'custom-confirm-modal', closeFn: () => closeCustomConfirm(false) },
         { id: 'custom-modal', closeFn: closeCustomAlert },
-        { id: 'pvp-category-modal', closeFn: closePvpCategoryModal }
+        { id: 'pvp-category-modal', closeFn: closePvpCategoryModal },
+        { id: 'suggest-question-modal', closeFn: closeSuggestQuestionModal }
     ];
 
     for (const modalObj of openModals) {
