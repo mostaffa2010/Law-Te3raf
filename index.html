@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=48">
+    <link rel="stylesheet" href="./style.css?v=49">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -681,6 +681,44 @@
         </div>
     </div>
 
+    
+    <!-- شاشة لوحة تحكم المشرف السرية -->
+    <div id="admin-panel-screen" class="screen">
+        <div class="header-bar">
+            <button class="btn-back" onclick="switchScreen('settings-screen')"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3>لوحة إدارة الأسئلة 🛡️</h3>
+            <button class="btn-header-refresh-admin" onclick="fetchAndRenderAdminQuestions()" title="تحديث"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+
+        <div class="admin-panel-content">
+            <!-- شريط الإحصائيات السريع -->
+            <div class="admin-stats-summary">
+                <div class="adm-stat-box pending">
+                    <span>⏳ معلقة</span>
+                    <b id="admin-stat-pending">0</b>
+                </div>
+                <div class="adm-stat-box approved">
+                    <span>✅ مقبولة</span>
+                    <b id="admin-stat-approved">0</b>
+                </div>
+                <div class="adm-stat-box rejected">
+                    <span>❌ مرفوضة</span>
+                    <b id="admin-stat-rejected">0</b>
+                </div>
+            </div>
+
+            <!-- زر النسخ الجماعي المباشر لشيت جوجل -->
+            <button class="btn-copy-all-approved" onclick="copyAllApprovedAsCSV()">
+                <i class="fa-solid fa-file-csv"></i> نسخ كل المقبول كـ CSV للشيت 📋
+            </button>
+
+            <!-- تغذية بطاقات الأسئلة المقترحة -->
+            <div class="admin-feed-container" id="admin-questions-feed">
+                <!-- تُولد البطاقات ديناميكياً من Firebase -->
+            </div>
+        </div>
+    </div>
+
     <!-- شاشة الإعدادات -->
     <div id="settings-screen" class="screen">
         <div class="header-bar">
@@ -704,6 +742,14 @@
                     <span>الاهتزاز عند اللمس</span>
                 </div>
                 <input type="checkbox" id="setting-vibrate" checked onchange="toggleVibrateSetting(this.checked)">
+            </div>
+
+                        <div class="setting-item btn-admin-secret" id="btn-admin-panel" style="display: none;" onclick="openAdminPanelScreen()">
+                <div class="setting-info">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--accent-yellow);"></i>
+                    <span style="color: var(--accent-yellow); font-weight: bold;">لوحة تحكم المشرف (إدارة الأسئلة)</span>
+                </div>
+                <i class="fa-solid fa-chevron-left" style="color: var(--accent-yellow); font-size: 0.8rem;"></i>
             </div>
 
             <div class="setting-item btn-danger-item" onclick="resetAllProgress()">
@@ -730,18 +776,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=48"></script>
-    <script src="./js/audio.js?v=48"></script>
-    <script src="./js/questions-engine.js?v=48"></script>
-    <script src="./js/ranked.js?v=48"></script>
-    <script src="./js/effects.js?v=48"></script>
-    <script src="./js/game.js?v=48"></script>
-    <script src="./js/pvp.js?v=48"></script>
-    <script src="./js/community.js?v=48"></script>
-    <script src="./js/customization.js?v=48"></script>
-    <script src="./js/features.js?v=48"></script>
-    <script src="./js/auth-nav.js?v=48"></script>
-    <script src="./js/app.js?v=48"></script>
+    <script src="./js/config.js?v=49"></script>
+    <script src="./js/audio.js?v=49"></script>
+    <script src="./js/questions-engine.js?v=49"></script>
+    <script src="./js/ranked.js?v=49"></script>
+    <script src="./js/effects.js?v=49"></script>
+    <script src="./js/game.js?v=49"></script>
+    <script src="./js/pvp.js?v=49"></script>
+    <script src="./js/community.js?v=49"></script>
+    <script src="./js/customization.js?v=49"></script>
+    <script src="./js/features.js?v=49"></script>
+    <script src="./js/auth-nav.js?v=49"></script>
+    <script src="./js/app.js?v=49"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -759,7 +805,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=48')
+          navigator.serviceWorker.register('./sw.js?v=49')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -978,18 +1024,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=48"></script>
-    <script src="./js/audio.js?v=48"></script>
-    <script src="./js/questions-engine.js?v=48"></script>
-    <script src="./js/ranked.js?v=48"></script>
-    <script src="./js/effects.js?v=48"></script>
-    <script src="./js/game.js?v=48"></script>
-    <script src="./js/pvp.js?v=48"></script>
-    <script src="./js/community.js?v=48"></script>
-    <script src="./js/customization.js?v=48"></script>
-    <script src="./js/features.js?v=48"></script>
-    <script src="./js/auth-nav.js?v=48"></script>
-    <script src="./js/app.js?v=48"></script>
+    <script src="./js/config.js?v=49"></script>
+    <script src="./js/audio.js?v=49"></script>
+    <script src="./js/questions-engine.js?v=49"></script>
+    <script src="./js/ranked.js?v=49"></script>
+    <script src="./js/effects.js?v=49"></script>
+    <script src="./js/game.js?v=49"></script>
+    <script src="./js/pvp.js?v=49"></script>
+    <script src="./js/community.js?v=49"></script>
+    <script src="./js/customization.js?v=49"></script>
+    <script src="./js/features.js?v=49"></script>
+    <script src="./js/auth-nav.js?v=49"></script>
+    <script src="./js/app.js?v=49"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -1007,7 +1053,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=48')
+          navigator.serviceWorker.register('./sw.js?v=49')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });

@@ -162,6 +162,7 @@ function handleNavigationBack() {
     }
 
     // 5. الشاشات الفرعية -> رجوع مباشر للقائمة الرئيسية دون إظهار نافذة الخروج
+    if (current === 'admin-panel-screen') { switchScreen('settings-screen', false); return true; }
     if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
         return true;

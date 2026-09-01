@@ -2855,6 +2855,195 @@ async function submitSuggestedQuestion() {
 }
 
 
+// --- إدارة لوحة المشرف السرية (Admin Panel) ---
+const ADMIN_EMAILS = ['mostaffa201021@gmail.com'];
+
+function isCurrentUserAdmin() {
+    return !!(currentUser && currentUser.email && ADMIN_EMAILS.includes(currentUser.email.toLowerCase().trim()));
+}
+
+function checkAndShowAdminButton() {
+    const adminBtn = document.getElementById('btn-admin-panel');
+    if (adminBtn) {
+        adminBtn.style.display = isCurrentUserAdmin() ? 'flex' : 'none';
+    }
+}
+
+function openAdminPanelScreen() {
+    if (!isCurrentUserAdmin()) {
+        showCustomAlert('هذه الصفحة مخصصة لمدير اللعبة فقط!', 'غير مصرح', '🚫');
+        return;
+    }
+    switchScreen('admin-panel-screen');
+    fetchAndRenderAdminQuestions();
+}
+
+async function fetchAndRenderAdminQuestions() {
+    const feed = document.getElementById('admin-questions-feed');
+    const countPending = document.getElementById('admin-stat-pending');
+    const countApproved = document.getElementById('admin-stat-approved');
+    const countRejected = document.getElementById('admin-stat-rejected');
+
+    if (!feed) return;
+    feed.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري جلب الأسئلة من السيرفر...</div>';
+
+    try {
+        if (!db) throw new Error("No database connection");
+
+        const snapshot = await db.collection('suggested_questions').orderBy('createdAt', 'desc').limit(100).get();
+
+        let pending = 0, approved = 0, rejected = 0;
+        let questions = [];
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            data.docId = doc.id;
+            questions.push(data);
+
+            const st = data.status || 'pending';
+            if (st === 'approved') approved++;
+            else if (st === 'rejected') rejected++;
+            else pending++;
+        });
+
+        if (countPending) countPending.innerText = pending;
+        if (countApproved) countApproved.innerText = approved;
+        if (countRejected) countRejected.innerText = rejected;
+
+        if (questions.length === 0) {
+            feed.innerHTML = '<div class="lb-loading">لا توجد أي أسئلة مقترحة حالياً.</div>';
+            return;
+        }
+
+        feed.innerHTML = '';
+
+        questions.forEach(q => {
+            const card = document.createElement('div');
+            const st = q.status || 'pending';
+            card.className = `admin-q-card status-${st}`;
+
+            const dateStr = q.createdAt ? new Date(q.createdAt).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+            const catStyle = (typeof CATEGORY_STYLES !== 'undefined' && CATEGORY_STYLES[q.category]) || { icon: 'fa-solid fa-shapes', color: '#a855f7' };
+
+            let statusBadge = `<span class="admin-status-badge pending">⏳ بانتظار المراجعة</span>`;
+            if (st === 'approved') statusBadge = `<span class="admin-status-badge approved">✅ مقبول ومعتمد</span>`;
+            if (st === 'rejected') statusBadge = `<span class="admin-status-badge rejected">❌ مرفوض</span>`;
+
+            card.innerHTML = `
+                <div class="admin-q-header">
+                    <div class="admin-q-cat-box">
+                        <i class="${catStyle.icon}" style="color: ${catStyle.color};"></i>
+                        <span>${q.category || 'عام'} (صعوبة: ${q.difficulty || 5})</span>
+                    </div>
+                    ${statusBadge}
+                </div>
+
+                <h4 class="admin-q-title">${q.question}</h4>
+
+                <div class="admin-q-options">
+                    <div class="admin-opt-item correct"><i class="fa-solid fa-check"></i> ${q.options ? q.options[0] : ''}</div>
+                    <div class="admin-opt-item wrong"><i class="fa-solid fa-xmark"></i> ${q.options ? q.options[1] : ''}</div>
+                    <div class="admin-opt-item wrong"><i class="fa-solid fa-xmark"></i> ${q.options ? q.options[2] : ''}</div>
+                    <div class="admin-opt-item wrong"><i class="fa-solid fa-xmark"></i> ${q.options ? q.options[3] : ''}</div>
+                </div>
+
+                <div class="admin-q-meta">
+                    <span>✍️ الكاتب: <b>${q.authorName || 'لاعب'}</b></span>
+                    <span>🕒 ${dateStr}</span>
+                </div>
+
+                <div class="admin-q-actions">
+                    <button class="btn-adm-approve" onclick="updateQuestionStatus('${q.docId}', 'approved')"><i class="fa-solid fa-check"></i> قبول</button>
+                    <button class="btn-adm-reject" onclick="updateQuestionStatus('${q.docId}', 'rejected')"><i class="fa-solid fa-xmark"></i> رفض</button>
+                    <button class="btn-adm-copy" onclick="copyQuestionAsCSV('${q.docId}')"><i class="fa-solid fa-copy"></i> نسخ CSV</button>
+                    <button class="btn-adm-del" onclick="deleteSuggestedQuestion('${q.docId}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+
+            feed.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Admin fetch error:", err);
+        feed.innerHTML = '<div class="lb-loading">تعذر جلب الأسئلة أو لا توجد صلاحيات كافية.</div>';
+    }
+}
+
+async function updateQuestionStatus(docId, newStatus) {
+    if (!db) return;
+    try {
+        await db.collection('suggested_questions').doc(docId).update({
+            status: newStatus,
+            reviewedAt: Date.now()
+        });
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+        fetchAndRenderAdminQuestions();
+    } catch (e) {
+        showCustomAlert('فشل تحديث حالة السؤال!', 'خطأ', '❌');
+    }
+}
+
+async function deleteSuggestedQuestion(docId) {
+    showCustomConfirm(
+        'هل تريد حقاً حذف هذا السؤال المقترح نهائياً؟',
+        async () => {
+            if (!db) return;
+            await db.collection('suggested_questions').doc(docId).delete().catch(() => {});
+            fetchAndRenderAdminQuestions();
+        },
+        null,
+        'تأكيد الحذف',
+        'حذف',
+        'إلغاء',
+        '🗑️'
+    );
+}
+
+async function copyQuestionAsCSV(docId) {
+    if (!db) return;
+    try {
+        const doc = await db.collection('suggested_questions').doc(docId).get();
+        if (!doc.exists) return;
+        const q = doc.data();
+
+        // format: ID,Category,Difficulty,Question,Opt1,Opt2,Opt3,Opt4,Correct,Image,Author
+        const csvLine = `[ID],${q.category},${q.difficulty},"${q.question.replace(/"/g, '""')}","${(q.options[0]||'').replace(/"/g, '""')}","${(q.options[1]||'').replace(/"/g, '""')}","${(q.options[2]||'').replace(/"/g, '""')}","${(q.options[3]||'').replace(/"/g, '""')}",0,,${q.authorName || 'لاعب'}`;
+
+        if (navigator.clipboard) {
+            await navigator.clipboard.writeText(csvLine);
+            showCustomAlert('تم نسخ سطر السؤال بصيغة CSV وجاهز للصق في الشيت مباشرة!', 'تم النسخ', '📋');
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function copyAllApprovedAsCSV() {
+    if (!db) return;
+    try {
+        const snapshot = await db.collection('suggested_questions').where('status', '==', 'approved').get();
+        if (snapshot.empty) {
+            showCustomAlert('لا توجد أسئلة مقبولة حالياً لنسخها!', 'تنبيه', 'ℹ️');
+            return;
+        }
+
+        let lines = [];
+        snapshot.forEach(doc => {
+            const q = doc.data();
+            const csvLine = `[ID],${q.category},${q.difficulty},"${q.question.replace(/"/g, '""')}","${(q.options[0]||'').replace(/"/g, '""')}","${(q.options[1]||'').replace(/"/g, '""')}","${(q.options[2]||'').replace(/"/g, '""')}","${(q.options[3]||'').replace(/"/g, '""')}",0,,${q.authorName || 'لاعب'}`;
+            lines.push(csvLine);
+        });
+
+        if (navigator.clipboard) {
+            await navigator.clipboard.writeText(lines.join('\n'));
+            showCustomAlert(`تم نسخ ${lines.length} سؤال معتمد كـ CSV ومستعد للصق في شيت جوجل!`, 'تم النسخ الشامل', '📋');
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+
 // js/customization.js - إدارة تخصيص الحساب والأفاتارات والإطارات والألقاب وبطاقة إحصائيات اللاعب
 
 // قائمة الأفاتارات (20 شخصية فيكتور أصلية عالية الدقة)
@@ -4278,6 +4467,7 @@ function handleNavigationBack() {
     }
 
     // 5. الشاشات الفرعية -> رجوع مباشر للقائمة الرئيسية دون إظهار نافذة الخروج
+    if (current === 'admin-panel-screen') { switchScreen('settings-screen', false); return true; }
     if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
         return true;
@@ -4428,6 +4618,7 @@ function initAuthAndApp() {
                     
                     if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkAndShowAdminButton === 'function') checkAndShowAdminButton();
                     if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
@@ -4444,6 +4635,7 @@ function initAuthAndApp() {
                             updateUserProfileUI(currentUser);
                             if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkAndShowAdminButton === 'function') checkAndShowAdminButton();
                     if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
