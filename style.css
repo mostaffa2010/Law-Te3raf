@@ -3792,3 +3792,45 @@ img[src*="frame_challenger_crown"] {
     50% { filter: drop-shadow(0 0 16px #f59e0b) drop-shadow(0 0 30px rgba(251, 191, 36, 0.95)); }
     100% { filter: drop-shadow(0 0 8px #fbbf24) drop-shadow(0 0 16px rgba(251, 191, 36, 0.65)); }
 }
+
+
+/* ==========================================
+   Customization Sub-Tabs (Avatars / Frames / Titles)
+   ========================================== */
+.custom-sub-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 4px;
+}
+
+.custom-sub-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.custom-sub-tab.active {
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.custom-subtab-content {
+    animation: fadeIn 0.2s ease;
+}

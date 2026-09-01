@@ -2194,6 +2194,26 @@ var TITLES_DB = window.TITLES_DB = [
 ];
 
 let activeProfileTab = 'stats';
+let activeCustomSubTab = 'avatars';
+
+function switchCustomSubTab(subTabName) {
+    activeCustomSubTab = subTabName;
+    document.querySelectorAll('.custom-sub-tab').forEach(t => t.classList.remove('active'));
+
+    const btn = document.getElementById(`subtab-${subTabName}`);
+    if (btn) btn.classList.add('active');
+
+    const contentAv = document.getElementById('subtab-content-avatars');
+    const contentFr = document.getElementById('subtab-content-frames');
+    const contentTi = document.getElementById('subtab-content-titles');
+
+    if (contentAv) contentAv.style.display = (subTabName === 'avatars') ? 'block' : 'none';
+    if (contentFr) contentFr.style.display = (subTabName === 'frames') ? 'block' : 'none';
+    if (contentTi) contentTi.style.display = (subTabName === 'titles') ? 'block' : 'none';
+
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
 let pendingAvatar = null;
 let pendingFrame = null;
 let pendingTitle = null;
