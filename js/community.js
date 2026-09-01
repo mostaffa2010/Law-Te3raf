@@ -583,6 +583,71 @@ async function saveAdminAnnouncement() {
 }
 
 // تحميل ومزامنة الإعدادات على الفور
+
+// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة بالكامل
+function applyLiveConfigUpdates() {
+    if (!window.APP_CONFIG) return;
+
+    // 1. تحديث أسعار الأفاتارات في AVATARS_DB
+    if (typeof AVATARS_DB !== 'undefined' && Array.isArray(AVATARS_DB) && window.APP_CONFIG.customPrices) {
+        AVATARS_DB.forEach(av => {
+            if (window.APP_CONFIG.customPrices[av.id] !== undefined) {
+                av.price = window.APP_CONFIG.customPrices[av.id];
+                if (av.type === 'shop') {
+                    av.unlockDesc = `متجر: ${toArabicNumerals(av.price)} عملة`;
+                }
+            }
+        });
+    }
+
+    // 2. تحديث أسعار الإطارات في FRAMES_DB
+    if (typeof FRAMES_DB !== 'undefined' && Array.isArray(FRAMES_DB) && window.APP_CONFIG.customPrices) {
+        FRAMES_DB.forEach(fr => {
+            if (window.APP_CONFIG.customPrices[fr.id] !== undefined) {
+                fr.price = window.APP_CONFIG.customPrices[fr.id];
+                if (fr.type === 'shop') {
+                    fr.unlockDesc = `متجر: ${toArabicNumerals(fr.price)} عملة`;
+                }
+            }
+        });
+    }
+
+    // 3. تحديث أسعار الألقاب في TITLES_DB
+    if (typeof TITLES_DB !== 'undefined' && Array.isArray(TITLES_DB) && window.APP_CONFIG.customPrices) {
+        TITLES_DB.forEach(ti => {
+            if (window.APP_CONFIG.customPrices[ti.id] !== undefined) {
+                ti.price = window.APP_CONFIG.customPrices[ti.id];
+                if (ti.type === 'shop') {
+                    ti.unlockDesc = `متجر: ${toArabicNumerals(ti.price)} عملة`;
+                }
+            }
+        });
+    }
+
+    // 4. تحديث وإظهار شريط الإعلانات في القائمة الرئيسية
+    const banner = document.getElementById('global-live-announcement-banner');
+    const bannerText = document.getElementById('global-announcement-text');
+    if (banner && bannerText) {
+        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
+            bannerText.innerText = window.APP_CONFIG.announcement.trim();
+            banner.style.display = 'flex';
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+
+    // 5. تحديث أسعار متجر المساعدات
+    if (typeof updateShopDisplay === 'function') updateShopDisplay();
+
+    // 6. تحديث متجر التخصيص إن كان مفتوحاً
+    if (typeof renderCustomizationContent === 'function') {
+        const customSec = document.getElementById('profile-custom-section');
+        if (customSec && customSec.style.display !== 'none') {
+            renderCustomizationContent();
+        }
+    }
+}
+
 function initLiveConfigListener() {
     // استرجاع الإعدادات المحفوظة محلياً أولاً
     try {
