@@ -2540,34 +2540,41 @@ let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
-    
-    const banner = document.getElementById('pwa-install-banner');
-    if (banner && !window.matchMedia('(display-mode: standalone)').matches) {
-        banner.style.display = 'flex';
-    }
+    checkPwaInstallBanner();
 });
+
+function checkPwaInstallBanner() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) {
+        banner.style.display = isStandalone ? 'none' : 'flex';
+    }
+}
 
 function installAppPWA() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     if (isIOS) {
-        showCustomAlert('لتثبيت اللعبة على الآيفون:\n1. اضغط على زر المشاركة (Share ⎋) أسفل المتصفح.\n2. اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen).', 'تثبيت اللعبة', '📲');
+        showCustomAlert('لتثبيت اللعبة على الآيفون:
+1. اضغط على زر المشاركة (Share ⎋) أسفل المتصفح.
+2. اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen) ➕.', 'تثبيت اللعبة على الآيفون', '📲');
         return;
     }
 
-    if (!deferredInstallPrompt) {
-        showCustomAlert('يمكنك تثبيت التطبيق من قائمة المتصفح (الثلاث نقاط) -> "تثبيت التطبيق"', 'تثبيت التطبيق', '💡');
-        return;
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choice) => {
+            if (choice.outcome === 'accepted') {
+                const banner = document.getElementById('pwa-install-banner');
+                if (banner) banner.style.display = 'none';
+            }
+            deferredInstallPrompt = null;
+        });
+    } else {
+        showCustomAlert('لتثبيت التطبيق على هاتفك:
+1. اضغط على قائمة المتصفح (الثلاث نقاط ⋮ في الأعلى).
+2. اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية" 📲.', 'تثبيت التطبيق', '💡');
     }
-    
-    deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.then((choice) => {
-        if (choice.outcome === 'accepted') {
-            const banner = document.getElementById('pwa-install-banner');
-            if (banner) banner.style.display = 'none';
-        }
-        deferredInstallPrompt = null;
-    });
 }
 
 
@@ -2821,6 +2828,7 @@ function initAuthAndApp() {
                     await loadCloudProgress(user.uid);
                     
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
                     if (typeof checkWheelStatus === 'function') checkWheelStatus();
                     if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -2834,6 +2842,7 @@ function initAuthAndApp() {
                             currentUser = JSON.parse(localGuest);
                             updateUserProfileUI(currentUser);
                             if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();
                             if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -2875,6 +2884,7 @@ function initAuthAndApp() {
 document.addEventListener('DOMContentLoaded', async () => {
     history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
     checkOnlineStatus();
+    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS && !window.navigator.standalone) {

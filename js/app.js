@@ -35,6 +35,7 @@ function initAuthAndApp() {
                     await loadCloudProgress(user.uid);
                     
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
                     if (typeof checkWheelStatus === 'function') checkWheelStatus();
                     if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -48,6 +49,7 @@ function initAuthAndApp() {
                             currentUser = JSON.parse(localGuest);
                             updateUserProfileUI(currentUser);
                             if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();
                             if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -89,6 +91,7 @@ function initAuthAndApp() {
 document.addEventListener('DOMContentLoaded', async () => {
     history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
     checkOnlineStatus();
+    if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS && !window.navigator.standalone) {
