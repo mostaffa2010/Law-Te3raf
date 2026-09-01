@@ -393,6 +393,7 @@ function spinLuckyWheel() {
             
             if (isFree) {
                 userProgress.lastWheelDate = getTodayString();
+            if (typeof trackDailyProgress === 'function') trackDailyProgress('wheelSpins', 1);
                 saveProgress();
             }
 
@@ -424,6 +425,77 @@ function giveWheelReward(sector) {
 function openAchievementsScreen() {
     switchScreen('achievements-screen');
     renderAchievementsList();
+}
+
+// --- محرك المهام اليومية والأسبوعية والإنجازات الدائمة (3-Tier Quests System) ---
+
+let activeAchievementsTab = 'daily';
+
+function getWeekNumberString() {
+    const d = new Date();
+    const onejan = new Date(d.getFullYear(), 0, 1);
+    const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    return `${d.getFullYear()}-W${week}`;
+}
+
+function ensureQuestsIntegrity() {
+    const today = getTodayString();
+    const currentWeek = getWeekNumberString();
+
+    if (!userProgress.dailyStats || userProgress.dailyStatsDate !== today) {
+        userProgress.dailyStatsDate = today;
+        userProgress.dailyStats = { correct: 0, rankedMatches: 0, fastAnswers: 0, wheelSpins: 0 };
+        userProgress.claimedDailyQuests = {};
+    }
+
+    if (!userProgress.weeklyStats || userProgress.weeklyStatsWeek !== currentWeek) {
+        userProgress.weeklyStatsWeek = currentWeek;
+        userProgress.weeklyStats = { rankedWins: 0, correct: 0, maxEndlessScore: 0, pvpMatches: 0 };
+        userProgress.claimedWeeklyQuests = {};
+    }
+
+    if (!userProgress.claimedDailyQuests) userProgress.claimedDailyQuests = {};
+    if (!userProgress.claimedWeeklyQuests) userProgress.claimedWeeklyQuests = {};
+    if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
+}
+
+function switchAchievementsTab(tabName) {
+    activeAchievementsTab = tabName;
+    document.querySelectorAll('.ach-nav-tab').forEach(t => t.classList.remove('active'));
+
+    const btn = document.getElementById(`tab-ach-${tabName}`);
+    if (btn) btn.classList.add('active');
+
+    const bannerText = document.getElementById('ach-banner-text');
+    if (bannerText) {
+        if (tabName === 'daily') bannerText.innerText = 'المهام اليومية تتجدد كل 24 ساعة';
+        else if (tabName === 'weekly') bannerText.innerText = 'المهام الأسبوعية تتجدد بداية كل أسبوع';
+        else bannerText.innerText = 'الإنجازات الدائمة الكبرى ومسيرة الألقاب الفخرية';
+    }
+
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+    renderAchievementsList();
+}
+
+function trackDailyProgress(key, amount = 1) {
+    ensureQuestsIntegrity();
+    if (!userProgress.dailyStats) userProgress.dailyStats = {};
+    userProgress.dailyStats[key] = (userProgress.dailyStats[key] || 0) + amount;
+    saveProgress();
+    updateAchievementBadge();
+}
+
+function trackWeeklyProgress(key, amount = 1) {
+    ensureQuestsIntegrity();
+    if (!userProgress.weeklyStats) userProgress.weeklyStats = {};
+    if (key === 'maxEndlessScore') {
+        userProgress.weeklyStats[key] = Math.max(userProgress.weeklyStats[key] || 0, amount);
+    } else {
+        userProgress.weeklyStats[key] = (userProgress.weeklyStats[key] || 0) + amount;
+    }
+    saveProgress();
+    updateAchievementBadge();
 }
 
 function getAchievementCurrentLevelData(ach, claimedLevel) {
@@ -480,91 +552,192 @@ function showAchievementToast(ach, level) {
     }
 }
 
-function updateAchievementBadge() {
-    const badge = document.getElementById('achievements-badge');
-    if (!badge) return;
-
-    let claimableCount = 0;
-    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
-        INFINITE_ACHIEVEMENTS.forEach(ach => {
-            const unlocked = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-            const claimed = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-            const maxLvl = ach.levels ? ach.levels.length : 1;
-            if (claimed < maxLvl && unlocked > claimed) {
-                claimableCount += (unlocked - claimed);
-            }
-        });
-    }
-
-    if (claimableCount > 0) {
-        badge.innerText = toArabicNumerals(claimableCount);
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
-
 function renderAchievementsList() {
+    ensureQuestsIntegrity();
     checkAllAchievements();
+
     const list = document.getElementById('achievements-list');
-    const countDisplay = document.getElementById('ach-unlocked-count');
-
-    let totalClaimed = 0;
-    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
-        INFINITE_ACHIEVEMENTS.forEach(a => {
-            totalClaimed += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
-        });
-    }
-
-    if (countDisplay) countDisplay.innerText = `إجمالي المستويات المكتملة: ${toArabicNumerals(totalClaimed)}`;
     if (!list) return;
     list.innerHTML = '';
 
-    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
-        INFINITE_ACHIEVEMENTS.forEach(ach => {
-            const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-            const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-            const { isMaxed, lvlData, maxLvl } = getAchievementCurrentLevelData(ach, claimedLvl);
-
-            const currentVal = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : 0;
-            const targetGoal = lvlData.target;
-            const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
-            const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
-
-            const descText = typeof ach.desc === 'function' ? ach.desc(toArabicNumerals(targetGoal)) : (ach.desc || '');
-
-            const card = document.createElement('div');
-            card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isMaxed ? 'maxed' : ''}`;
-
-            let claimBtnHtml = '';
-            if (isMaxed) {
-                claimBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
-            } else if (canClaim) {
-                claimBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام (${lvlData.rewardName || (lvlData.reward + ' عملة')})</button>`;
-            } else {
-                claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> الجائزة: ${lvlData.rewardName || (lvlData.reward + ' عملة')}</span>`;
-            }
-
-            card.innerHTML = `
-                <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
-                    <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
-                </div>
-                <div class="ach-info-box">
-                    <div class="ach-title-row">
-                        <h4>${ach.title || ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)})`}</small></h4>
-                        ${claimBtnHtml}
-                    </div>
-                    <div class="ach-desc">${descText}</div>
-                    <div class="ach-progress-container">
-                        <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${ach.color || 'var(--accent-green)'};"></div>
-                    </div>
-                </div>
-                <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
-            `;
-
-            list.appendChild(card);
-        });
+    if (activeAchievementsTab === 'daily') {
+        renderDailyQuests(list);
+    } else if (activeAchievementsTab === 'weekly') {
+        renderWeeklyQuests(list);
+    } else {
+        renderLifetimeAchievements(list);
     }
+}
+
+function renderDailyQuests(list) {
+    if (typeof DAILY_QUESTS_CONFIG === 'undefined') return;
+
+    DAILY_QUESTS_CONFIG.forEach(quest => {
+        const currentVal = typeof quest.getProgress === 'function' ? quest.getProgress(userProgress) : 0;
+        const targetGoal = quest.target;
+        const isClaimed = !!(userProgress.claimedDailyQuests && userProgress.claimedDailyQuests[quest.id]);
+        const canClaim = !isClaimed && (currentVal >= targetGoal);
+        const progressPercent = isClaimed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
+
+        const card = document.createElement('div');
+        card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isClaimed ? 'maxed' : ''}`;
+
+        let claimBtnHtml = '';
+        if (isClaimed) {
+            claimBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
+        } else if (canClaim) {
+            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimDailyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام (${toArabicNumerals(quest.reward)} عملة)</button>`;
+        } else {
+            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${toArabicNumerals(quest.reward)} عملة</span>`;
+        }
+
+        card.innerHTML = `
+            <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
+                <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
+            </div>
+            <div class="ach-info-box">
+                <div class="ach-title-row">
+                    <h4>${quest.title}</h4>
+                    ${claimBtnHtml}
+                </div>
+                <div class="ach-desc">${quest.desc}</div>
+                <div class="ach-progress-container">
+                    <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${quest.color || 'var(--accent-green)'};"></div>
+                </div>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function renderWeeklyQuests(list) {
+    if (typeof WEEKLY_QUESTS_CONFIG === 'undefined') return;
+
+    WEEKLY_QUESTS_CONFIG.forEach(quest => {
+        const currentVal = typeof quest.getProgress === 'function' ? quest.getProgress(userProgress) : 0;
+        const targetGoal = quest.target;
+        const isClaimed = !!(userProgress.claimedWeeklyQuests && userProgress.claimedWeeklyQuests[quest.id]);
+        const canClaim = !isClaimed && (currentVal >= targetGoal);
+        const progressPercent = isClaimed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
+
+        const card = document.createElement('div');
+        card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isClaimed ? 'maxed' : ''}`;
+
+        let claimBtnHtml = '';
+        if (isClaimed) {
+            claimBtnHtml = `<span class="ach-maxed-badge">تم الاستلام ✅</span>`;
+        } else if (canClaim) {
+            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimWeeklyQuest('${quest.id}')"><i class="fa-solid fa-gift"></i> استلام (${toArabicNumerals(quest.reward)} عملة)</button>`;
+        } else {
+            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${toArabicNumerals(quest.reward)} عملة</span>`;
+        }
+
+        card.innerHTML = `
+            <div class="ach-icon-box" style="color: ${quest.color || 'var(--accent-yellow)'};">
+                <i class="${quest.icon || 'fa-solid fa-trophy'}"></i>
+            </div>
+            <div class="ach-info-box">
+                <div class="ach-title-row">
+                    <h4>${quest.title}</h4>
+                    ${claimBtnHtml}
+                </div>
+                <div class="ach-desc">${quest.desc}</div>
+                <div class="ach-progress-container">
+                    <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${quest.color || 'var(--accent-green)'};"></div>
+                </div>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function renderLifetimeAchievements(list) {
+    if (typeof INFINITE_ACHIEVEMENTS === 'undefined' || !Array.isArray(INFINITE_ACHIEVEMENTS)) return;
+
+    INFINITE_ACHIEVEMENTS.forEach(ach => {
+        const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+        const { isMaxed, lvlData, maxLvl } = getAchievementCurrentLevelData(ach, claimedLvl);
+
+        const currentVal = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : 0;
+        const targetGoal = lvlData.target;
+        const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
+        const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
+
+        const descText = typeof ach.desc === 'function' ? ach.desc(toArabicNumerals(targetGoal)) : (ach.desc || '');
+
+        const card = document.createElement('div');
+        card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isMaxed ? 'maxed' : ''}`;
+
+        let claimBtnHtml = '';
+        if (isMaxed) {
+            claimBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
+        } else if (canClaim) {
+            claimBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام (${lvlData.rewardName || (lvlData.reward + ' عملة')})</button>`;
+        } else {
+            claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> ${lvlData.rewardName || (lvlData.reward + ' عملة')}</span>`;
+        }
+
+        card.innerHTML = `
+            <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
+                <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
+            </div>
+            <div class="ach-info-box">
+                <div class="ach-title-row">
+                    <h4>${ach.title || ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)})`}</small></h4>
+                    ${claimBtnHtml}
+                </div>
+                <div class="ach-desc">${descText}</div>
+                <div class="ach-progress-container">
+                    <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${ach.color || 'var(--accent-green)'};"></div>
+                </div>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function claimDailyQuest(questId) {
+    ensureQuestsIntegrity();
+    const quest = DAILY_QUESTS_CONFIG.find(q => q.id === questId);
+    if (!quest) return;
+
+    if (userProgress.claimedDailyQuests[questId]) return;
+
+    userProgress.claimedDailyQuests[questId] = true;
+    userProgress.coins = (userProgress.coins || 0) + quest.reward;
+
+    saveProgress();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    showCustomAlert(`🎉 مبروك! استلمت مكافأة المهمة اليومية [ ${quest.title} ]: +${toArabicNumerals(quest.reward)} عملة ذهبية!`, 'مهمة مكتملة!', '🏆');
+
+    updateHeaderStats();
+    renderAchievementsList();
+    updateAchievementBadge();
+}
+
+function claimWeeklyQuest(questId) {
+    ensureQuestsIntegrity();
+    const quest = WEEKLY_QUESTS_CONFIG.find(q => q.id === questId);
+    if (!quest) return;
+
+    if (userProgress.claimedWeeklyQuests[questId]) return;
+
+    userProgress.claimedWeeklyQuests[questId] = true;
+    userProgress.coins = (userProgress.coins || 0) + quest.reward;
+
+    saveProgress();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    showCustomAlert(`🎉 مبروك! استلمت مكافأة المهمة الأسبوعية [ ${quest.title} ]: +${toArabicNumerals(quest.reward)} عملة ذهبية!`, 'مهمة أسبوعية مكتملة!', '👑');
+
+    updateHeaderStats();
+    renderAchievementsList();
+    updateAchievementBadge();
 }
 
 function claimAchievementReward(achId) {
@@ -589,6 +762,51 @@ function claimAchievementReward(achId) {
     renderAchievementsList();
     updateAchievementBadge();
 }
+
+function updateAchievementBadge() {
+    const badge = document.getElementById('achievements-badge');
+    if (!badge) return;
+
+    ensureQuestsIntegrity();
+
+    let claimableCount = 0;
+
+    // 1. فحص اليومية
+    if (typeof DAILY_QUESTS_CONFIG !== 'undefined') {
+        DAILY_QUESTS_CONFIG.forEach(q => {
+            const val = typeof q.getProgress === 'function' ? q.getProgress(userProgress) : 0;
+            if (!userProgress.claimedDailyQuests[q.id] && val >= q.target) claimableCount++;
+        });
+    }
+
+    // 2. فحص الأسبوعية
+    if (typeof WEEKLY_QUESTS_CONFIG !== 'undefined') {
+        WEEKLY_QUESTS_CONFIG.forEach(q => {
+            const val = typeof q.getProgress === 'function' ? q.getProgress(userProgress) : 0;
+            if (!userProgress.claimedWeeklyQuests[q.id] && val >= q.target) claimableCount++;
+        });
+    }
+
+    // 3. فحص الدائمة
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const unlocked = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+            const claimed = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+            const maxLvl = ach.levels ? ach.levels.length : 1;
+            if (claimed < maxLvl && unlocked > claimed) {
+                claimableCount += (unlocked - claimed);
+            }
+        });
+    }
+
+    if (claimableCount > 0) {
+        badge.innerText = toArabicNumerals(claimableCount);
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
 
 // --- متجر المساعدات ---
 function openShopScreen() {

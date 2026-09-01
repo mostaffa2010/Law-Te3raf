@@ -236,6 +236,7 @@ function triggerPvpCountdown(roomData) {
 
 function startPvpMatch(roomData) {
     gameState.mode = 'pvp';
+    if (typeof trackWeeklyProgress === 'function') trackWeeklyProgress('pvpMatches', 1);
     gameState.questions = roomData.questions;
     gameState.currentIndex = 0;
     gameState.correctCount = 0;

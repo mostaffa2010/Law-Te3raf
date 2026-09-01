@@ -227,6 +227,8 @@ function selectAnswer(selectedIndex, btnElement) {
         }
         userProgress.coins += 2;
         userProgress.totalCorrect = (userProgress.totalCorrect || 0) + 1;
+        if (typeof trackDailyProgress === 'function') trackDailyProgress('correct', 1);
+        if (typeof trackWeeklyProgress === 'function') trackWeeklyProgress('correct', 1);
 
         // تحديث تقدم المهام اليومية والأسبوعية
         if (!userProgress.dailyQuestsProgress) userProgress.dailyQuestsProgress = {};
@@ -246,6 +248,7 @@ function selectAnswer(selectedIndex, btnElement) {
 
         if (gameState.timer >= 12) {
             userProgress.fastAnswersCount = (userProgress.fastAnswersCount || 0) + 1;
+            if (typeof trackDailyProgress === 'function') trackDailyProgress('fastAnswers', 1);
         }
 
         gameState.sessionCorrectStreak++;

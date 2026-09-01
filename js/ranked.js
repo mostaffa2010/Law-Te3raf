@@ -366,6 +366,7 @@ function showRankedVersusScreen(opponent) {
 
 function launchRankedGameSession() {
     gameState.mode = 'ranked';
+    if (typeof trackDailyProgress === 'function') trackDailyProgress('rankedMatches', 1);
     gameState.questions = getSmartQuestions(10); // 10 أسئلة سريعة ومكثفة
     gameState.currentIndex = 0;
     gameState.correctCount = 0;
@@ -586,6 +587,7 @@ function finishRankedMatchSession() {
 
     if (isWinner) {
         userProgress.rankedWins = (userProgress.rankedWins || 0) + 1;
+            if (typeof trackWeeklyProgress === 'function') trackWeeklyProgress('rankedWins', 1);
 
         if (!userProgress.dailyQuestsProgress) userProgress.dailyQuestsProgress = {};
         userProgress.dailyQuestsProgress.daily_ranked = (userProgress.dailyQuestsProgress.daily_ranked || 0) + 1;
