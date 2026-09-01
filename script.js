@@ -26,18 +26,15 @@ if (typeof firebase !== 'undefined') {
         auth = firebase.auth();
         db = firebase.firestore();
 
-        // تفعيل حفظ البيانات أوفلاين في Firestore
         if (db && db.enablePersistence) {
-            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-                console.warn('Firestore offline persistence status:', err.code);
-            });
+            db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
         }
 
         if (typeof firebase.analytics === 'function') {
             firebase.analytics();
         }
     } catch (e) {
-        console.warn('Firebase init warning (offline mode):', e);
+        console.warn('Firebase init warning:', e);
     }
 }
 
@@ -60,7 +57,7 @@ let gameState = {
     usedPowerupInSession: false,
     sessionCorrectStreak: 0,
     sessionMistakes: [],
-    leaderboardTab: 'endless',
+    leaderboardTab: 'ranked',
     pvpRoomId: null,
     isPvpHost: false,
     pvpUnsubscribe: null,
@@ -109,11 +106,10 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-// ثوابت النمط اللانهائي
 const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
 
-// بيانات تقدم المستخدم المحفوظة
-let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
+// البنية الافتراضية الشاملة لتقدم المستخدم
+const DEFAULT_USER_PROGRESS = {
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -129,16 +125,55 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     itemsPurchased: 0,
     infiniteLevels: {},
     claimedInfiniteLevels: {},
-    endlessSeenAt: {}
+    endlessSeenAt: {},
+    rankTier: 'iron',
+    rankStars: 0,
+    rankedWins: 0,
+    rankedLosses: 0,
+    rankedWinStreak: 0,
+    highestRankTier: 'iron'
 };
 
-// استعادة الجلسة المحفوظة أوفلاين إن وجدت
-const savedOfflineGuest = localStorage.getItem('local_offline_guest');
-if (savedOfflineGuest) {
-    try {
-        currentUser = JSON.parse(savedOfflineGuest);
-    } catch(e) {}
+let userProgress = { ...DEFAULT_USER_PROGRESS };
+
+function ensureUserProgressIntegrity() {
+    if (!userProgress || typeof userProgress !== 'object') {
+        userProgress = { ...DEFAULT_USER_PROGRESS };
+    }
+    for (let key in DEFAULT_USER_PROGRESS) {
+        if (userProgress[key] === undefined || userProgress[key] === null) {
+            if (typeof DEFAULT_USER_PROGRESS[key] === 'object' && !Array.isArray(DEFAULT_USER_PROGRESS[key])) {
+                userProgress[key] = { ...DEFAULT_USER_PROGRESS[key] };
+            } else if (Array.isArray(DEFAULT_USER_PROGRESS[key])) {
+                userProgress[key] = [...DEFAULT_USER_PROGRESS[key]];
+            } else {
+                userProgress[key] = DEFAULT_USER_PROGRESS[key];
+            }
+        }
+    }
+    if (!userProgress.inventory) userProgress.inventory = { hint5050: 1, addTime: 1, skip: 1 };
+    if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
+    if (!userProgress.seenQuestions) userProgress.seenQuestions = [];
+    if (!userProgress.endlessSeenAt) userProgress.endlessSeenAt = {};
 }
+
+// محاولة قراءة التقدم المحفوظ محلياً مع ضمان سلامة البيانات
+try {
+    const saved = localStorage.getItem('law_ta3raf_progress');
+    if (saved) {
+        userProgress = { ...userProgress, ...JSON.parse(saved) };
+    }
+} catch(e) {}
+ensureUserProgressIntegrity();
+
+// استعادة الجلسة المحفوظة أوفلاين إن وجدت
+try {
+    const savedOfflineGuest = localStorage.getItem('local_offline_guest');
+    if (savedOfflineGuest) {
+        currentUser = JSON.parse(savedOfflineGuest);
+    }
+} catch(e) {}
 
 // دوال المساعدة الأساسية
 function showCustomAlert(message, title = 'تنبيه', icon = '💡') {
@@ -235,6 +270,7 @@ function getAchReward(ach, level) {
 }
 
 function saveProgress() {
+    ensureUserProgressIntegrity();
     localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
 
     if (db && currentUser && currentUser.uid && !currentUser.isOffline) {
@@ -248,9 +284,12 @@ function saveProgress() {
             highScore: userProgress.highScore || 0,
             pvpWins: userProgress.pvpWins || 0,
             totalCorrect: userProgress.totalCorrect || 0,
+            rankTier: userProgress.rankTier || 'iron',
+            rankStars: userProgress.rankStars || 0,
+            rankedWins: userProgress.rankedWins || 0,
             progress: userProgress,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
+        }, { merge: true }).catch(() => {});
     }
 }
 
@@ -260,12 +299,13 @@ async function loadCloudProgress(uid) {
         const doc = await db.collection('users').doc(uid).get();
         if (doc.exists && doc.data().progress) {
             userProgress = { ...userProgress, ...doc.data().progress };
+            ensureUserProgressIntegrity();
             localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
         } else {
             saveProgress();
         }
     } catch (e) {
-        console.log('Error loading cloud progress:', e);
+        console.warn('Error loading cloud progress:', e);
     }
 }
 
@@ -1858,6 +1898,8 @@ async function fetchAndRenderLeaderboard() {
     else if (tab === 'pvp') sortField = 'pvpWins';
 
     try {
+        if (!db) throw new Error('No DB connection');
+
         const snapshot = await db.collection('users')
             .orderBy(sortField, 'desc')
             .limit(50)
@@ -1870,8 +1912,8 @@ async function fetchAndRenderLeaderboard() {
                 uid: doc.id,
                 name: d.name || 'لاعب',
                 photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                rankTier: (d.progress && d.progress.rankTier) || 'iron',
-                rankStars: (d.progress && d.progress.rankStars) || 0,
+                rankTier: (d.progress && d.progress.rankTier) || d.rankTier || 'iron',
+                rankStars: (d.progress && d.progress.rankStars !== undefined) ? d.progress.rankStars : (d.rankStars || 0),
                 rankedWins: d.rankedWins || 0,
                 highScore: d.highScore || 0,
                 pvpWins: d.pvpWins || 0
@@ -1893,7 +1935,21 @@ async function fetchAndRenderLeaderboard() {
 
         renderLeaderboardUI(players, tab);
     } catch (error) {
-        listContainer.innerHTML = '<div class="lb-loading" style="color: var(--accent-red);">تعذر تحميل قائمة المتصدرين حالياً.</div>';
+        // عرض الترتيب المحلي للمستخدم في حال تعذر الاتصال
+        const localPlayers = [];
+        if (currentUser) {
+            localPlayers.push({
+                uid: currentUser.uid,
+                name: currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت'),
+                photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+                rankTier: userProgress.rankTier || 'iron',
+                rankStars: userProgress.rankStars || 0,
+                rankedWins: userProgress.rankedWins || 0,
+                highScore: userProgress.highScore || 0,
+                pvpWins: userProgress.pvpWins || 0
+            });
+        }
+        renderLeaderboardUI(localPlayers, tab);
     }
 }
 
@@ -1909,7 +1965,14 @@ function formatLeaderboardScore(p, tab) {
 function renderLeaderboardUI(players, tab) {
     const podiumContainer = document.getElementById('podium-container');
     const listContainer = document.getElementById('leaderboard-list');
+    if (!listContainer) return;
     listContainer.innerHTML = '';
+
+    if (!players || players.length === 0) {
+        listContainer.innerHTML = '<div class="lb-loading">لا توجد بيانات متاحة حالياً.</div>';
+        updateMyRankFooter([], tab);
+        return;
+    }
 
     const top1 = players[0] || null;
     const top2 = players[1] || null;
@@ -1970,9 +2033,7 @@ function renderLeaderboardUI(players, tab) {
             const rank = idx + 4;
             const isMe = currentUser && (p.uid === currentUser.uid);
             const scoreText = formatLeaderboardScore(p, tab);
-            let subText = (tab === 'pvp') 
-                ? `انتصارات الغرف: ${p.pvpWins || 0}`
-                : `أعلى سكور صمود: ${p.highScore || 0}`;
+            let subText = (tab === 'ranked') ? `انتصارات: ${p.rankedWins || 0}` : ((tab === 'pvp') ? `انتصارات: ${p.pvpWins || 0}` : `أعلى سكور`);
 
             const card = document.createElement('div');
             card.className = `lb-item-card ${isMe ? 'is-current-user' : ''}`;
@@ -2002,8 +2063,8 @@ function updateMyRankFooter(players, tab) {
     if (!currentUser) return;
 
     const myUid = currentUser.uid;
-    const myIndex = players.findIndex(p => p.uid === myUid);
-    const myRank = myIndex !== -1 ? `#${myIndex + 1}` : '#50+';
+    const myIndex = players ? players.findIndex(p => p.uid === myUid) : -1;
+    const myRank = myIndex !== -1 ? `#${myIndex + 1}` : '#--';
 
     if (posElem) posElem.innerText = myRank;
     if (nameElem) nameElem.innerText = currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت');
@@ -2023,10 +2084,18 @@ function updateMyRankFooter(players, tab) {
 }
 
 // --- عجلة الحظ اليومية ---
+function openWheelScreen() {
+    switchScreen('wheel-screen');
+    checkWheelStatus();
+    drawWheel();
+}
+
 function drawWheel() {
     const canvas = document.getElementById('wheel-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     const numSectors = WHEEL_SECTORS.length;
     const arc = (2 * Math.PI) / numSectors;
     const radius = canvas.width / 2;
@@ -2070,7 +2139,7 @@ function checkWheelStatus() {
     const badge = document.getElementById('wheel-badge');
     const spinText = document.getElementById('spin-btn-text');
     const statusText = document.getElementById('wheel-status-text');
-    const isFree = userProgress.lastWheelDate !== getTodayString();
+    const isFree = (userProgress.lastWheelDate !== getTodayString());
 
     if (badge) badge.style.display = isFree ? 'flex' : 'none';
     if (spinText) spinText.innerText = isFree ? 'تدوير مجاني' : 'تدوير (25 عملة)';
@@ -2081,17 +2150,12 @@ function checkWheelStatus() {
     }
 }
 
-function openWheelScreen() {
-    checkWheelStatus();
-    switchScreen('wheel-screen');
-}
-
 function spinLuckyWheel() {
     if (isWheelSpinning) return;
 
-    const isFree = userProgress.lastWheelDate !== getTodayString();
+    const isFree = (userProgress.lastWheelDate !== getTodayString());
     if (!isFree) {
-        if (userProgress.coins < 25) {
+        if ((userProgress.coins || 0) < 25) {
             showCustomAlert('تحتاج 25 عملة للتدوير الإضافي!', 'رصيد غير كافٍ', '🪙');
             return;
         }
@@ -2153,9 +2217,10 @@ function giveWheelReward(sector) {
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
 
     if (sector.type === "coins") {
-        userProgress.coins += sector.value;
+        userProgress.coins = (userProgress.coins || 0) + sector.value;
         showCustomAlert(`فزت بـ ${sector.value} عملة ذهبية!`, 'مبروك!', '🎉');
     } else if (sector.type === "item") {
+        if (!userProgress.inventory) userProgress.inventory = {};
         userProgress.inventory[sector.value] = (userProgress.inventory[sector.value] || 0) + 1;
         showCustomAlert(`فزت بوسيلة مساعدة: [${sector.label}] في مخزونك!`, 'مبروك!', '🎁');
     }
@@ -2165,17 +2230,23 @@ function giveWheelReward(sector) {
 }
 
 // --- سجل الإنجازات ---
+function openAchievementsScreen() {
+    switchScreen('achievements-screen');
+    renderAchievementsList();
+}
+
 function checkAllAchievements() {
     let newlyUnlocked = false;
 
     INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const currentLvl = userProgress.infiniteLevels[ach.id] || 0;
-        const claimedLvl = userProgress.claimedInfiniteLevels[ach.id] || 0;
+        const currentLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
         const currentVal = userProgress[ach.stat] || 0;
 
         const targetGoal = getAchGoal(ach, claimedLvl);
 
         if (claimedLvl < ach.maxLevel && currentVal >= targetGoal && currentLvl === claimedLvl) {
+            if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
             userProgress.infiniteLevels[ach.id] = claimedLvl + 1;
             newlyUnlocked = true;
             showAchievementToast(ach, claimedLvl + 1);
@@ -2206,8 +2277,8 @@ function updateAchievementBadge() {
 
     let unclaimedCount = 0;
     INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unl = userProgress.infiniteLevels[ach.id] || 0;
-        const clm = userProgress.claimedInfiniteLevels[ach.id] || 0;
+        const unl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+        const clm = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
         if (unl > clm) unclaimedCount += (unl - clm);
     });
 
@@ -2219,18 +2290,13 @@ function updateAchievementBadge() {
     }
 }
 
-function openAchievementsScreen() {
-    renderAchievementsList();
-    switchScreen('achievements-screen');
-}
-
 function renderAchievementsList() {
     const list = document.getElementById('achievements-list');
     const countDisplay = document.getElementById('ach-unlocked-count');
 
     let totalClaimedLevels = 0;
     INFINITE_ACHIEVEMENTS.forEach(a => {
-        totalClaimedLevels += (userProgress.claimedInfiniteLevels[a.id] || 0);
+        totalClaimedLevels += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
     });
 
     if (countDisplay) countDisplay.innerText = `إجمالي المستويات المحققة: ${totalClaimedLevels}`;
@@ -2238,8 +2304,8 @@ function renderAchievementsList() {
     list.innerHTML = '';
 
     INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unlockedLvl = userProgress.infiniteLevels[ach.id] || 0;
-        const claimedLvl = userProgress.claimedInfiniteLevels[ach.id] || 0;
+        const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
         const currentVal = userProgress[ach.stat] || 0;
         const isMaxed = claimedLvl >= ach.maxLevel;
 
@@ -2276,6 +2342,7 @@ function renderAchievementsList() {
 
 function claimAchievementReward(achId, rewardAmount) {
     const ach = INFINITE_ACHIEVEMENTS.find(a => a.id === achId);
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
     const claimedLvl = userProgress.claimedInfiniteLevels[achId] || 0;
     if (ach && claimedLvl >= ach.maxLevel) return;
 
@@ -2293,8 +2360,8 @@ function claimAchievementReward(achId, rewardAmount) {
 
 // --- متجر المساعدات ---
 function openShopScreen() {
-    updateShopDisplay();
     switchScreen('shop-screen');
+    updateShopDisplay();
 }
 
 function updateShopDisplay() {
@@ -2302,9 +2369,11 @@ function updateShopDisplay() {
     const invTime = document.getElementById('inv-time');
     const invSkip = document.getElementById('inv-skip');
 
-    if (inv50) inv50.innerText = userProgress.inventory.hint5050 || 0;
-    if (invTime) invTime.innerText = userProgress.inventory.addTime || 0;
-    if (invSkip) invSkip.innerText = userProgress.inventory.skip || 0;
+    const inv = userProgress.inventory || { hint5050: 0, addTime: 0, skip: 0 };
+
+    if (inv50) inv50.innerText = inv.hint5050 || 0;
+    if (invTime) invTime.innerText = inv.addTime || 0;
+    if (invSkip) invSkip.innerText = inv.skip || 0;
 
     const isClaimedToday = (userProgress.lastFreeRewardDate === getTodayString());
     const rewardBtn = document.getElementById('claim-reward-btn');
@@ -2315,10 +2384,12 @@ function updateShopDisplay() {
 }
 
 function buyItem(itemKey, cost, quantity = 1) {
-    if (userProgress.coins < cost) {
+    if ((userProgress.coins || 0) < cost) {
         showCustomAlert('رصيدك من العملات غير كافٍ!', 'تنبيه', '🪙');
         return;
     }
+
+    if (!userProgress.inventory) userProgress.inventory = {};
 
     userProgress.coins -= cost;
     userProgress.inventory[itemKey] = (userProgress.inventory[itemKey] || 0) + quantity;
@@ -2373,8 +2444,6 @@ function updateHeaderStats() {
         const modesTag = document.getElementById('modes-current-rank-tag');
         if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span>`;
         if (modesTag) modesTag.innerHTML = `<span style="color: #000; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name} (${userProgress.rankStars || 0} ⭐)</span>`;
-    }
-} (${userProgress.rankStars || 0} ⭐)`;
     }
 }
 

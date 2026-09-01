@@ -24,18 +24,15 @@ if (typeof firebase !== 'undefined') {
         auth = firebase.auth();
         db = firebase.firestore();
 
-        // تفعيل حفظ البيانات أوفلاين في Firestore
         if (db && db.enablePersistence) {
-            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-                console.warn('Firestore offline persistence status:', err.code);
-            });
+            db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
         }
 
         if (typeof firebase.analytics === 'function') {
             firebase.analytics();
         }
     } catch (e) {
-        console.warn('Firebase init warning (offline mode):', e);
+        console.warn('Firebase init warning:', e);
     }
 }
 
@@ -58,7 +55,7 @@ let gameState = {
     usedPowerupInSession: false,
     sessionCorrectStreak: 0,
     sessionMistakes: [],
-    leaderboardTab: 'endless',
+    leaderboardTab: 'ranked',
     pvpRoomId: null,
     isPvpHost: false,
     pvpUnsubscribe: null,
@@ -107,11 +104,10 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-// ثوابت النمط اللانهائي
 const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
 
-// بيانات تقدم المستخدم المحفوظة
-let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
+// البنية الافتراضية الشاملة لتقدم المستخدم
+const DEFAULT_USER_PROGRESS = {
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -127,16 +123,55 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     itemsPurchased: 0,
     infiniteLevels: {},
     claimedInfiniteLevels: {},
-    endlessSeenAt: {}
+    endlessSeenAt: {},
+    rankTier: 'iron',
+    rankStars: 0,
+    rankedWins: 0,
+    rankedLosses: 0,
+    rankedWinStreak: 0,
+    highestRankTier: 'iron'
 };
 
-// استعادة الجلسة المحفوظة أوفلاين إن وجدت
-const savedOfflineGuest = localStorage.getItem('local_offline_guest');
-if (savedOfflineGuest) {
-    try {
-        currentUser = JSON.parse(savedOfflineGuest);
-    } catch(e) {}
+let userProgress = { ...DEFAULT_USER_PROGRESS };
+
+function ensureUserProgressIntegrity() {
+    if (!userProgress || typeof userProgress !== 'object') {
+        userProgress = { ...DEFAULT_USER_PROGRESS };
+    }
+    for (let key in DEFAULT_USER_PROGRESS) {
+        if (userProgress[key] === undefined || userProgress[key] === null) {
+            if (typeof DEFAULT_USER_PROGRESS[key] === 'object' && !Array.isArray(DEFAULT_USER_PROGRESS[key])) {
+                userProgress[key] = { ...DEFAULT_USER_PROGRESS[key] };
+            } else if (Array.isArray(DEFAULT_USER_PROGRESS[key])) {
+                userProgress[key] = [...DEFAULT_USER_PROGRESS[key]];
+            } else {
+                userProgress[key] = DEFAULT_USER_PROGRESS[key];
+            }
+        }
+    }
+    if (!userProgress.inventory) userProgress.inventory = { hint5050: 1, addTime: 1, skip: 1 };
+    if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
+    if (!userProgress.seenQuestions) userProgress.seenQuestions = [];
+    if (!userProgress.endlessSeenAt) userProgress.endlessSeenAt = {};
 }
+
+// محاولة قراءة التقدم المحفوظ محلياً مع ضمان سلامة البيانات
+try {
+    const saved = localStorage.getItem('law_ta3raf_progress');
+    if (saved) {
+        userProgress = { ...userProgress, ...JSON.parse(saved) };
+    }
+} catch(e) {}
+ensureUserProgressIntegrity();
+
+// استعادة الجلسة المحفوظة أوفلاين إن وجدت
+try {
+    const savedOfflineGuest = localStorage.getItem('local_offline_guest');
+    if (savedOfflineGuest) {
+        currentUser = JSON.parse(savedOfflineGuest);
+    }
+} catch(e) {}
 
 // دوال المساعدة الأساسية
 function showCustomAlert(message, title = 'تنبيه', icon = '💡') {
@@ -233,6 +268,7 @@ function getAchReward(ach, level) {
 }
 
 function saveProgress() {
+    ensureUserProgressIntegrity();
     localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
 
     if (db && currentUser && currentUser.uid && !currentUser.isOffline) {
@@ -246,9 +282,12 @@ function saveProgress() {
             highScore: userProgress.highScore || 0,
             pvpWins: userProgress.pvpWins || 0,
             totalCorrect: userProgress.totalCorrect || 0,
+            rankTier: userProgress.rankTier || 'iron',
+            rankStars: userProgress.rankStars || 0,
+            rankedWins: userProgress.rankedWins || 0,
             progress: userProgress,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
+        }, { merge: true }).catch(() => {});
     }
 }
 
@@ -258,11 +297,12 @@ async function loadCloudProgress(uid) {
         const doc = await db.collection('users').doc(uid).get();
         if (doc.exists && doc.data().progress) {
             userProgress = { ...userProgress, ...doc.data().progress };
+            ensureUserProgressIntegrity();
             localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
         } else {
             saveProgress();
         }
     } catch (e) {
-        console.log('Error loading cloud progress:', e);
+        console.warn('Error loading cloud progress:', e);
     }
 }
