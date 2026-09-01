@@ -214,6 +214,7 @@ function launchRankedGameSession() {
     currentRankedOpponent.score = 0;
     currentRankedOpponent.correctCount = 0;
     currentRankedOpponent.answeredIndex = 0;
+    currentRankedOpponent.answersHistory = [];
 
     const pwrBar = document.getElementById('game-powerups-bar');
     if (pwrBar) pwrBar.style.display = 'none';
@@ -250,9 +251,14 @@ function startOpponentSimulation() {
             const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
             const timeBonus = Math.floor(Math.random() * 8) + 4;
 
+            if (!currentRankedOpponent.answersHistory) currentRankedOpponent.answersHistory = [];
+
             if (isCorrect) {
                 currentRankedOpponent.correctCount++;
                 currentRankedOpponent.score += (100 + timeBonus * 10);
+                currentRankedOpponent.answersHistory.push(true);
+            } else {
+                currentRankedOpponent.answersHistory.push(false);
             }
 
             currentRankedOpponent.answeredIndex++;
@@ -289,7 +295,14 @@ function updateRankedOpponentUI() {
         dotsContainer.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             const dot = document.createElement('span');
-            dot.className = `opp-progress-dot ${i < currentRankedOpponent.answeredIndex ? 'answered' : ''}`;
+            const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
+            if (state === true) {
+                dot.className = 'opp-progress-dot correct-dot';
+            } else if (state === false) {
+                dot.className = 'opp-progress-dot wrong-dot';
+            } else {
+                dot.className = 'opp-progress-dot pending-dot';
+            }
             dotsContainer.appendChild(dot);
         }
     }
@@ -313,7 +326,14 @@ function updateWaitingOpponentUI() {
         dotsContainer.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             const dot = document.createElement('span');
-            dot.className = `opp-progress-dot ${i < currentRankedOpponent.answeredIndex ? 'answered' : ''}`;
+            const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
+            if (state === true) {
+                dot.className = 'opp-progress-dot correct-dot';
+            } else if (state === false) {
+                dot.className = 'opp-progress-dot wrong-dot';
+            } else {
+                dot.className = 'opp-progress-dot pending-dot';
+            }
             dotsContainer.appendChild(dot);
         }
     }
@@ -328,9 +348,13 @@ function finishRankedMatchSession() {
     while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
         const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
         const timeBonus = Math.floor(Math.random() * 8) + 4;
+        if (!currentRankedOpponent.answersHistory) currentRankedOpponent.answersHistory = [];
         if (isCorrect) {
             currentRankedOpponent.correctCount++;
             currentRankedOpponent.score += (100 + timeBonus * 10);
+            currentRankedOpponent.answersHistory.push(true);
+        } else {
+            currentRankedOpponent.answersHistory.push(false);
         }
         currentRankedOpponent.answeredIndex++;
     }

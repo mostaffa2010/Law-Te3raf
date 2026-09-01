@@ -2414,15 +2414,27 @@ html, body {
 }
 
 .opp-progress-dot {
-    width: 10px;
-    height: 10px;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.opp-progress-dot.answered {
+.opp-progress-dot.correct-dot {
     background: var(--accent-green);
-    box-shadow: 0 0 6px var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    transform: scale(1.15);
+}
+
+.opp-progress-dot.wrong-dot {
+    background: var(--accent-red);
+    box-shadow: 0 0 8px var(--accent-red);
+    transform: scale(1.15);
+}
+
+.opp-progress-dot.pending-dot {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Ranked Result Screen */
