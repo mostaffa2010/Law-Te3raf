@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=52">
+    <link rel="stylesheet" href="./style.css?v=53">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -660,27 +660,27 @@
                 <i class="fa-solid fa-divide shop-icon"></i>
                 <h4>حذف إجابتين (50:50)</h4>
                 <p>مخزونك: <b id="inv-5050">0</b></p>
-                <button class="btn-buy" onclick="buyItem('hint5050', 20)"><i class="fa-solid fa-coins"></i> 20</button>
+                <button id="btn-buy-5050" class="btn-buy" onclick="buyItem('hint5050')"><i class="fa-solid fa-coins"></i> 20</button>
             </div>
 
             <div class="shop-card">
                 <i class="fa-solid fa-clock-rotate-left shop-icon"></i>
                 <h4>إضافة 10 ثواني</h4>
                 <p>مخزونك: <b id="inv-time">0</b></p>
-                <button class="btn-buy" onclick="buyItem('addTime', 15)"><i class="fa-solid fa-coins"></i> 15</button>
+                <button id="btn-buy-time" class="btn-buy" onclick="buyItem('addTime')"><i class="fa-solid fa-coins"></i> 15</button>
             </div>
 
             <div class="shop-card">
                 <i class="fa-solid fa-forward-step shop-icon"></i>
                 <h4>تخطي السؤال</h4>
                 <p>مخزونك: <b id="inv-skip">0</b></p>
-                <button class="btn-buy" onclick="buyItem('skip', 30)"><i class="fa-solid fa-coins"></i> 30</button>
+                <button id="btn-buy-skip" class="btn-buy" onclick="buyItem('skip')"><i class="fa-solid fa-coins"></i> 30</button>
             </div>
 
             <div class="shop-card free-reward-card">
                 <i class="fa-solid fa-gift shop-icon" style="color: #10b981;"></i>
                 <h4>هدية يومية مجانية</h4>
-                <p>احصل على 30 عملة ذهبية</p>
+                <p id="free-reward-desc">احصل على 30 عملة ذهبية</p>
                 <button id="claim-reward-btn" class="btn-buy free-btn" onclick="claimFreeReward()">استلام مجاناً</button>
             </div>
         </div>
@@ -892,18 +892,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=52"></script>
-    <script src="./js/audio.js?v=52"></script>
-    <script src="./js/questions-engine.js?v=52"></script>
-    <script src="./js/ranked.js?v=52"></script>
-    <script src="./js/effects.js?v=52"></script>
-    <script src="./js/game.js?v=52"></script>
-    <script src="./js/pvp.js?v=52"></script>
-    <script src="./js/community.js?v=52"></script>
-    <script src="./js/customization.js?v=52"></script>
-    <script src="./js/features.js?v=52"></script>
-    <script src="./js/auth-nav.js?v=52"></script>
-    <script src="./js/app.js?v=52"></script>
+    <script src="./js/config.js?v=53"></script>
+    <script src="./js/audio.js?v=53"></script>
+    <script src="./js/questions-engine.js?v=53"></script>
+    <script src="./js/ranked.js?v=53"></script>
+    <script src="./js/effects.js?v=53"></script>
+    <script src="./js/game.js?v=53"></script>
+    <script src="./js/pvp.js?v=53"></script>
+    <script src="./js/community.js?v=53"></script>
+    <script src="./js/customization.js?v=53"></script>
+    <script src="./js/features.js?v=53"></script>
+    <script src="./js/auth-nav.js?v=53"></script>
+    <script src="./js/app.js?v=53"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -921,7 +921,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=52')
+          navigator.serviceWorker.register('./sw.js?v=53')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -1140,18 +1140,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=52"></script>
-    <script src="./js/audio.js?v=52"></script>
-    <script src="./js/questions-engine.js?v=52"></script>
-    <script src="./js/ranked.js?v=52"></script>
-    <script src="./js/effects.js?v=52"></script>
-    <script src="./js/game.js?v=52"></script>
-    <script src="./js/pvp.js?v=52"></script>
-    <script src="./js/community.js?v=52"></script>
-    <script src="./js/customization.js?v=52"></script>
-    <script src="./js/features.js?v=52"></script>
-    <script src="./js/auth-nav.js?v=52"></script>
-    <script src="./js/app.js?v=52"></script>
+    <script src="./js/config.js?v=53"></script>
+    <script src="./js/audio.js?v=53"></script>
+    <script src="./js/questions-engine.js?v=53"></script>
+    <script src="./js/ranked.js?v=53"></script>
+    <script src="./js/effects.js?v=53"></script>
+    <script src="./js/game.js?v=53"></script>
+    <script src="./js/pvp.js?v=53"></script>
+    <script src="./js/community.js?v=53"></script>
+    <script src="./js/customization.js?v=53"></script>
+    <script src="./js/features.js?v=53"></script>
+    <script src="./js/auth-nav.js?v=53"></script>
+    <script src="./js/app.js?v=53"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -1169,7 +1169,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=52')
+          navigator.serviceWorker.register('./sw.js?v=53')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });

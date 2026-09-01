@@ -615,15 +615,27 @@ function updateShopDisplay() {
     }
 }
 
-function buyItem(itemKey, cost, quantity = 1) {
-    if ((userProgress.coins || 0) < cost) {
+function getShopItemPrice(itemKey) {
+    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
+    if (itemKey === 'hint5050') return p.hint5050 || 20;
+    if (itemKey === 'addTime') return p.addTime || 15;
+    if (itemKey === 'skip') return p.skip || 30;
+    if (itemKey === 'dailyFreeReward') return p.dailyFreeReward || 30;
+    if (itemKey === 'wheelExtraSpin') return p.wheelExtraSpin || 25;
+    return 20;
+}
+
+function buyItem(itemKey, cost = null, quantity = 1) {
+    const itemCost = (cost !== null) ? cost : getShopItemPrice(itemKey);
+
+    if ((userProgress.coins || 0) < itemCost) {
         showCustomAlert('رصيدك من العملات غير كافٍ!', 'تنبيه', '🪙');
         return;
     }
 
     if (!userProgress.inventory) userProgress.inventory = {};
 
-    userProgress.coins -= cost;
+    userProgress.coins -= itemCost;
     userProgress.inventory[itemKey] = (userProgress.inventory[itemKey] || 0) + quantity;
     userProgress.itemsPurchased = (userProgress.itemsPurchased || 0) + 1;
     

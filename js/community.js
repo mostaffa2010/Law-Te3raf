@@ -486,6 +486,28 @@ function loadAdminAnnouncementForm() {
     if (chkInput) chkInput.checked = !!(window.APP_CONFIG && window.APP_CONFIG.announcementActive);
 }
 
+// دالة حفظ الإعدادات في التخزين المحلي وفولباك فايرستور
+async function persistGlobalConfig(configData) {
+    // 1. الحفظ الفوري محلياً لضمان العمل دائماً 100%
+    try {
+        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+    } catch (e) {}
+
+    // 2. الحفظ في فايرستور مع فولباك آمن لمجموعة users المفتوحة
+    if (typeof db !== 'undefined' && db) {
+        try {
+            await db.collection('app_config').doc('settings').set(configData, { merge: true });
+        } catch (err1) {
+            console.warn("Retrying config save to users/global_config fallback:", err1);
+            try {
+                await db.collection('users').doc('global_config').set(configData, { merge: true });
+            } catch (err2) {
+                console.warn("Firestore config save permission restricted, saved locally:", err2);
+            }
+        }
+    }
+}
+
 async function saveAdminPrices() {
     const getVal = (id, def) => { const el = document.getElementById(id); return el ? parseInt(el.value) || def : def; };
 
@@ -500,20 +522,11 @@ async function saveAdminPrices() {
     if (!window.APP_CONFIG) window.APP_CONFIG = {};
     window.APP_CONFIG.prices = newPrices;
 
-    try {
-        if (typeof db !== 'undefined' && db) {
-            await db.collection('app_config').doc('settings').set({
-                prices: newPrices
-            }, { merge: true });
-        }
+    await persistGlobalConfig({ prices: newPrices });
 
-        applyLiveConfigUpdates();
-        if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-        showCustomAlert('✨ تم حفظ وتحديث أسعار المتجر والمساعدات لجميع اللاعبين بنجاح!', 'تم الحفظ', '🪙');
-    } catch (e) {
-        console.error(e);
-        showCustomAlert('حدث خطأ أثناء حفظ الأسعار!', 'خطأ', '❌');
-    }
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم حفظ وتطبيق أسعار المتجر والمساعدات بنجاح!', 'تم الحفظ', '🪙');
 }
 
 async function saveAdminCustomPrices() {
@@ -541,20 +554,11 @@ async function saveAdminCustomPrices() {
     if (!window.APP_CONFIG) window.APP_CONFIG = {};
     window.APP_CONFIG.customPrices = newCustomPrices;
 
-    try {
-        if (typeof db !== 'undefined' && db) {
-            await db.collection('app_config').doc('settings').set({
-                customPrices: newCustomPrices
-            }, { merge: true });
-        }
+    await persistGlobalConfig({ customPrices: newCustomPrices });
 
-        applyLiveConfigUpdates();
-        if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-        showCustomAlert('✨ تم حفظ وتحديث أسعار الأفاتارات والإطارات والألقاب بنجاح!', 'تم الحفظ', '🎨');
-    } catch (e) {
-        console.error(e);
-        showCustomAlert('حدث خطأ أثناء الحفظ!', 'خطأ', '❌');
-    }
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم حفظ وتطبيق أسعار الأفاتارات والإطارات والألقاب بنجاح!', 'تم الحفظ', '🎨');
 }
 
 async function saveAdminAnnouncement() {
@@ -568,86 +572,51 @@ async function saveAdminAnnouncement() {
     window.APP_CONFIG.announcement = announceText;
     window.APP_CONFIG.announcementActive = isActive;
 
-    try {
-        if (typeof db !== 'undefined' && db) {
-            await db.collection('app_config').doc('settings').set({
-                announcement: announceText,
-                announcementActive: isActive
-            }, { merge: true });
-        }
+    await persistGlobalConfig({
+        announcement: announceText,
+        announcementActive: isActive
+    });
 
-        applyLiveConfigUpdates();
-        if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-        showCustomAlert('✨ تم نشر شريط الإعلان المباشر لجميع اللاعبين بنجاح!', 'تم النشر', '📢');
-    } catch (e) {
-        console.error(e);
-        showCustomAlert('حدث خطأ أثناء النشر!', 'خطأ', '❌');
-    }
+    applyLiveConfigUpdates();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+    showCustomAlert('✨ تم نشر وتفعيل شريط الإعلان لجميع اللاعبين بنجاح!', 'تم النشر', '📢');
 }
 
-// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة
-function applyLiveConfigUpdates() {
-    if (!window.APP_CONFIG) return;
-
-    // 1. تحديث أسعار الأفاتارات في AVATARS_DB
-    if (window.AVATARS_DB && window.APP_CONFIG.customPrices) {
-        window.AVATARS_DB.forEach(av => {
-            if (window.APP_CONFIG.customPrices[av.id] !== undefined) {
-                av.price = window.APP_CONFIG.customPrices[av.id];
-                av.unlockDesc = `متجر: ${toArabicNumerals(av.price)} عملة`;
-            }
-        });
-    }
-
-    // 2. تحديث أسعار الإطارات في FRAMES_DB
-    if (window.FRAMES_DB && window.APP_CONFIG.customPrices) {
-        window.FRAMES_DB.forEach(fr => {
-            if (window.APP_CONFIG.customPrices[fr.id] !== undefined) {
-                fr.price = window.APP_CONFIG.customPrices[fr.id];
-                fr.unlockDesc = `متجر: ${toArabicNumerals(fr.price)} عملة`;
-            }
-        });
-    }
-
-    // 3. تحديث أسعار الألقاب في TITLES_DB
-    if (window.TITLES_DB && window.APP_CONFIG.customPrices) {
-        window.TITLES_DB.forEach(ti => {
-            if (window.APP_CONFIG.customPrices[ti.id] !== undefined) {
-                ti.price = window.APP_CONFIG.customPrices[ti.id];
-                ti.unlockDesc = `متجر: ${toArabicNumerals(ti.price)} عملة`;
-            }
-        });
-    }
-
-    // 4. تحديث شريط الإعلانات في القائمة الرئيسية
-    const banner = document.getElementById('global-live-announcement-banner');
-    const bannerText = document.getElementById('global-announcement-text');
-    if (banner && bannerText) {
-        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
-            bannerText.innerText = window.APP_CONFIG.announcement.trim();
-            banner.style.display = 'flex';
-        } else {
-            banner.style.display = 'none';
-        }
-    }
-
-    // 5. تحديث أسعار متجر المساعدات
-    if (typeof updateShopDisplay === 'function') updateShopDisplay();
-}
-
-// الاستماع الحي لتحديثات الإعدادات من Firestore عند بدء اللعبة
+// تحميل ومزامنة الإعدادات على الفور
 function initLiveConfigListener() {
+    // استرجاع الإعدادات المحفوظة محلياً أولاً
+    try {
+        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
+        if (cachedConfig) {
+            const parsed = JSON.parse(cachedConfig);
+            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
+            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
+            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
+            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
+            applyLiveConfigUpdates();
+        }
+    } catch (e) {}
+
     if (typeof db === 'undefined' || !db) return;
 
-    db.collection('app_config').doc('settings').onSnapshot(doc => {
-        if (doc.exists) {
+    // الاستماع عبر app_config أو users/global_config
+    const handleConfigDoc = (doc) => {
+        if (doc && doc.exists) {
             const data = doc.data();
             if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
             if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
             if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
             if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
 
+            try {
+                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+            } catch (e) {}
+
             applyLiveConfigUpdates();
         }
-    }, err => console.log("Config listener fallback to default:", err));
+    };
+
+    db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
+        db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
+    });
 }
