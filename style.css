@@ -1200,33 +1200,6 @@ html, body {
 }
 
 /* ==========================================
-   Categories Grid
-   ========================================== */
-.categories-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.category-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 18px;
-    padding: 20px 10px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.category-card i {
-    font-size: 32px;
-    margin-bottom: 10px;
-}
-
-.category-card h4 {
-    font-size: 0.95rem;
-}
-
-/* ==========================================
    Game Screen & Question Mechanics
    ========================================== */
 .game-top-bar {
@@ -2542,4 +2515,166 @@ html, body {
 .rk-wait-opp-info {
     display: flex;
     flex-direction: column;
+}
+
+
+/* ==========================================
+   Live Reactions System (8 Emojis & Floating Animation)
+   ========================================== */
+.floating-reactions-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99999;
+    overflow: hidden;
+}
+
+.floating-bubble {
+    position: absolute;
+    bottom: 80px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(22, 27, 34, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 6px 14px 6px 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    animation: floatReactionUp 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    pointer-events: none;
+}
+
+.floating-bubble.is-me {
+    right: 20px;
+    border-color: var(--accent-yellow);
+}
+
+.floating-bubble.is-opponent {
+    left: 20px;
+    border-color: var(--accent-pink);
+}
+
+.float-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.float-sender {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.float-emoji {
+    font-size: 1.8rem;
+    animation: popBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes floatReactionUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.6);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.1);
+    }
+    30% {
+        transform: translateY(-50px) scale(1);
+    }
+    75% {
+        opacity: 1;
+        transform: translateY(-160px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-240px) scale(0.7);
+    }
+}
+
+@keyframes popBounce {
+    0% { transform: scale(0.3); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+/* Reactions Dock */
+.reactions-dock {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 12px) + 12px);
+    right: 15px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-toggle-reactions {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-toggle-reactions:active {
+    transform: scale(0.92);
+}
+
+.react-hint-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-yellow);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+.reactions-drawer {
+    display: none;
+    background: rgba(22, 27, 34, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-purple);
+    border-radius: 24px;
+    padding: 6px 10px;
+    gap: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    animation: popIn 0.25s ease;
+}
+
+.reactions-drawer.open {
+    display: flex;
+}
+
+.btn-emoji {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 12px;
+    transition: transform 0.15s ease, background-color 0.15s;
+    line-height: 1;
+}
+
+.btn-emoji:active {
+    transform: scale(1.3);
+    background: rgba(255, 255, 255, 0.1);
 }

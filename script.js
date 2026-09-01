@@ -957,48 +957,7 @@ function startEndlessMode() {
     loadQuestion();
 }
 
-function openCategoriesScreen() {
-    const grid = document.getElementById('categories-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
 
-    const bank = getActiveQuestionsBank();
-    const categories = [...new Set(bank.map(q => q.category))];
-
-    categories.forEach(cat => {
-        const style = CATEGORY_STYLES[cat] || { icon: 'fa-solid fa-shapes', color: 'var(--accent-purple)' };
-        const card = document.createElement('div');
-        card.className = 'category-card';
-        card.innerHTML = `
-            <i class="${style.icon}" style="color: ${style.color};"></i>
-            <h4>${cat}</h4>
-        `;
-        card.onclick = () => startCategoryMode(cat);
-        grid.appendChild(card);
-    });
-
-    switchScreen('categories-screen');
-}
-
-function startCategoryMode(cat) {
-    gameState.mode = 'category';
-    gameState.selectedCategory = cat;
-    gameState.currentIndex = 0;
-    gameState.correctCount = 0;
-    gameState.wrongCount = 0;
-    gameState.lives = 3;
-    gameState.score = 0;
-    gameState.usedPowerupInSession = false;
-    gameState.sessionCorrectStreak = 0;
-    gameState.sessionMistakes = [];
-
-    const pwrBar = document.getElementById('game-powerups-bar');
-    if (pwrBar) pwrBar.style.display = 'flex';
-
-    gameState.questions = getSmartQuestions(10, cat);
-    switchScreen('game-screen');
-    loadQuestion();
-}
 
 function checkDailyStatus() {
     const badge = document.getElementById('daily-status-badge');
@@ -1084,6 +1043,11 @@ function loadQuestion() {
     renderLivesDisplay();
     startTimer();
     updatePowerupButtons();
+
+    const reactDock = document.getElementById('game-reactions-dock');
+    if (reactDock) {
+        reactDock.style.display = (gameState.mode === 'pvp' || gameState.mode === 'ranked') ? 'flex' : 'none';
+    }
 
     const optionsGrid = document.getElementById('options-grid');
     optionsGrid.innerHTML = '';
@@ -1232,6 +1196,8 @@ function proceedNext() {
 }
 
 async function finishGameSession() {
+    const reactDock = document.getElementById('game-reactions-dock');
+    if (reactDock) reactDock.style.display = 'none';
     if (gameState.mode === 'ranked') {
         const oppWidget = document.getElementById('game-ranked-opp-bar');
         if (oppWidget) oppWidget.style.display = 'none';
@@ -1307,14 +1273,7 @@ async function finishGameSession() {
             resultTitle.innerText = 'فاتتك فرصة اليوم';
             resultMessage.innerText = 'حاولت في التحدي ولكن لم تصل لـ 7 إجابات صحيحة.';
         }
-    } else if (gameState.mode === 'category') {
-        if (gameState.correctCount >= 7 && typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-        else if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
-
-        resultIcon.innerText = '🎯';
-        resultTitle.innerText = 'انتهى التدريب!';
-        resultMessage.innerText = `أجبت على ${gameState.correctCount} من 10 في قسم ${gameState.selectedCategory}.`;
-    }
+    } 
 
     saveProgress();
     checkAllAchievements();
@@ -1353,7 +1312,7 @@ function openReviewScreen() {
 
 function restartGame() {
     if (gameState.mode === 'endless') startEndlessMode();
-    else if (gameState.mode === 'category') startCategoryMode(gameState.selectedCategory);
+    
     else switchScreen('modes-screen');
 }
 
@@ -1639,6 +1598,14 @@ function listenToPvpRoom(code) {
             });
         }
 
+        if (data.lastReaction && data.lastReaction.id !== lastSeenReactionId) {
+            lastSeenReactionId = data.lastReaction.id;
+            const isMe = (currentUser && data.lastReaction.senderUid === currentUser.uid);
+            if (!isMe) {
+                showFloatingReaction(data.lastReaction.emoji, data.lastReaction.senderName, data.lastReaction.senderAvatar, false);
+            }
+        }
+
         if (data.status === 'starting') {
             triggerPvpCountdown(data);
         }
@@ -1879,6 +1846,87 @@ function selectPvpCategory(catId, catLabel) {
     if (triggerLabel) triggerLabel.innerText = catLabel;
 
     closePvpCategoryModal();
+}
+
+
+// --- محرك التفاعلات والرياكشنات الحية ---
+let lastSentReactionTime = 0;
+let lastSeenReactionId = null;
+
+function toggleReactionsDrawer() {
+    const drawer = document.getElementById('reactions-drawer');
+    if (!drawer) return;
+    drawer.classList.toggle('open');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function sendLiveReaction(emoji) {
+    const now = Date.now();
+    if (now - lastSentReactionTime < 1000) {
+        return; // منع السبام (Cooldown 1 ثانية)
+    }
+    lastSentReactionTime = now;
+
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+
+    const myName = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'أنت';
+    const myAvatar = (currentUser && currentUser.photoURL) || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+
+    // إظهار الرياكشن محلياً للمستخدم فوراً
+    showFloatingReaction(emoji, myName, myAvatar, true);
+
+    // إغلاق الدرج بعد الاختيار
+    const drawer = document.getElementById('reactions-drawer');
+    if (drawer) drawer.classList.remove('open');
+
+    // إرسال للغرفة في Firebase إذا كان في مود PvP
+    if (gameState.mode === 'pvp' && gameState.pvpRoomId && db) {
+        const reactionObj = {
+            id: now + '_' + Math.random().toString(36).substr(2, 5),
+            emoji: emoji,
+            senderUid: currentUser ? currentUser.uid : 'anon',
+            senderName: myName,
+            senderAvatar: myAvatar,
+            timestamp: now
+        };
+
+        db.collection('pvp_rooms').doc(gameState.pvpRoomId).update({
+            lastReaction: reactionObj
+        }).catch(() => {});
+    }
+
+    // تفاعل المنافس الذكي في مود الرانك
+    if (gameState.mode === 'ranked' && typeof currentRankedOpponent !== 'undefined' && currentRankedOpponent) {
+        if (Math.random() > 0.35) {
+            const botReactions = ['🔥', '👏', '😂', '🎯', '😱', '🧠'];
+            const randomReaction = botReactions[Math.floor(Math.random() * botReactions.length)];
+            setTimeout(() => {
+                showFloatingReaction(randomReaction, currentRankedOpponent.name, currentRankedOpponent.avatar, false);
+            }, 1200 + Math.random() * 1500);
+        }
+    }
+}
+
+function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
+    const container = document.getElementById('floating-reactions-box');
+    if (!container) return;
+
+    const bubble = document.createElement('div');
+    bubble.className = `floating-bubble ${isMe ? 'is-me' : 'is-opponent'}`;
+    bubble.innerHTML = `
+        <img class="float-avatar" src="${senderAvatar}" alt="${senderName}">
+        <span class="float-sender">${senderName}</span>
+        <span class="float-emoji">${emoji}</span>
+    `;
+
+    container.appendChild(bubble);
+
+    // إزالة العنصر بعد انتهاء الأنيميشن
+    setTimeout(() => {
+        if (bubble && bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 2800);
 }
 
 
@@ -2641,7 +2689,7 @@ function handleNavigationBack() {
         switchScreen('modes-screen', false);
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
-    } else if (current === 'categories-screen' || current === 'result-screen') {
+    } else if (current === 'result-screen') {
         switchScreen('modes-screen', false);
     } else if (current === 'review-screen') {
         switchScreen('result-screen', false);

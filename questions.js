@@ -777,5 +777,230 @@ const questionsBank = [
     options: ["أودي (Audi)", "فولكس فاجن", "أوبل", "بورشه"],
     correct: 0,
     image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2442,
+    category: "جغرافيا",
+    difficulty: 2,
+    question: "ما اسم برج الساعة التاريخي الشهير الواقع في العاصمة البريطانية لندن؟",
+    options: ["ساعة بيغ بن", "برج إليزابيث", "برج لندن", "ساعة مكة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2443,
+    category: "جغرافيا",
+    difficulty: 3,
+    question: "ما اسم هذا المبنى المعماري الشهير بتصميمه الشراعي في أستراليا؟",
+    options: ["دار أوبرا سيدني", "متحف اللوفر", "برج العرب", "متحف غوغنهايم"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1523428096881-5cb799f6990f?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2444,
+    category: "جغرافيا",
+    difficulty: 1,
+    question: "إلى أي دولة آسيوية ينتمي هذا العلم الذي يتوسطه قرص أحمر؟",
+    options: ["الصين", "اليابان", "كوريا الجنوبية", "فيتنام"],
+    correct: 1,
+    image: "https://flagcdn.com/w640/jp.png"
+  },
+  {
+    id: 2445,
+    category: "جغرافيا",
+    difficulty: 2,
+    question: "هذا العلم المكون من ثلاثة ألوان أفقية (أسود، أحمر، ذهبي) هو علم أي دولة؟",
+    options: ["بلجيكا", "ألمانيا", "النمسا", "هولندا"],
+    correct: 1,
+    image: "https://flagcdn.com/w640/de.png"
+  },
+  {
+    id: 2446,
+    category: "تاريخ",
+    difficulty: 5,
+    question: "ما اسم مدينة الإنكا التاريخية الضائعة المشيدة فوق قمم جبال الأنديز في بيرو؟",
+    options: ["ماتشو بيتشو", "تشيتشن إيتزا", "تيوتيهواكان", "البتراء"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2447,
+    category: "تاريخ",
+    difficulty: 6,
+    question: "ما اسم هرم حضارة المايا الشهير (إل كاستيو) الواقع في المكسيك؟",
+    options: ["تشيتشن إيتزا", "هرم تيكال", "هرم سقارة", "معبد الشمس"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1518638150340-f706e86654de?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2448,
+    category: "علوم وفضاء",
+    difficulty: 1,
+    question: "ما اسم الكوكب الأزرق الذي نعيش عليه كما يبدو من الفضاء الخارجي؟",
+    options: ["الأرض", "نبتون", "أورانوس", "الزهرة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2449,
+    category: "علوم وفضاء",
+    difficulty: 1,
+    question: "ما هو هذا الجرم السماوي وهو التابع الطبيعي الوحيد لكوكب الأرض؟",
+    options: ["القمر", "تيتان", "غانيميد", "فوبوس"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1532693322450-2cb5c511067d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2450,
+    category: "طبيعة وحيوانات",
+    difficulty: 2,
+    question: "ما اسم هذا السنور الكبير المخطط وهو أضخم أنواع فصيلة القطط؟",
+    options: ["النمر (ببر)", "الأسد", "الفهد", "اليغور"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2451,
+    category: "طبيعة وحيوانات",
+    difficulty: 1,
+    question: "ما هو هذا الحيوان الثديي وهو أضخم حيوان بري يعيش على اليابسة؟",
+    options: ["الفيل الإفريقي", "فرس النهر", "وحيد القرن", "الزرافة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2452,
+    category: "طبيعة وحيوانات",
+    difficulty: 2,
+    question: "ما اسم هذا الزاحف الشهير بقدرته المذهلة على تغيير ألوان جلده للتمويه؟",
+    options: ["الحرباء", "الضفدع الشجري", "الإغوانا", "البرص"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2453,
+    category: "سينما وفن",
+    difficulty: 4,
+    question: "ما اسم هذه اللوحة التعبيرية العالمية الشهيرة للرسام النرويجي إدفارد مونك؟",
+    options: ["الصرخة", "الموناليزا", "غرنيكا", "العشاء الأخير"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2454,
+    category: "سينما وفن",
+    difficulty: 5,
+    question: "ما اسم هذا التمثال البرونزي الشهير للنحات الفرنسي أوغست رودان؟",
+    options: ["تمثال المفكر", "تمثال داود", "تمثال أبو الهول", "تمثال فينوس"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2455,
+    category: "إسلاميات",
+    difficulty: 1,
+    question: "في أي مدينة سعودية يقع المسجد النبوي الشريف ذو القبة الخضراء؟",
+    options: ["المدينة المنورة", "مكة المكرمة", "الرياض", "جدة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2456,
+    category: "إسلاميات",
+    difficulty: 3,
+    question: "ما اسم هذا الصرح والجامع الإسلامي العريق الذي بني في العصر الفاطمي بالقاهرة؟",
+    options: ["الجامع الأزهر", "جامع عمرو بن العاص", "جامع السلطان حسن", "قلعة قايتباي"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2457,
+    category: "رياضة وكورة",
+    difficulty: 1,
+    question: "أي رياضة جماعية عالمية تُلعب باستخدام هذه الكرة داخل ملعب عشبي؟",
+    options: ["كرة القدم", "كرة السلة", "كرة اليد", "الكرة الطائرة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2458,
+    category: "رياضة وكورة",
+    difficulty: 2,
+    question: "ما هي هذه اللعبة المضربية الفردية التي تُلعب على ملاعب ويمبلدون ورولان غاروس؟",
+    options: ["كرة المضرب (التنس)", "تنس الطاولة", "الريشة الطائرة", "الاسكواش"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2459,
+    category: "تكنولوجيا وألعاب",
+    difficulty: 1,
+    question: "ما اسم منصة الألعاب الشهيرة التابعة لشركة سوني (Sony) والتي تعود لها هذه الذراع؟",
+    options: ["بلايستيشن (PlayStation)", "إكس بوكس (Xbox)", "نينتندو سويتش", "سيجا"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2460,
+    category: "تكنولوجيا وألعاب",
+    difficulty: 2,
+    question: "ما اسم الحاسوب المحمول الأيقوني الذي تصنعه شركة آبل؟",
+    options: ["ماك بوك (MacBook)", "ثينك باد", "سيرفس برو", "كروم بوك"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2461,
+    category: "سيارات ومحركات",
+    difficulty: 3,
+    question: "ما هي شركة السيارات الخارقة الإيطالية الشهيرة صاحبة طرازات هوراكان وأفنتادور؟",
+    options: ["لامبورغيني", "فيراري", "مازيراتي", "بورشه"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2462,
+    category: "سيارات ومحركات",
+    difficulty: 2,
+    question: "هذا الشعار الدائري الأزرق والأبيض يعود لأي شركة سيارات ألمانية شهيرة؟",
+    options: ["بي إم دبليو (BMW)", "مرسيدس-بنز", "أودي", "فولكس فاجن"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1555353540-64580b51c258?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2463,
+    category: "معلومات عامة",
+    difficulty: 2,
+    question: "ما اسم أول وأشهر عملة رقمية مشفرة في العالم ظهرت عام 2009؟",
+    options: ["بيتكوين (Bitcoin)", "إيثريوم", "تيذر", "ريبل"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2464,
+    category: "جغرافيا",
+    difficulty: 3,
+    question: "ما هي القارة الجليدية المتجمدة الواقعة في أقصى جنوب الكرة الأرضية؟",
+    options: ["أنتاركتيكا (القارة القطبية الجنوبية)", "جرينلاند", "أيسلندا", "ألاسكا"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2465,
+    category: "معلومات عامة",
+    difficulty: 1,
+    question: "ما هي هذه المادة الغذائية الأساسية المصنوعة من القمح والتي تعد قوام المخبوزات؟",
+    options: ["الخبز", "الأرز", "الذرة", "الشوفان"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2466,
+    category: "علوم وفضاء",
+    difficulty: 6,
+    question: "ما اسم هذا التجمع الهائل من النجوم والغازات والغبار الكوني في الفضاء؟",
+    options: ["السديم (Nebula)", "المذنب", "الكويكب", "الثقب الأسود"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=600&q=80"
   }
 ];

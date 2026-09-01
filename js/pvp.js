@@ -176,6 +176,14 @@ function listenToPvpRoom(code) {
             });
         }
 
+        if (data.lastReaction && data.lastReaction.id !== lastSeenReactionId) {
+            lastSeenReactionId = data.lastReaction.id;
+            const isMe = (currentUser && data.lastReaction.senderUid === currentUser.uid);
+            if (!isMe) {
+                showFloatingReaction(data.lastReaction.emoji, data.lastReaction.senderName, data.lastReaction.senderAvatar, false);
+            }
+        }
+
         if (data.status === 'starting') {
             triggerPvpCountdown(data);
         }
@@ -416,4 +424,85 @@ function selectPvpCategory(catId, catLabel) {
     if (triggerLabel) triggerLabel.innerText = catLabel;
 
     closePvpCategoryModal();
+}
+
+
+// --- محرك التفاعلات والرياكشنات الحية ---
+let lastSentReactionTime = 0;
+let lastSeenReactionId = null;
+
+function toggleReactionsDrawer() {
+    const drawer = document.getElementById('reactions-drawer');
+    if (!drawer) return;
+    drawer.classList.toggle('open');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function sendLiveReaction(emoji) {
+    const now = Date.now();
+    if (now - lastSentReactionTime < 1000) {
+        return; // منع السبام (Cooldown 1 ثانية)
+    }
+    lastSentReactionTime = now;
+
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+
+    const myName = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'أنت';
+    const myAvatar = (currentUser && currentUser.photoURL) || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+
+    // إظهار الرياكشن محلياً للمستخدم فوراً
+    showFloatingReaction(emoji, myName, myAvatar, true);
+
+    // إغلاق الدرج بعد الاختيار
+    const drawer = document.getElementById('reactions-drawer');
+    if (drawer) drawer.classList.remove('open');
+
+    // إرسال للغرفة في Firebase إذا كان في مود PvP
+    if (gameState.mode === 'pvp' && gameState.pvpRoomId && db) {
+        const reactionObj = {
+            id: now + '_' + Math.random().toString(36).substr(2, 5),
+            emoji: emoji,
+            senderUid: currentUser ? currentUser.uid : 'anon',
+            senderName: myName,
+            senderAvatar: myAvatar,
+            timestamp: now
+        };
+
+        db.collection('pvp_rooms').doc(gameState.pvpRoomId).update({
+            lastReaction: reactionObj
+        }).catch(() => {});
+    }
+
+    // تفاعل المنافس الذكي في مود الرانك
+    if (gameState.mode === 'ranked' && typeof currentRankedOpponent !== 'undefined' && currentRankedOpponent) {
+        if (Math.random() > 0.35) {
+            const botReactions = ['🔥', '👏', '😂', '🎯', '😱', '🧠'];
+            const randomReaction = botReactions[Math.floor(Math.random() * botReactions.length)];
+            setTimeout(() => {
+                showFloatingReaction(randomReaction, currentRankedOpponent.name, currentRankedOpponent.avatar, false);
+            }, 1200 + Math.random() * 1500);
+        }
+    }
+}
+
+function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
+    const container = document.getElementById('floating-reactions-box');
+    if (!container) return;
+
+    const bubble = document.createElement('div');
+    bubble.className = `floating-bubble ${isMe ? 'is-me' : 'is-opponent'}`;
+    bubble.innerHTML = `
+        <img class="float-avatar" src="${senderAvatar}" alt="${senderName}">
+        <span class="float-sender">${senderName}</span>
+        <span class="float-emoji">${emoji}</span>
+    `;
+
+    container.appendChild(bubble);
+
+    // إزالة العنصر بعد انتهاء الأنيميشن
+    setTimeout(() => {
+        if (bubble && bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 2800);
 }

@@ -131,7 +131,7 @@ function handleNavigationBack() {
         switchScreen('modes-screen', false);
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
-    } else if (current === 'categories-screen' || current === 'result-screen') {
+    } else if (current === 'result-screen') {
         switchScreen('modes-screen', false);
     } else if (current === 'review-screen') {
         switchScreen('result-screen', false);

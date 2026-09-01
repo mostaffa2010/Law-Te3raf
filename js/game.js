@@ -20,48 +20,7 @@ function startEndlessMode() {
     loadQuestion();
 }
 
-function openCategoriesScreen() {
-    const grid = document.getElementById('categories-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
 
-    const bank = getActiveQuestionsBank();
-    const categories = [...new Set(bank.map(q => q.category))];
-
-    categories.forEach(cat => {
-        const style = CATEGORY_STYLES[cat] || { icon: 'fa-solid fa-shapes', color: 'var(--accent-purple)' };
-        const card = document.createElement('div');
-        card.className = 'category-card';
-        card.innerHTML = `
-            <i class="${style.icon}" style="color: ${style.color};"></i>
-            <h4>${cat}</h4>
-        `;
-        card.onclick = () => startCategoryMode(cat);
-        grid.appendChild(card);
-    });
-
-    switchScreen('categories-screen');
-}
-
-function startCategoryMode(cat) {
-    gameState.mode = 'category';
-    gameState.selectedCategory = cat;
-    gameState.currentIndex = 0;
-    gameState.correctCount = 0;
-    gameState.wrongCount = 0;
-    gameState.lives = 3;
-    gameState.score = 0;
-    gameState.usedPowerupInSession = false;
-    gameState.sessionCorrectStreak = 0;
-    gameState.sessionMistakes = [];
-
-    const pwrBar = document.getElementById('game-powerups-bar');
-    if (pwrBar) pwrBar.style.display = 'flex';
-
-    gameState.questions = getSmartQuestions(10, cat);
-    switchScreen('game-screen');
-    loadQuestion();
-}
 
 function checkDailyStatus() {
     const badge = document.getElementById('daily-status-badge');
@@ -147,6 +106,11 @@ function loadQuestion() {
     renderLivesDisplay();
     startTimer();
     updatePowerupButtons();
+
+    const reactDock = document.getElementById('game-reactions-dock');
+    if (reactDock) {
+        reactDock.style.display = (gameState.mode === 'pvp' || gameState.mode === 'ranked') ? 'flex' : 'none';
+    }
 
     const optionsGrid = document.getElementById('options-grid');
     optionsGrid.innerHTML = '';
@@ -295,6 +259,8 @@ function proceedNext() {
 }
 
 async function finishGameSession() {
+    const reactDock = document.getElementById('game-reactions-dock');
+    if (reactDock) reactDock.style.display = 'none';
     if (gameState.mode === 'ranked') {
         const oppWidget = document.getElementById('game-ranked-opp-bar');
         if (oppWidget) oppWidget.style.display = 'none';
@@ -370,14 +336,7 @@ async function finishGameSession() {
             resultTitle.innerText = 'فاتتك فرصة اليوم';
             resultMessage.innerText = 'حاولت في التحدي ولكن لم تصل لـ 7 إجابات صحيحة.';
         }
-    } else if (gameState.mode === 'category') {
-        if (gameState.correctCount >= 7 && typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-        else if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
-
-        resultIcon.innerText = '🎯';
-        resultTitle.innerText = 'انتهى التدريب!';
-        resultMessage.innerText = `أجبت على ${gameState.correctCount} من 10 في قسم ${gameState.selectedCategory}.`;
-    }
+    } 
 
     saveProgress();
     checkAllAchievements();
@@ -416,7 +375,7 @@ function openReviewScreen() {
 
 function restartGame() {
     if (gameState.mode === 'endless') startEndlessMode();
-    else if (gameState.mode === 'category') startCategoryMode(gameState.selectedCategory);
+    
     else switchScreen('modes-screen');
 }
 
