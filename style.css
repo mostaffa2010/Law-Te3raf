@@ -3359,3 +3359,31 @@ html, body {
     cursor: pointer;
     padding: 4px;
 }
+
+
+/* Ranked Card Header Clean Layout */
+.ranked-header-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.btn-rank-info-clean {
+    background: transparent;
+    border: none;
+    color: var(--accent-yellow);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, color 0.15s;
+    line-height: 1;
+}
+
+.btn-rank-info-clean:active {
+    transform: scale(1.2);
+    color: #fbbf24;
+}

@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=33">
+    <link rel="stylesheet" href="./style.css?v=34">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -216,21 +216,23 @@
         </div>
 
         <div class="modes-container">
-                                <div class="mode-card ranked-mode" onclick="startRankedMatchmaking()">
+                                            <div class="mode-card ranked-mode" onclick="startRankedMatchmaking()">
                 <div class="mode-icon ranked-icon-wrap">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
                 <div class="mode-info">
-                    <div class="ranked-card-title-row">
+                    <div class="ranked-header-flex">
                         <h4>مباراة التصنيف 1v1 👑</h4>
-                        <button class="btn-info-circle-rank" onclick="event.stopPropagation(); openRankedInfoModal();" title="تفاصيل الدوريات والمواسم"><i class="fa-solid fa-circle-info"></i></button>
+                        <button class="btn-rank-info-clean" onclick="event.stopPropagation(); openRankedInfoModal();" title="تفاصيل الدوريات والمواسم">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </button>
                     </div>
                     <p>نافس لاعبين في نفس مستواك، اجمع النجوم، واصعد لقمة الدوريات!</p>
                 </div>
-                <div class="ranked-badge-tag" id="modes-current-rank-tag">الحديدي</div>
+                <div class="ranked-badge-tag" id="modes-current-rank-tag">الحديدي ٣ (0 ⭐)</div>
             </div>
 
-<div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
+            <div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
                 <div class="mode-icon pvp-icon-wrap">
                     <i class="fa-solid fa-users-rays"></i>
                 </div>
@@ -415,15 +417,11 @@
 
     
 
-        <div class="levels-scroll-container">
-            <div id="levels-grid" class="levels-grid"></div>
-        </div>
-    </div>
+        
 
     
 
-        <div id="categories-grid" class="categories-grid"></div>
-    </div>
+        
 
         <!-- شاشة اللعب والأسئلة -->
     <div id="game-screen" class="screen">
@@ -705,16 +703,17 @@
         </div>
     </div>
 
-    <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=30"></script>
-    <script src="./js/audio.js?v=30"></script>
-    <script src="./js/questions-engine.js?v=30"></script>
-    <script src="./js/ranked.js?v=30"></script>
-    <script src="./js/game.js?v=30"></script>
-    <script src="./js/pvp.js?v=30"></script>
-    <script src="./js/features.js?v=30"></script>
-    <script src="./js/auth-nav.js?v=30"></script>
-    <script src="./js/app.js?v=30"></script>
+        <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
+    <script src="./js/config.js?v=34"></script>
+    <script src="./js/audio.js?v=34"></script>
+    <script src="./js/questions-engine.js?v=34"></script>
+    <script src="./js/ranked.js?v=34"></script>
+    <script src="./js/game.js?v=34"></script>
+    <script src="./js/pvp.js?v=34"></script>
+    <script src="./js/customization.js?v=34"></script>
+    <script src="./js/features.js?v=34"></script>
+    <script src="./js/auth-nav.js?v=34"></script>
+    <script src="./js/app.js?v=34"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
