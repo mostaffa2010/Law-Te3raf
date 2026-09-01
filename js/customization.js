@@ -26,7 +26,7 @@ var AVATARS_DB = window.AVATARS_DB = [
     { id: 'av_falcon', name: 'صقر الأساطير', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: './assets/avatars/avatar_falcon.svg', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
     { id: 'av_lightning', name: 'سيد الصاعقة والبرق', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: './assets/avatars/avatar_lightning.svg', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
     { id: 'av_warlord', name: 'بطل التحديات والرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: './assets/avatars/avatar_champion.svg', unlockDesc: 'إنجاز: 100 فوز بالرانك' },
-    { id: 'av_cosmic_god', name: 'كيان الكون الأسطوري', type: 'rank', reqRankTier: 'challenger', src: './assets/avatars/avatar_cosmic_god.svg', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'av_cosmic_god', name: 'كيان الكون الأسطوري', type: 'rank', reqRankTier: 'challenger', src: './assets/avatars/avatar_cosmic_god.svg', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
 // قائمة الإطارات المزخرفة الأصلية (Ornate SVG Frame Overlays)
@@ -61,7 +61,7 @@ var TITLES_DB = window.TITLES_DB = [
     { id: 'title_encyclopedia', title: 'موسوعة المعرفة', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
     { id: 'title_invincible', title: 'عقل لا يُقهر', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
     { id: 'title_champion', title: 'بطل الأبطال', type: 'rank', reqRankTier: 'master', unlockDesc: 'بلوغ دوري أستاذ' },
-    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
 let activeProfileTab = 'stats';

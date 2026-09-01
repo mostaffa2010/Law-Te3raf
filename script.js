@@ -778,7 +778,7 @@ function showRankedVersusScreen(opponent) {
 
 function launchRankedGameSession() {
     gameState.mode = 'ranked';
-    gameState.questions = getSmartQuestions(5); // 5 أسئلة سريعة ومكثفة
+    gameState.questions = getSmartQuestions(10); // 5 أسئلة سريعة ومكثفة
     gameState.currentIndex = 0;
     gameState.correctCount = 0;
     gameState.wrongCount = 0;
@@ -812,7 +812,7 @@ function startOpponentSimulation() {
     clearTimeout(opponentSimTimeout);
 
     function scheduleNextOpponentAnswer() {
-        if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) {
+        if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 10) {
             if (isPlayerWaitingForOpponent) {
                 setTimeout(finishRankedMatchSession, 600);
             }
@@ -822,7 +822,7 @@ function startOpponentSimulation() {
         const answerDelay = (currentRankedOpponent.minAnswerTime + Math.random() * (currentRankedOpponent.maxAnswerTime - currentRankedOpponent.minAnswerTime)) * 1000;
 
         opponentSimTimeout = setTimeout(() => {
-            if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) return;
+            if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 10) return;
 
             const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
             const timeBonus = Math.floor(Math.random() * 8) + 4;
@@ -844,7 +844,7 @@ function startOpponentSimulation() {
                 updateWaitingOpponentUI();
             }
 
-            if (currentRankedOpponent.answeredIndex < 5) {
+            if (currentRankedOpponent.answeredIndex < 10) {
                 scheduleNextOpponentAnswer();
             } else if (isPlayerWaitingForOpponent) {
                 setTimeout(finishRankedMatchSession, 800);
@@ -869,7 +869,7 @@ function updateRankedOpponentUI() {
 
     if (dotsContainer) {
         dotsContainer.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             const dot = document.createElement('span');
             const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
             if (state === true) {
@@ -895,12 +895,12 @@ function updateWaitingOpponentUI() {
     if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
     if (oppAvatarElem) oppAvatarElem.src = currentRankedOpponent.avatar;
     if (oppStatusElem) {
-        oppStatusElem.innerText = `أجاب على ${currentRankedOpponent.answeredIndex} من 5 أسئلة (${currentRankedOpponent.score} نقطة)...`;
+        oppStatusElem.innerText = `أجاب على ${currentRankedOpponent.answeredIndex} من 10 أسئلة (${currentRankedOpponent.score} نقطة)...`;
     }
 
     if (dotsContainer) {
         dotsContainer.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             const dot = document.createElement('span');
             const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
             if (state === true) {
@@ -920,7 +920,7 @@ function finishRankedMatchSession() {
     clearTimeout(opponentSimTimeout);
     isPlayerWaitingForOpponent = false;
 
-    while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+    while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
         if (!currentRankedOpponent.answersHistory) currentRankedOpponent.answersHistory = [];
         const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
         const timeBonus = Math.floor(Math.random() * 8) + 4;
@@ -957,7 +957,7 @@ function finishRankedMatchSession() {
         const starsEarned = winStreakBonus ? 2 : 1;
 
         if (rankBefore.isApex) {
-            // رتب النخبة (أستاذ، أستاذ أعظم، تشالنجر) تعتمد على نقاط الـ LP
+            // رتب النخبة (أستاذ، أستاذ أعظم، متحدي) تعتمد على نقاط الـ LP
             const lpGain = Math.floor(Math.random() * 10) + 25; // +25 إلى +35 LP
             userProgress.rankLP = (userProgress.rankLP || 0) + lpGain;
             userProgress.rankStars = (userProgress.rankStars || 0) + 1;
@@ -1057,8 +1057,8 @@ function renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, 
         subElem.innerText = `حاول مرة أخرى وركز في السرعة والدقة للتعويض!`;
     }
 
-    if (myScoreElem) myScoreElem.innerText = `${gameState.score} نقطة (${gameState.correctCount}/5)`;
-    if (oppScoreElem) oppScoreElem.innerText = `${currentRankedOpponent.score} نقطة (${currentRankedOpponent.correctCount}/5)`;
+    if (myScoreElem) myScoreElem.innerText = `${gameState.score} نقطة (${gameState.correctCount}/10)`;
+    if (oppScoreElem) oppScoreElem.innerText = `${currentRankedOpponent.score} نقطة (${currentRankedOpponent.correctCount}/10)`;
     if (oppAvatarElem) oppAvatarElem.src = currentRankedOpponent.avatar;
     if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
 
@@ -1394,7 +1394,7 @@ async function finishGameSession() {
         if (oppWidget) oppWidget.style.display = 'none';
 
         // فحص هل المنافس أنهى أسئلته الـ 5 كاملة أم لا يزال يجاوب
-        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
             isPlayerWaitingForOpponent = true;
             updateWaitingOpponentUI();
             switchScreen('ranked-waiting-opponent-screen', false);
@@ -2155,7 +2155,7 @@ var AVATARS_DB = window.AVATARS_DB = [
     { id: 'av_falcon', name: 'صقر الأساطير', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: './assets/avatars/avatar_falcon.svg', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
     { id: 'av_lightning', name: 'سيد الصاعقة والبرق', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: './assets/avatars/avatar_lightning.svg', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
     { id: 'av_warlord', name: 'بطل التحديات والرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: './assets/avatars/avatar_champion.svg', unlockDesc: 'إنجاز: 100 فوز بالرانك' },
-    { id: 'av_cosmic_god', name: 'كيان الكون الأسطوري', type: 'rank', reqRankTier: 'challenger', src: './assets/avatars/avatar_cosmic_god.svg', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'av_cosmic_god', name: 'كيان الكون الأسطوري', type: 'rank', reqRankTier: 'challenger', src: './assets/avatars/avatar_cosmic_god.svg', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
 // قائمة الإطارات المزخرفة الأصلية (Ornate SVG Frame Overlays)
@@ -2190,7 +2190,7 @@ var TITLES_DB = window.TITLES_DB = [
     { id: 'title_encyclopedia', title: 'موسوعة المعرفة', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
     { id: 'title_invincible', title: 'عقل لا يُقهر', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
     { id: 'title_champion', title: 'بطل الأبطال', type: 'rank', reqRankTier: 'master', unlockDesc: 'بلوغ دوري أستاذ' },
-    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
 let activeProfileTab = 'stats';

@@ -287,7 +287,7 @@ async function finishGameSession() {
         if (oppWidget) oppWidget.style.display = 'none';
 
         // فحص هل المنافس أنهى أسئلته الـ 5 كاملة أم لا يزال يجاوب
-        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
             isPlayerWaitingForOpponent = true;
             updateWaitingOpponentUI();
             switchScreen('ranked-waiting-opponent-screen', false);

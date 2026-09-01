@@ -282,7 +282,7 @@ function showRankedVersusScreen(opponent) {
 
 function launchRankedGameSession() {
     gameState.mode = 'ranked';
-    gameState.questions = getSmartQuestions(5); // 5 أسئلة سريعة ومكثفة
+    gameState.questions = getSmartQuestions(10); // 5 أسئلة سريعة ومكثفة
     gameState.currentIndex = 0;
     gameState.correctCount = 0;
     gameState.wrongCount = 0;
@@ -316,7 +316,7 @@ function startOpponentSimulation() {
     clearTimeout(opponentSimTimeout);
 
     function scheduleNextOpponentAnswer() {
-        if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) {
+        if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 10) {
             if (isPlayerWaitingForOpponent) {
                 setTimeout(finishRankedMatchSession, 600);
             }
@@ -326,7 +326,7 @@ function startOpponentSimulation() {
         const answerDelay = (currentRankedOpponent.minAnswerTime + Math.random() * (currentRankedOpponent.maxAnswerTime - currentRankedOpponent.minAnswerTime)) * 1000;
 
         opponentSimTimeout = setTimeout(() => {
-            if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) return;
+            if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 10) return;
 
             const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
             const timeBonus = Math.floor(Math.random() * 8) + 4;
@@ -348,7 +348,7 @@ function startOpponentSimulation() {
                 updateWaitingOpponentUI();
             }
 
-            if (currentRankedOpponent.answeredIndex < 5) {
+            if (currentRankedOpponent.answeredIndex < 10) {
                 scheduleNextOpponentAnswer();
             } else if (isPlayerWaitingForOpponent) {
                 setTimeout(finishRankedMatchSession, 800);
@@ -373,7 +373,7 @@ function updateRankedOpponentUI() {
 
     if (dotsContainer) {
         dotsContainer.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             const dot = document.createElement('span');
             const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
             if (state === true) {
@@ -399,12 +399,12 @@ function updateWaitingOpponentUI() {
     if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
     if (oppAvatarElem) oppAvatarElem.src = currentRankedOpponent.avatar;
     if (oppStatusElem) {
-        oppStatusElem.innerText = `أجاب على ${currentRankedOpponent.answeredIndex} من 5 أسئلة (${currentRankedOpponent.score} نقطة)...`;
+        oppStatusElem.innerText = `أجاب على ${currentRankedOpponent.answeredIndex} من 10 أسئلة (${currentRankedOpponent.score} نقطة)...`;
     }
 
     if (dotsContainer) {
         dotsContainer.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             const dot = document.createElement('span');
             const state = currentRankedOpponent.answersHistory ? currentRankedOpponent.answersHistory[i] : undefined;
             if (state === true) {
@@ -424,7 +424,7 @@ function finishRankedMatchSession() {
     clearTimeout(opponentSimTimeout);
     isPlayerWaitingForOpponent = false;
 
-    while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+    while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
         if (!currentRankedOpponent.answersHistory) currentRankedOpponent.answersHistory = [];
         const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
         const timeBonus = Math.floor(Math.random() * 8) + 4;
@@ -461,7 +461,7 @@ function finishRankedMatchSession() {
         const starsEarned = winStreakBonus ? 2 : 1;
 
         if (rankBefore.isApex) {
-            // رتب النخبة (أستاذ، أستاذ أعظم، تشالنجر) تعتمد على نقاط الـ LP
+            // رتب النخبة (أستاذ، أستاذ أعظم، متحدي) تعتمد على نقاط الـ LP
             const lpGain = Math.floor(Math.random() * 10) + 25; // +25 إلى +35 LP
             userProgress.rankLP = (userProgress.rankLP || 0) + lpGain;
             userProgress.rankStars = (userProgress.rankStars || 0) + 1;
@@ -561,8 +561,8 @@ function renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, 
         subElem.innerText = `حاول مرة أخرى وركز في السرعة والدقة للتعويض!`;
     }
 
-    if (myScoreElem) myScoreElem.innerText = `${gameState.score} نقطة (${gameState.correctCount}/5)`;
-    if (oppScoreElem) oppScoreElem.innerText = `${currentRankedOpponent.score} نقطة (${currentRankedOpponent.correctCount}/5)`;
+    if (myScoreElem) myScoreElem.innerText = `${gameState.score} نقطة (${gameState.correctCount}/10)`;
+    if (oppScoreElem) oppScoreElem.innerText = `${currentRankedOpponent.score} نقطة (${currentRankedOpponent.correctCount}/10)`;
     if (oppAvatarElem) oppAvatarElem.src = currentRankedOpponent.avatar;
     if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
 
