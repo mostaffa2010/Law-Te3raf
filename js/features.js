@@ -587,12 +587,20 @@ function updateHeaderStats() {
     if (shopCoins) shopCoins.innerText = val;
     if (lbCoins) lbCoins.innerText = val;
 
-    if (typeof getUserCurrentRank === 'function') {
+    if (typeof getUserCurrentRank === 'function' && typeof formatUserFullRankName === 'function') {
         const rk = getUserCurrentRank();
+        const fullTitle = formatUserFullRankName();
         const headerRank = document.getElementById('header-user-rank-pill');
         const modesTag = document.getElementById('modes-current-rank-tag');
-        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span>`;
-        if (modesTag) modesTag.innerHTML = `<span style="color: #000; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name} (${userProgress.rankStars || 0} ⭐)</span>`;
+
+        if (headerRank) {
+            headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight: bold;"><i class="${rk.icon}"></i> ${fullTitle}</span>`;
+        }
+
+        if (modesTag) {
+            const starsOrLp = rk.isApex ? `${userProgress.rankLP || 0} LP` : `${userProgress.rankStars || 0} ⭐`;
+            modesTag.innerHTML = `<span style="color: #000; font-weight: 800;"><i class="${rk.icon}"></i> ${fullTitle} (${starsOrLp})</span>`;
+        }
     }
 }
 
