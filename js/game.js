@@ -143,11 +143,6 @@ function renderLivesDisplay() {
         return;
     }
 
-    if (gameState.mode === 'ranked') {
-        container.innerHTML = `<span style="font-size: 0.85rem; color: var(--accent-yellow); font-weight: 900;"><i class="fa-solid fa-trophy"></i> 10 أسئلة</span>`;
-        return;
-    }
-
     for (let i = 0; i < 3; i++) {
         const icon = document.createElement('i');
         icon.className = `fa-solid fa-heart ${i < gameState.lives ? '' : 'opacity-muted'}`;
@@ -237,7 +232,7 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
     gameState.isAnswered = true;
     clearInterval(gameState.timerInterval);
     gameState.wrongCount++;
-    if (gameState.mode !== 'pvp' && gameState.mode !== 'ranked') {
+    if (gameState.mode !== 'pvp') {
         gameState.lives = Math.max(0, gameState.lives - 1);
     }
     gameState.sessionCorrectStreak = 0;
@@ -256,7 +251,7 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
     renderLivesDisplay();
     revealCorrectAnswer();
 
-    if (gameState.lives <= 0 && gameState.mode !== 'pvp' && gameState.mode !== 'ranked') {
+    if (gameState.lives <= 0 && gameState.mode !== 'pvp') {
         setTimeout(finishGameSession, 1200);
         return;
     }
