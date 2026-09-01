@@ -2678,3 +2678,200 @@ html, body {
     transform: scale(1.3);
     background: rgba(255, 255, 255, 0.1);
 }
+
+
+/* ==========================================
+   Live Reactions System & Floating Animations
+   ========================================== */
+.floating-reactions-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999999;
+    overflow: hidden;
+}
+
+.floating-bubble {
+    position: absolute;
+    bottom: 110px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(22, 27, 34, 0.94);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid var(--border-color);
+    border-radius: 26px;
+    padding: 6px 14px 6px 10px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75);
+    animation: floatReactionUp 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    pointer-events: none;
+}
+
+.floating-bubble.is-me {
+    right: 20px;
+    border-color: var(--accent-yellow);
+}
+
+.floating-bubble.is-opponent {
+    left: 20px;
+    border-color: var(--accent-pink);
+}
+
+.float-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.float-sender {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.float-emoji {
+    font-size: 2rem;
+    animation: popBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes floatReactionUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.6);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.1);
+    }
+    30% {
+        transform: translateY(-50px) scale(1);
+    }
+    75% {
+        opacity: 1;
+        transform: translateY(-160px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-240px) scale(0.7);
+    }
+}
+
+@keyframes popBounce {
+    0% { transform: scale(0.3); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+/* Floating Reaction Trigger Button (Bottom-Left) */
+.btn-floating-reaction {
+    position: fixed !important;
+    bottom: calc(env(safe-area-inset-bottom, 12px) + 20px) !important;
+    left: 20px !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, var(--accent-purple), #7c3aed) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    font-size: 1.4rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6) !important;
+    z-index: 99999 !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.btn-floating-reaction:active {
+    transform: scale(0.9) !important;
+}
+
+/* Perfectly Centered Reactions Modal Card */
+.reactions-modal-card {
+    background: #161b22 !important;
+    border: 1.5px solid var(--accent-purple) !important;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(99, 102, 241, 0.4) !important;
+    border-radius: 24px !important;
+    padding: 20px 16px !important;
+    max-width: 320px !important;
+    width: 90% !important;
+    text-align: center !important;
+    transform: scale(0.85);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.custom-modal-overlay.show .reactions-modal-card {
+    transform: scale(1) !important;
+}
+
+.reactions-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.reactions-card-header h4 {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    color: var(--accent-yellow) !important;
+}
+
+.btn-close-reactions {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid var(--border-color) !important;
+    color: #ffffff !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 0.85rem !important;
+}
+
+.reactions-grid-box {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+}
+
+.reaction-emoji-btn {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    padding: 10px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, background-color 0.15s, border-color 0.15s !important;
+}
+
+.reaction-emoji-btn .emoji-icon {
+    font-size: 1.85rem !important;
+    line-height: 1 !important;
+}
+
+.reaction-emoji-btn .emoji-label {
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    color: var(--text-secondary) !important;
+}
+
+.reaction-emoji-btn:active {
+    transform: scale(1.2) !important;
+    background: rgba(99, 102, 241, 0.25) !important;
+    border-color: var(--accent-purple) !important;
+}
