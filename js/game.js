@@ -183,10 +183,9 @@ function selectAnswer(selectedIndex, btnElement) {
     clearInterval(gameState.timerInterval);
 
     const q = gameState.questions[gameState.currentIndex];
-    const isCorrect = selectedIndex === q.correct;
+    const isCorrect = (selectedIndex === q.correct);
 
-    if (isCorrect) {
-    // تسجيل إحصائيات دقة الأقسام
+    // تسجيل إحصائيات دقة الأقسام بدقة تامة لجميع الإجابات (صحيحة وخاطئة)
     if (q && q.category) {
         if (!userProgress.categoryStats) userProgress.categoryStats = {};
         if (!userProgress.categoryStats[q.category]) {
@@ -196,7 +195,10 @@ function selectAnswer(selectedIndex, btnElement) {
         if (isCorrect) {
             userProgress.categoryStats[q.category].correct++;
         }
+        saveProgress();
     }
+
+    if (isCorrect) {
 
         if (typeof AudioEngine !== 'undefined') AudioEngine.playCorrect();
         btnElement.classList.add('correct');
@@ -238,6 +240,19 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
     gameState.isAnswered = true;
     clearInterval(gameState.timerInterval);
     gameState.wrongCount++;
+
+    // في حال انتهاء الوقت دون اختيار، يتم احتساب السؤال ضمن إجمالي أسئلة القسم
+    if (isTimeout) {
+        const qTimeout = gameState.questions[gameState.currentIndex];
+        if (qTimeout && qTimeout.category) {
+            if (!userProgress.categoryStats) userProgress.categoryStats = {};
+            if (!userProgress.categoryStats[qTimeout.category]) {
+                userProgress.categoryStats[qTimeout.category] = { total: 0, correct: 0 };
+            }
+            userProgress.categoryStats[qTimeout.category].total++;
+            saveProgress();
+        }
+    }
     if (gameState.mode !== 'pvp' && gameState.mode !== 'ranked') {
         gameState.lives = Math.max(0, gameState.lives - 1);
     }
@@ -293,7 +308,7 @@ async function finishGameSession() {
         if (oppWidget) oppWidget.style.display = 'none';
 
         // فحص هل المنافس أنهى أسئلته الـ 5 كاملة أم لا يزال يجاوب
-        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
+        if (typeof currentRankedOpponent !== 'undefined' && currentRankedOpponent && currentRankedOpponent.answeredIndex < 10) {
             isPlayerWaitingForOpponent = true;
             updateWaitingOpponentUI();
             switchScreen('ranked-waiting-opponent-screen', false);
