@@ -32,7 +32,9 @@
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
+    <!-- صندوق الرياكشنات العائمة المتحركة -->
     <div id="floating-reactions-box" class="floating-reactions-box"></div>
+    
 
 
     <!-- شاشة البداية (Splash Screen) -->
@@ -458,7 +460,7 @@
 
         <div class="options-grid" id="options-grid"></div>
 
-        <div class="powerups-bar" id="game-powerups-bar">
+                        <div class="powerups-bar" id="game-powerups-bar">
             <button class="btn-powerup" id="btn-5050" onclick="use5050()">
                 <i class="fa-solid fa-divide"></i>
                 <span class="powerup-title">حذف إجابتين</span>
@@ -476,21 +478,98 @@
             </button>
         </div>
 
-        <!-- شريط التفاعلات والرياكشنات الحية (8 إيموجي) في أسفل الشاشة -->
-        <div class="reactions-dock" id="game-reactions-dock" style="display: none;">
-            <div class="reactions-bar-pills">
-                <button class="btn-emoji" onclick="sendLiveReaction('🔥')" title="حماس">🔥</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('😂')" title="ضحك">😂</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('👏')" title="تشجيع">👏</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('😱')" title="صدمة">😱</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('🧠')" title="ذكاء">🧠</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('🎯')" title="إصابة">🎯</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('😭')" title="بكاء">😭</button>
-                <button class="btn-emoji" onclick="sendLiveReaction('🚀')" title="سرعة">🚀</button>
+        <!-- زر التفاعل العائم الأنيق المخصص للأونلاين والتصنيف -->
+        <button class="btn-floating-reaction" id="game-reaction-trigger" onclick="toggleReactionsDrawer()" title="إرسال تفاعل" style="display: none;">
+            <i class="fa-solid fa-face-smile"></i>
+        </button>
+
+        <!-- نافذة اختيار الرياكشنات المنبثقة في منتصف الشاشة -->
+        <div class="reactions-modal-overlay" id="reactions-modal-overlay" onclick="closeReactionsDrawer(event)">
+            <div class="reactions-modal-card" id="reactions-modal-card" onclick="event.stopPropagation()">
+                <div class="reactions-card-header">
+                    <h4>اختر تفاعلاً لإرساله 💬</h4>
+                    <button class="btn-close-reactions" onclick="toggleReactionsDrawer()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="reactions-grid-box">
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🔥')">
+                        <span class="emoji-icon">🔥</span>
+                        <span class="emoji-label">حماس</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😂')">
+                        <span class="emoji-icon">😂</span>
+                        <span class="emoji-label">ضحك</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('👏')">
+                        <span class="emoji-icon">👏</span>
+                        <span class="emoji-label">تشجيع</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😱')">
+                        <span class="emoji-icon">😱</span>
+                        <span class="emoji-label">صدمة</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🧠')">
+                        <span class="emoji-icon">🧠</span>
+                        <span class="emoji-label">ذكاء</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🎯')">
+                        <span class="emoji-icon">🎯</span>
+                        <span class="emoji-label">إصابة</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😭')">
+                        <span class="emoji-icon">😭</span>
+                        <span class="emoji-label">بكاء</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🚀')">
+                        <span class="emoji-icon">🚀</span>
+                        <span class="emoji-label">سرعة</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-    </div>
+        <!-- نافذة اختيار الرياكشنات المنبثقة في منتصف الشاشة بتصميم زجاجي فاخر -->
+        <div class="reactions-modal-overlay" id="reactions-modal-overlay" onclick="closeReactionsDrawer(event)">
+            <div class="reactions-modal-card" id="reactions-modal-card" onclick="event.stopPropagation()">
+                <div class="reactions-card-header">
+                    <h4>اختر تفاعلاً لإرساله 💬</h4>
+                    <button class="btn-close-reactions" onclick="toggleReactionsDrawer()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="reactions-grid-box">
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🔥')">
+                        <span class="emoji-icon">🔥</span>
+                        <span class="emoji-label">حماس</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😂')">
+                        <span class="emoji-icon">😂</span>
+                        <span class="emoji-label">ضحك</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('👏')">
+                        <span class="emoji-icon">👏</span>
+                        <span class="emoji-label">تشجيع</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😱')">
+                        <span class="emoji-icon">😱</span>
+                        <span class="emoji-label">صدمة</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🧠')">
+                        <span class="emoji-icon">🧠</span>
+                        <span class="emoji-label">ذكاء</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🎯')">
+                        <span class="emoji-icon">🎯</span>
+                        <span class="emoji-label">إصابة</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('😭')">
+                        <span class="emoji-icon">😭</span>
+                        <span class="emoji-label">بكاء</span>
+                    </button>
+                    <button class="reaction-emoji-btn" onclick="sendLiveReaction('🚀')">
+                        <span class="emoji-icon">🚀</span>
+                        <span class="emoji-label">سرعة</span>
+                    </button>
+                </div>
+            </div>
+        </div></div>
 
     <!-- شاشة النتيجة العادية -->
     <div id="result-screen" class="screen">

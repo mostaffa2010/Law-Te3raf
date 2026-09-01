@@ -1042,11 +1042,20 @@ function loadQuestion() {
 
     renderLivesDisplay();
     startTimer();
-    updatePowerupButtons();
 
-    const reactDock = document.getElementById('game-reactions-dock');
-    if (reactDock) {
-        reactDock.style.display = (gameState.mode === 'pvp' || gameState.mode === 'ranked') ? 'flex' : 'none';
+    const isCompetitiveMode = (gameState.mode === 'ranked' || gameState.mode === 'pvp');
+
+    const pwrBar = document.getElementById('game-powerups-bar');
+    if (pwrBar) {
+        pwrBar.style.display = isCompetitiveMode ? 'none' : 'flex';
+    }
+    if (!isCompetitiveMode) {
+        updatePowerupButtons();
+    }
+
+    const reactTrigger = document.getElementById('game-reaction-trigger');
+    if (reactTrigger) {
+        reactTrigger.style.display = isCompetitiveMode ? 'flex' : 'none';
     }
 
     const optionsGrid = document.getElementById('options-grid');
@@ -1854,9 +1863,15 @@ let lastSentReactionTime = 0;
 let lastSeenReactionId = null;
 
 function toggleReactionsDrawer() {
-    const drawer = document.getElementById('reactions-drawer');
-    if (!drawer) return;
-    drawer.classList.toggle('open');
+    const modal = document.getElementById('reactions-modal-overlay');
+    if (!modal) return;
+    modal.classList.toggle('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function closeReactionsDrawer(event) {
+    const modal = document.getElementById('reactions-modal-overlay');
+    if (modal) modal.classList.remove('show');
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
 
@@ -1876,8 +1891,8 @@ function sendLiveReaction(emoji) {
     showFloatingReaction(emoji, myName, myAvatar, true);
 
     // إغلاق الدرج بعد الاختيار
-    const drawer = document.getElementById('reactions-drawer');
-    if (drawer) drawer.classList.remove('open');
+    const modal = document.getElementById('reactions-modal-overlay');
+    if (modal) modal.classList.remove('show');
 
     // إرسال للغرفة في Firebase إذا كان في مود PvP
     if (gameState.mode === 'pvp' && gameState.pvpRoomId && db) {

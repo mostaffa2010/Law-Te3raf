@@ -105,11 +105,20 @@ function loadQuestion() {
 
     renderLivesDisplay();
     startTimer();
-    updatePowerupButtons();
 
-    const reactDock = document.getElementById('game-reactions-dock');
-    if (reactDock) {
-        reactDock.style.display = (gameState.mode === 'pvp' || gameState.mode === 'ranked') ? 'flex' : 'none';
+    const isCompetitiveMode = (gameState.mode === 'ranked' || gameState.mode === 'pvp');
+
+    const pwrBar = document.getElementById('game-powerups-bar');
+    if (pwrBar) {
+        pwrBar.style.display = isCompetitiveMode ? 'none' : 'flex';
+    }
+    if (!isCompetitiveMode) {
+        updatePowerupButtons();
+    }
+
+    const reactTrigger = document.getElementById('game-reaction-trigger');
+    if (reactTrigger) {
+        reactTrigger.style.display = isCompetitiveMode ? 'flex' : 'none';
     }
 
     const optionsGrid = document.getElementById('options-grid');
