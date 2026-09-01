@@ -137,9 +137,12 @@
     <!-- القائمة الرئيسية -->
     <div id="main-menu" class="screen">
         <div class="header-bar">
-            <div class="user-profile-widget">
+            <div class="user-profile-widget" onclick="openRankedInfoModal()">
                 <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
-                <span id="user-name">لاعب</span>
+                <div class="user-name-box">
+                    <span id="user-name">لاعب</span>
+                    <span class="user-rank-pill" id="header-user-rank-pill">🛡️ حديدي</span>
+                </div>
             </div>
             <div class="header-coins" onclick="openShopScreen()">
                 <i class="fa-solid fa-coins"></i>
@@ -201,7 +204,18 @@
         </div>
 
         <div class="modes-container">
-            <div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
+                        <div class="mode-card ranked-mode" onclick="startRankedMatchmaking()">
+                <div class="mode-icon ranked-icon-wrap">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div class="mode-info">
+                    <h4>مباراة التصنيف 1v1 (Ranked) 👑</h4>
+                    <p>نافس لاعبين في نفس مستواك، اجمع النجوم، واصعد لقمة الدوريات!</p>
+                </div>
+                <div class="ranked-badge-tag" id="modes-current-rank-tag">🛡️ الحديدي</div>
+            </div>
+
+<div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
                 <div class="mode-icon pvp-icon-wrap">
                     <i class="fa-solid fa-users-rays"></i>
                 </div>
@@ -360,8 +374,11 @@
         </div>
 
         <div class="lb-tabs-wrapper">
-            <button id="tab-lb-endless" class="lb-tab active" onclick="switchLeaderboardTab('endless')">
-                <i class="fa-solid fa-fire"></i> أبطال النمط اللانهائي
+            <button id="tab-lb-ranked" class="lb-tab active" onclick="switchLeaderboardTab('ranked')">
+                <i class="fa-solid fa-crown"></i> أبطال الرانك
+            </button>
+            <button id="tab-lb-endless" class="lb-tab" onclick="switchLeaderboardTab('endless')">
+                <i class="fa-solid fa-fire"></i> النمط اللانهائي
             </button>
             <button id="tab-lb-pvp" class="lb-tab" onclick="switchLeaderboardTab('pvp')">
                 <i class="fa-solid fa-users-rays"></i> تحدي الأصدقاء
@@ -421,7 +438,18 @@
             </div>
         </div>
 
-        <div class="timer-wrapper">
+                <div class="ranked-opp-live-bar" id="game-ranked-opp-bar" style="display: none;">
+            <div class="opp-live-info">
+                <img class="opp-live-avatar" id="ranked-opp-live-avatar" src="" alt="Opponent">
+                <div class="opp-live-meta">
+                    <span class="opp-live-name" id="ranked-opp-live-name">المنافس</span>
+                    <span class="opp-live-score" id="ranked-opp-live-score">0 نقطة</span>
+                </div>
+            </div>
+            <div class="opp-progress-dots" id="ranked-opp-dots"></div>
+        </div>
+
+<div class="timer-wrapper">
             <div class="timer-circle">
                 <span id="timer-count">15</span>
             </div>
@@ -632,6 +660,7 @@
     <script src="./js/game.js?v=26"></script>
     <script src="./js/pvp.js?v=26"></script>
     <script src="./js/features.js?v=26"></script>
+    <script src="./js/ranked.js?v=28"></script>
     <script src="./js/app.js?v=26"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
@@ -644,5 +673,92 @@
         });
       }
     </script>
+
+    <!-- نافذة تفاصيل وشرح دوريات الرانك (Ranked Info Modal) -->
+    <div id="ranked-info-modal" class="custom-modal-overlay" onclick="closeRankedInfoModal()">
+        <div class="custom-modal-card ranked-info-modal-card" onclick="event.stopPropagation()">
+            <div class="custom-modal-icon">🏆</div>
+            <h3>دوريات التصنيف والمواسم</h3>
+            <p>10 دوريات تنافسية، فُز بالمباريات واجمع النجوم للترقية إلى قمة التصنيف!</p>
+            <div class="ranked-tiers-list" id="ranked-tiers-list"></div>
+            <button class="btn-modal-close" style="margin-top: 15px;" onclick="closeRankedInfoModal()">حسناً</button>
+        </div>
+    </div>
+
+    <!-- نافذة البحث عن منافس (Matchmaking Overlay) -->
+    <div id="matchmaking-overlay" class="custom-modal-overlay">
+        <div class="matchmaking-card">
+            <div class="radar-box">
+                <div class="radar-circle"></div>
+                <div class="radar-pulse"></div>
+                <i class="fa-solid fa-crosshairs radar-icon"></i>
+            </div>
+            <h3>جاري البحث عن منافس...</h3>
+            <div class="mm-rank-badge" id="mm-player-rank-badge">🛡️ حديدي</div>
+            <div class="mm-timer" id="mm-timer-text">00:00</div>
+            <button class="btn-cancel-mm" onclick="cancelRankedMatchmaking()">
+                <i class="fa-solid fa-xmark"></i> إلغاء البحث
+            </button>
+        </div>
+    </div>
+
+    <!-- شاشة المواجهة (Versus Screen) -->
+    <div id="ranked-versus-screen" class="screen versus-screen">
+        <div class="versus-container">
+            <div class="vs-player-card left">
+                <img class="vs-avatar" id="vs-my-avatar" src="" alt="Player">
+                <h3 id="vs-my-name">أنت</h3>
+                <div class="vs-rank-badge" id="vs-my-rank">🛡️ حديدي</div>
+            </div>
+
+            <div class="vs-badge-center">
+                <span>VS</span>
+            </div>
+
+            <div class="vs-player-card right">
+                <img class="vs-avatar" id="vs-opp-avatar" src="" alt="Opponent">
+                <h3 id="vs-opp-name">المنافس</h3>
+                <div class="vs-rank-badge" id="vs-opp-rank">🛡️ حديدي</div>
+            </div>
+        </div>
+        <p class="vs-starting-note">ينطلق التحدي السريع (5 أسئلة)... استعد!</p>
+    </div>
+
+    <!-- شاشة نتيجة مباراة الرانك (Ranked Result Screen) -->
+    <div id="ranked-result-screen" class="screen">
+        <div class="result-card ranked-res-card">
+            <div class="result-icon" id="rk-res-icon">🏆</div>
+            <h2 id="rk-res-title">انتصار!</h2>
+            <p id="rk-res-sub">ملخص نتيجة المواجهة التنافسية:</p>
+
+            <div class="rk-score-compare-box">
+                <div class="rk-player-stat">
+                    <span>نقاطك</span>
+                    <b id="rk-my-final-score" style="color: var(--accent-yellow);">0</b>
+                </div>
+                <div class="rk-vs-divider">ضد</div>
+                <div class="rk-player-stat">
+                    <span id="rk-res-opp-name">المنافس</span>
+                    <b id="rk-opp-final-score" style="color: var(--text-secondary);">0</b>
+                </div>
+            </div>
+
+            <div class="rk-progress-display-card">
+                <div id="rk-res-rank-emblem">🛡️</div>
+                <div class="rk-progress-details">
+                    <h4 id="rk-res-rank-title">الحديدي</h4>
+                    <div class="rk-stars-row" id="rk-res-stars-box"></div>
+                </div>
+            </div>
+
+            <div class="rk-streak-badge" id="rk-streak-bonus-badge" style="display: none;"></div>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="switchScreen('modes-screen')">القائمة الرئيسية</button>
+                <button class="btn-primary" onclick="startRankedMatchmaking()">مباراة جديدة ⚔️</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

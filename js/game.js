@@ -212,7 +212,13 @@ function selectAnswer(selectedIndex, btnElement) {
         btnElement.classList.add('correct');
         btnElement.querySelector('i').className = 'fa-solid fa-circle-check';
         gameState.correctCount++;
-        gameState.score += (gameState.mode === 'pvp' ? (10 + gameState.timer) : 10);
+        if (gameState.mode === 'ranked') {
+            gameState.score += (100 + gameState.timer * 10);
+        } else if (gameState.mode === 'pvp') {
+            gameState.score += (10 + gameState.timer);
+        } else {
+            gameState.score += 10;
+        }
         userProgress.coins += 2;
         userProgress.totalCorrect = (userProgress.totalCorrect || 0) + 1;
 
@@ -289,6 +295,13 @@ function proceedNext() {
 }
 
 async function finishGameSession() {
+    if (gameState.mode === 'ranked') {
+        if (typeof finishRankedMatchSession === 'function') {
+            finishRankedMatchSession();
+        }
+        return;
+    }
+
     if (gameState.mode === 'pvp') {
         await updatePvpPlayerFinalScore();
         switchScreen('pvp-waiting-opponent-screen');

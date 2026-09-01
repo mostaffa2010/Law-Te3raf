@@ -10,7 +10,10 @@ function switchLeaderboardTab(tab) {
     gameState.leaderboardTab = tab;
     document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
     
-    if (tab === 'endless') {
+    if (tab === 'ranked') {
+        const t = document.getElementById('tab-lb-ranked');
+        if (t) t.classList.add('active');
+    } else if (tab === 'endless') {
         const t = document.getElementById('tab-lb-endless');
         if (t) t.classList.add('active');
     } else if (tab === 'pvp') {
@@ -29,8 +32,10 @@ async function fetchAndRenderLeaderboard() {
     listContainer.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الترتيب العالمي...</div>';
     if (podiumContainer) podiumContainer.innerHTML = '';
 
-    const tab = gameState.leaderboardTab || 'endless';
-    let sortField = (tab === 'pvp') ? 'pvpWins' : 'highScore';
+    const tab = gameState.leaderboardTab || 'ranked';
+    let sortField = 'rankedWins';
+    if (tab === 'endless') sortField = 'highScore';
+    else if (tab === 'pvp') sortField = 'pvpWins';
 
     try {
         const snapshot = await db.collection('users')
@@ -45,8 +50,9 @@ async function fetchAndRenderLeaderboard() {
                 uid: doc.id,
                 name: d.name || 'لاعب',
                 photoURL: d.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                totalStars: d.totalStars || 0,
-                unlockedLevel: d.unlockedLevel || 1,
+                rankTier: (d.progress && d.progress.rankTier) || 'iron',
+                rankStars: (d.progress && d.progress.rankStars) || 0,
+                rankedWins: d.rankedWins || 0,
                 highScore: d.highScore || 0,
                 pvpWins: d.pvpWins || 0
             });
@@ -57,8 +63,9 @@ async function fetchAndRenderLeaderboard() {
                 uid: currentUser.uid,
                 name: currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب'),
                 photoURL: currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-                totalStars: calculateTotalStars(),
-                unlockedLevel: userProgress.unlockedLevel || 1,
+                rankTier: userProgress.rankTier || 'iron',
+                rankStars: userProgress.rankStars || 0,
+                rankedWins: userProgress.rankedWins || 0,
                 highScore: userProgress.highScore || 0,
                 pvpWins: userProgress.pvpWins || 0
             });
@@ -71,6 +78,10 @@ async function fetchAndRenderLeaderboard() {
 }
 
 function formatLeaderboardScore(p, tab) {
+    if (tab === 'ranked') {
+        const rk = (typeof getRankData === 'function') ? getRankData(p.rankTier) : { icon: '🛡️', name: 'الحديدي' };
+        return `${rk.icon} ${rk.name} (${p.rankStars || 0} ⭐)`;
+    }
     if (tab === 'pvp') return `${p.pvpWins || 0} فوز ⚔️`;
     return `${p.highScore || 0} نقطة`;
 }
@@ -178,7 +189,11 @@ function updateMyRankFooter(players, tab) {
     if (nameElem) nameElem.innerText = currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت');
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
-    if (tab === 'pvp') {
+    if (tab === 'ranked') {
+        const rk = (typeof getUserCurrentRank === 'function') ? getUserCurrentRank() : { icon: '🛡️', name: 'الحديدي' };
+        if (subElem) subElem.innerText = `انتصارات الرانك: ${userProgress.rankedWins || 0}`;
+        if (valElem) valElem.innerText = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+    } else if (tab === 'pvp') {
         if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
         if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
     } else {
@@ -531,6 +546,14 @@ function updateHeaderStats() {
     if (achCoins) achCoins.innerText = val;
     if (shopCoins) shopCoins.innerText = val;
     if (lbCoins) lbCoins.innerText = val;
+
+    if (typeof getUserCurrentRank === 'function') {
+        const rk = getUserCurrentRank();
+        const headerRank = document.getElementById('header-user-rank-pill');
+        const modesTag = document.getElementById('modes-current-rank-tag');
+        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;">${rk.icon} ${rk.name}</span>`;
+        if (modesTag) modesTag.innerHTML = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+    }
 }
 
 // --- تثبيت التطبيق كـ PWA ---
