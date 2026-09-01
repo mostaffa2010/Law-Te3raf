@@ -586,6 +586,13 @@ function finishRankedMatchSession() {
 
     if (isWinner) {
         userProgress.rankedWins = (userProgress.rankedWins || 0) + 1;
+
+        if (!userProgress.dailyQuestsProgress) userProgress.dailyQuestsProgress = {};
+        userProgress.dailyQuestsProgress.daily_ranked = (userProgress.dailyQuestsProgress.daily_ranked || 0) + 1;
+
+        if (!userProgress.weeklyQuestsProgress) userProgress.weeklyQuestsProgress = {};
+        userProgress.weeklyQuestsProgress.weekly_ranked_wins = (userProgress.weeklyQuestsProgress.weekly_ranked_wins || 0) + 1;
+
         userProgress.rankedWinStreak = (userProgress.rankedWinStreak || 0) + 1;
         userProgress.coins = (userProgress.coins || 0) + 30;
 

@@ -631,17 +631,37 @@
     </div>
 
     <!-- شاشة الإنجازات -->
+    <!-- شاشة المهام والإنجازات المتطورة -->
     <div id="achievements-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
-            <h3>سجل الإنجازات</h3>
-            <div class="header-coins">
+            <h3>سجل المهام والإنجازات 🏆</h3>
+            <div class="header-coins" onclick="openShopScreen()">
                 <i class="fa-solid fa-coins"></i>
                 <span id="ach-coins-display">0</span>
             </div>
         </div>
-        <div class="ach-counter-header" id="ach-unlocked-count">إجمالي المستويات المحققة: 0</div>
-        <div class="achievements-list" id="achievements-list"></div>
+
+        <!-- أزرار التبويبات الثلاثة الرئيسية -->
+        <div class="ach-nav-tabs-container">
+            <div class="ach-nav-tabs">
+                <button class="ach-nav-tab active" id="tab-ach-daily" onclick="switchAchievementsTab('daily')">
+                    <i class="fa-solid fa-sun"></i> اليومية
+                </button>
+                <button class="ach-nav-tab" id="tab-ach-weekly" onclick="switchAchievementsTab('weekly')">
+                    <i class="fa-solid fa-calendar-week"></i> الأسبوعية
+                </button>
+                <button class="ach-nav-tab" id="tab-ach-lifetime" onclick="switchAchievementsTab('lifetime')">
+                    <i class="fa-solid fa-crown"></i> الدائمة
+                </button>
+            </div>
+        </div>
+
+        <div class="ach-sub-banner" id="ach-sub-banner">
+            <span id="ach-banner-text">المهام اليومية تتجدد كل 24 ساعة</span>
+        </div>
+
+        <div class="achievements-list-container" id="achievements-list"></div>
     </div>
 
     <!-- شاشة متجر المساعدات -->

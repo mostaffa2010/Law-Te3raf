@@ -1,3 +1,128 @@
+// --- نظام المهام اليومية والأسبوعية والإنجازات الدائمة المتطور ---
+
+function getTodayString() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getWeekString() {
+    const d = new Date();
+    const startOfYear = new Date(d.getFullYear(), 0, 1);
+    const pastDaysOfYear = (d - startOfYear) / 86400000;
+    const weekNum = Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+    return `${d.getFullYear()}-W${weekNum}`;
+}
+
+var DAILY_QUESTS_CONFIG = window.DAILY_QUESTS_CONFIG = [
+    { id: 'daily_correct', title: 'نشاط اليوم 🎯', desc: 'أجب على 10 أسئلة بشكل صحيح عبر أي نمط.', icon: 'fa-solid fa-circle-check', color: '#10b981', target: 10, reward: 25 },
+    { id: 'daily_speed', title: 'ردود الفعل السريعة ⚡', desc: 'أجب على 3 أسئلة في أقل من 3 ثوانٍ.', icon: 'fa-solid fa-bolt', color: '#38bdf8', target: 3, reward: 20 },
+    { id: 'daily_ranked', title: 'بطل المواجهات ⚔️', desc: 'حقق الفوز في مباراة واحدة في نمط الرانك (1v1).', icon: 'fa-solid fa-trophy', color: '#f59e0b', target: 1, reward: 35 },
+    { id: 'daily_wheel', title: 'عجلة الحظ اليومية 🎡', desc: 'قم بتدوير عجلة الحظ واكسب جائزتك اليومية.', icon: 'fa-solid fa-dharmachakra', color: '#ec4899', target: 1, reward: 15 }
+];
+
+var WEEKLY_QUESTS_CONFIG = window.WEEKLY_QUESTS_CONFIG = [
+    { id: 'weekly_ranked_wins', title: 'قاهر الرانك الأسبوعي 👑', desc: 'حقق الفوز في 7 مباريات تصنيف (Ranked 1v1).', icon: 'fa-solid fa-crown', color: '#f59e0b', target: 7, reward: 120 },
+    { id: 'weekly_correct', title: 'عقل الأسبوع الخارق 🧠', desc: 'أجب على 60 سؤالاً بشكل صحيح خلال هذا الأسبوع.', icon: 'fa-solid fa-brain', color: '#38bdf8', target: 60, reward: 100 },
+    { id: 'weekly_streak', title: 'سلسلة الصمود 🔥', desc: 'حقق سلسلة 5 إجابات صحيحة متتالية في الرانك أو اللانهائي.', icon: 'fa-solid fa-fire', color: '#ef4444', target: 5, reward: 80 },
+    { id: 'weekly_pvp', title: 'روح الجماعة 👥', desc: 'العب مباراتين في غرف تحدي الأصدقاء أونلاين.', icon: 'fa-solid fa-users-rays', color: '#a855f7', target: 2, reward: 90 }
+];
+
+var LIFETIME_ACHIEVEMENTS_CONFIG = window.LIFETIME_ACHIEVEMENTS_CONFIG = [
+    {
+        id: 'life_correct',
+        title: 'موسوعة المعرفة الكبرى',
+        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح عبر جميع أنماط اللعب.`,
+        icon: 'fa-solid fa-brain',
+        color: '#f59e0b',
+        getProgress: (p) => p.totalCorrect || 0,
+        levels: [
+            { target: 100, reward: 50, rewardName: '50 عملة' },
+            { target: 300, reward: 150, rewardName: '150 عملة + لقب المفكر العبقري' },
+            { target: 700, reward: 300, rewardName: '300 عملة + لقب إمبراطور الثقافة' },
+            { target: 1500, reward: 600, rewardName: '600 عملة + أفاتار صقر الأساطير 🦅' },
+            { target: 2500, reward: 1200, rewardName: '1,200 عملة + لقب موسوعة المعرفة' }
+        ]
+    },
+    {
+        id: 'life_speed',
+        title: 'صاعقة السرعة الخاطفة',
+        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح خلال أقل من 3 ثوانٍ.`,
+        icon: 'fa-solid fa-bolt',
+        color: '#38bdf8',
+        getProgress: (p) => p.fastAnswersCount || 0,
+        levels: [
+            { target: 25, reward: 40, rewardName: '40 عملة' },
+            { target: 75, reward: 100, rewardName: '100 عملة' },
+            { target: 150, reward: 250, rewardName: '250 عملة + لقب صاعقة السرعة ⚡' },
+            { target: 200, reward: 500, rewardName: '500 عملة + أفاتار سيد الصاعقة ⚡' }
+        ]
+    },
+    {
+        id: 'life_ranked_wins',
+        title: 'قاهر الرانك والتصنيف',
+        desc: (target) => `حقق الفوز في ${target} مباراة تصنيف (Ranked 1v1).`,
+        icon: 'fa-solid fa-trophy',
+        color: '#a855f7',
+        getProgress: (p) => p.rankedWins || 0,
+        levels: [
+            { target: 10, reward: 50, rewardName: '50 عملة' },
+            { target: 30, reward: 150, rewardName: '150 عملة' },
+            { target: 60, reward: 350, rewardName: '350 عملة + لقب قاهر الرانك ⚔️' },
+            { target: 100, reward: 800, rewardName: '800 عملة + أفاتار بطل التحديات 👑' }
+        ]
+    },
+    {
+        id: 'life_win_streak',
+        title: 'سلسلة اللهب الناري',
+        desc: (target) => `حقق سلسلة ${target} انتصارات متتالية في مباريات الرانك دون أي هزيمة.`,
+        icon: 'fa-solid fa-fire',
+        color: '#ef4444',
+        getProgress: (p) => p.maxRankedWinStreak || p.rankedWinStreak || 0,
+        levels: [
+            { target: 3, reward: 30, rewardName: '30 عملة' },
+            { target: 5, reward: 80, rewardName: '80 عملة' },
+            { target: 7, reward: 200, rewardName: '200 عملة + لقب البروفيسور 🎓' },
+            { target: 10, reward: 600, rewardName: '600 عملة + إطار اللهب الناري المتوهج 🔥' }
+        ]
+    },
+    {
+        id: 'life_endless',
+        title: 'أسطورة النمط اللانهائي',
+        desc: (target) => `حقق سكور ${target} نقطة في جولة واحدة في النمط اللانهائي.`,
+        icon: 'fa-solid fa-infinity',
+        color: '#10b981',
+        getProgress: (p) => p.highScore || 0,
+        levels: [
+            { target: 50, reward: 40, rewardName: '40 عملة' },
+            { target: 100, reward: 100, rewardName: '100 عملة' },
+            { target: 200, reward: 250, rewardName: '250 عملة + أفاتار السايبورغ المتطور 🤖' },
+            { target: 350, reward: 500, rewardName: '500 عملة + لقب عقل لا يُقهر 🛡️' }
+        ]
+    },
+    {
+        id: 'life_rank_tier',
+        title: 'صائد الدوريات والمواسم',
+        desc: (target) => `ابلغ دوري ${target} في مباريات الرانك والتصنيف.`,
+        icon: 'fa-solid fa-chess-queen',
+        color: '#fbbf24',
+        getProgress: (p) => {
+            const rkTier = p.rankTier || 'iron';
+            const rkConfig = (typeof RANKS_CONFIG !== 'undefined') ? (RANKS_CONFIG.find(r => r.id === rkTier) || RANKS_CONFIG[0]) : { tier: 1 };
+            return rkConfig.tier || 1;
+        },
+        levels: [
+            { target: 4, reward: 100, rewardName: '100 عملة (دوري الذهبي)' },
+            { target: 5, reward: 200, rewardName: '200 عملة (دوري البلاتيني)' },
+            { target: 7, reward: 500, rewardName: '500 عملة + إطار الكريستال الماسي 💎' },
+            { target: 8, reward: 800, rewardName: '800 عملة + لقب بطل الأبطال 🌟' },
+            { target: 10, reward: 1500, rewardName: '1,500 عملة + تاج المتحدي الأسطوري 👑' }
+        ]
+    }
+];
+
+// للتوافق العكسي
+var INFINITE_ACHIEVEMENTS = window.INFINITE_ACHIEVEMENTS = LIFETIME_ACHIEVEMENTS_CONFIG;
+
 // دالة تحويل الأرقام إلى الأرقام العربية الشرقية (٠، ١، ٢، ٣، ٤، ٥، ٦، ٧، ٨، ٩)
 function toArabicNumerals(num) {
     if (num === undefined || num === null) return '';
@@ -140,80 +265,6 @@ var wheelCurrentAngle = 0;
 window.wheelCurrentAngle = wheelCurrentAngle;
 
 // إعدادات الإنجازات
-var INFINITE_ACHIEVEMENTS = window.INFINITE_ACHIEVEMENTS = [
-    {
-        id: 'ach_correct',
-        title: 'موسوعة المعرفة الكبرى',
-        icon: 'fa-solid fa-brain',
-        color: '#f59e0b',
-        levels: [
-            { target: 100, reward: 50, rewardName: '50 عملة' },
-            { target: 300, reward: 150, rewardName: '150 عملة + لقب المفكر الذكي' },
-            { target: 700, reward: 300, rewardName: '300 عملة' },
-            { target: 1500, reward: 600, rewardName: '600 عملة + أفاتار صقر المعرفة الأسطوري 🦅' },
-            { target: 2500, reward: 1200, rewardName: '1,200 عملة + شارة العبقرية الخالدة' }
-        ],
-        getProgress: (p) => p.totalCorrect || 0,
-        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح عبر جميع أنماط اللعب.`
-    },
-    {
-        id: 'ach_speed',
-        title: 'السرعة الخاطفة',
-        icon: 'fa-solid fa-bolt',
-        color: '#38bdf8',
-        levels: [
-            { target: 25, reward: 40, rewardName: '40 عملة' },
-            { target: 75, reward: 100, rewardName: '100 عملة' },
-            { target: 150, reward: 250, rewardName: '250 عملة + لقب صاعقة السرعة ⚡' },
-            { target: 200, reward: 500, rewardName: '500 عملة + أفاتار البرق الخاطف ⚡' }
-        ],
-        getProgress: (p) => p.fastAnswersCount || 0,
-        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح خلال أقل من 3 ثوانٍ.`
-    },
-    {
-        id: 'ach_pvp',
-        title: 'سيد التحديات والرانك',
-        icon: 'fa-solid fa-trophy',
-        color: '#a855f7',
-        levels: [
-            { target: 10, reward: 50, rewardName: '50 عملة' },
-            { target: 30, reward: 150, rewardName: '150 عملة' },
-            { target: 60, reward: 350, rewardName: '350 عملة + لقب قاهر الرانك ⚔️' },
-            { target: 100, reward: 800, rewardName: '800 عملة + أفاتار ملك التحديات 👑' }
-        ],
-        getProgress: (p) => p.rankedWins || 0,
-        desc: (target) => `حقق الفوز في ${target} مباراة تصنيف (Ranked 1v1).`
-    },
-    {
-        id: 'ach_streak',
-        title: 'القناص الذي لا يخطئ',
-        icon: 'fa-solid fa-fire',
-        color: '#ef4444',
-        levels: [
-            { target: 3, reward: 30, rewardName: '30 عملة' },
-            { target: 5, reward: 80, rewardName: '80 عملة' },
-            { target: 7, reward: 200, rewardName: '200 عملة + لقب البروفيسور 🎓' },
-            { target: 10, reward: 500, rewardName: '500 عملة + إطار اللهب الناري المتوهج 🔥' }
-        ],
-        getProgress: (p) => p.rankedWinStreak || 0,
-        desc: (target) => `حقق سلسلة ${target} انتصارات متتالية في مباريات الرانك دون أي هزيمة.`
-    },
-    {
-        id: 'ach_high_score',
-        title: 'أسطورة الصمود',
-        icon: 'fa-solid fa-infinity',
-        color: '#10b981',
-        levels: [
-            { target: 50, reward: 40, rewardName: '40 عملة' },
-            { target: 100, reward: 100, rewardName: '100 عملة' },
-            { target: 200, reward: 250, rewardName: '250 عملة' },
-            { target: 350, reward: 600, rewardName: '600 عملة' }
-        ],
-        getProgress: (p) => p.highScore || 0,
-        desc: (target) => `حقق سكور ${target} نقطة في النمط اللانهائي.`
-    }
-];
-
 // أيقونات وتنسيقات الأقسام
 var CATEGORY_STYLES = window.CATEGORY_STYLES = {
     'إسلاميات': { icon: 'fa-solid fa-kaaba', color: '#10b981' },

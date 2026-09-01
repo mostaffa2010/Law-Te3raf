@@ -4621,3 +4621,215 @@ button, .mode-card, .menu-action-card, .custom-item-card, .pvp-action-card {
 button:active, .mode-card:active, .menu-action-card:active {
     transform: scale(0.96) !important;
 }
+
+
+/* ==========================================
+   Modern Quests & Achievements UI (Daily / Weekly / Lifetime)
+   ========================================== */
+.ach-nav-tabs-container {
+    padding: 0 16px;
+    margin-bottom: 12px;
+}
+
+.ach-nav-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 4px;
+}
+
+.ach-nav-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px 4px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.ach-nav-tab.active {
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+    transform: scale(1.02);
+}
+
+.ach-sub-banner {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin: 0 16px 14px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-weight: 700;
+}
+
+.achievements-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.quest-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 16px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    text-align: right;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    transition: all 0.25s ease;
+}
+
+.quest-card.ready {
+    border-color: var(--accent-green);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), var(--bg-card));
+    box-shadow: 0 6px 22px rgba(16, 185, 129, 0.25);
+}
+
+.quest-card.claimed {
+    opacity: 0.65;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.quest-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.quest-info-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.quest-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.quest-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.quest-progress-counter {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--accent-yellow);
+}
+
+.quest-level-pill {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--accent-purple);
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.quest-desc {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.quest-progress-track {
+    background: rgba(255, 255, 255, 0.08);
+    height: 7px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 2px 0;
+}
+
+.quest-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.quest-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.quest-percent-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+}
+
+.btn-claim-quest-shiny {
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    border: none;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 7px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    animation: pulse 1.6s infinite;
+}
+
+.btn-claim-quest-shiny:active {
+    transform: scale(0.95);
+}
+
+.quest-tag-reward {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--accent-yellow);
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.quest-tag-claimed {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--accent-green);
+    background: rgba(16, 185, 129, 0.12);
+    padding: 3px 10px;
+    border-radius: 10px;
+}

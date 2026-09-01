@@ -228,6 +228,22 @@ function selectAnswer(selectedIndex, btnElement) {
         userProgress.coins += 2;
         userProgress.totalCorrect = (userProgress.totalCorrect || 0) + 1;
 
+        // تحديث تقدم المهام اليومية والأسبوعية
+        if (!userProgress.dailyQuestsProgress) userProgress.dailyQuestsProgress = {};
+        userProgress.dailyQuestsProgress.daily_correct = (userProgress.dailyQuestsProgress.daily_correct || 0) + 1;
+
+        if (!userProgress.weeklyQuestsProgress) userProgress.weeklyQuestsProgress = {};
+        userProgress.weeklyQuestsProgress.weekly_correct = (userProgress.weeklyQuestsProgress.weekly_correct || 0) + 1;
+
+        if (gameState.timer >= 12) {
+            userProgress.dailyQuestsProgress.daily_speed = (userProgress.dailyQuestsProgress.daily_speed || 0) + 1;
+        }
+
+        if (gameState.sessionCorrectStreak >= 5) {
+            userProgress.weeklyQuestsProgress.weekly_streak = Math.max(userProgress.weeklyQuestsProgress.weekly_streak || 0, gameState.sessionCorrectStreak);
+        }
+
+
         if (gameState.timer >= 12) {
             userProgress.fastAnswersCount = (userProgress.fastAnswersCount || 0) + 1;
         }
