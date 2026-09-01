@@ -145,12 +145,16 @@ function updateUserProfileUI(user) {
 function switchScreen(screenId, pushToHistory = true) {
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
     clearInterval(gameState.timerInterval);
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = ''; // ضمان إخفاء أي شاشة
+    });
     
     const target = document.getElementById(screenId);
     if (target) {
         target.classList.add('active');
         gameState.currentScreen = screenId;
+        window.scrollTo(0, 0); // التمرير لأعلى الشاشة فوراً
     }
 
     if (pushToHistory) {
