@@ -2669,7 +2669,7 @@ function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
 }
 
 
-// js/community.js - إدارة اقتراح الأسئلة من اللاعبين والمجتمع
+// js/community.js - إدارة اقتراح الأسئلة من اللاعبين والمجتمع ولوحة تحكم المشرف
 
 const SUGGEST_CATEGORIES = [
     { id: 'إسلاميات', name: 'إسلاميات', icon: 'fa-solid fa-mosque', color: '#10b981' },
@@ -2820,7 +2820,7 @@ async function submitSuggestedQuestion() {
                 options: [opt1, opt2, opt3, opt4],
                 correct: 0,
                 authorName: author || 'صديق اللعبة',
-                authorUid: currentUser ? currentUser.uid : 'anon',
+                authorUid: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.uid : 'anon',
                 status: 'pending',
                 createdAt: Date.now()
             });
@@ -2854,12 +2854,11 @@ async function submitSuggestedQuestion() {
     }
 }
 
-
 // --- إدارة لوحة المشرف السرية (Admin Panel) ---
 const ADMIN_EMAILS = ['mostaffa201021@gmail.com'];
 
 function isCurrentUserAdmin() {
-    return !!(currentUser && currentUser.email && ADMIN_EMAILS.includes(currentUser.email.toLowerCase().trim()));
+    return !!(typeof currentUser !== 'undefined' && currentUser && currentUser.email && ADMIN_EMAILS.includes(currentUser.email.toLowerCase().trim()));
 }
 
 function checkAndShowAdminButton() {
@@ -2888,7 +2887,7 @@ async function fetchAndRenderAdminQuestions() {
     feed.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري جلب الأسئلة من السيرفر...</div>';
 
     try {
-        if (!db) throw new Error("No database connection");
+        if (typeof db === 'undefined' || !db) throw new Error("No database connection");
 
         const snapshot = await db.collection('suggested_questions').orderBy('createdAt', 'desc').limit(100).get();
 
@@ -2926,7 +2925,7 @@ async function fetchAndRenderAdminQuestions() {
             const catStyle = (typeof CATEGORY_STYLES !== 'undefined' && CATEGORY_STYLES[q.category]) || { icon: 'fa-solid fa-shapes', color: '#a855f7' };
 
             let statusBadge = `<span class="admin-status-badge pending">⏳ بانتظار المراجعة</span>`;
-            if (st === 'approved') statusBadge = `<span class="admin-status-badge approved">✅ مقبول ومعتمد</span>`;
+            if (st === 'approved') statusBadge = `<span class="admin-status-badge approved">✅ مقبول ومعتمد (ID #${q.assignedId || '---'})</span>`;
             if (st === 'rejected') statusBadge = `<span class="admin-status-badge rejected">❌ مرفوض</span>`;
 
             card.innerHTML = `
@@ -2953,9 +2952,9 @@ async function fetchAndRenderAdminQuestions() {
                 </div>
 
                 <div class="admin-q-actions">
-                    <button class="btn-adm-approve" onclick="updateQuestionStatus('${q.docId}', 'approved')"><i class="fa-solid fa-check"></i> قبول</button>
+                    <button class="btn-adm-approve" onclick="updateQuestionStatus('${q.docId}', 'approved')"><i class="fa-solid fa-check"></i> قبول وحجز ID</button>
                     <button class="btn-adm-reject" onclick="updateQuestionStatus('${q.docId}', 'rejected')"><i class="fa-solid fa-xmark"></i> رفض</button>
-                    <button class="btn-adm-copy" onclick="copyQuestionAsCSV('${q.docId}')"><i class="fa-solid fa-copy"></i> نسخ CSV</button>
+                    <button class="btn-adm-copy" onclick="copyQuestionAsTSV('${q.docId}')"><i class="fa-solid fa-table-cells"></i> نسخ TSV</button>
                     <button class="btn-adm-del" onclick="deleteSuggestedQuestion('${q.docId}')"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `;
@@ -2969,13 +2968,46 @@ async function fetchAndRenderAdminQuestions() {
     }
 }
 
+function getNextAvailableQuestionId() {
+    if (typeof window !== 'undefined' && window.questionsBank && Array.isArray(window.questionsBank) && window.questionsBank.length > 0) {
+        let maxId = 0;
+        window.questionsBank.forEach(q => {
+            const idNum = parseInt(q.id);
+            if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
+        });
+        return maxId > 0 ? maxId + 1 : 2587;
+    }
+    return 2587;
+}
+
+function formatQuestionToTSV(q, assignedId) {
+    const id = assignedId || getNextAvailableQuestionId();
+    const cat = q.category || 'معلومات عامة';
+    const diff = q.difficulty || 4;
+    const cleanStr = (s) => (s || '').toString().split('\n').join(' ').split('\r').join(' ').split('\t').join(' ').trim();
+    const questionText = cleanStr(q.question);
+    const opt1 = cleanStr(q.options && q.options[0]);
+    const opt2 = cleanStr(q.options && q.options[1]);
+    const opt3 = cleanStr(q.options && q.options[2]);
+    const opt4 = cleanStr(q.options && q.options[3]);
+    const correct = 0;
+    const image = q.image ? q.image.trim() : '';
+    const author = cleanStr(q.authorName || 'لاعب');
+
+    return `${id}\t${cat}\t${diff}\t${questionText}\t${opt1}\t${opt2}\t${opt3}\t${opt4}\t${correct}\t${image}\t${author}`;
+}
+
 async function updateQuestionStatus(docId, newStatus) {
-    if (!db) return;
+    if (typeof db === 'undefined' || !db) return;
     try {
-        await db.collection('suggested_questions').doc(docId).update({
+        const updateData = {
             status: newStatus,
             reviewedAt: Date.now()
-        });
+        };
+        if (newStatus === 'approved') {
+            updateData.assignedId = getNextAvailableQuestionId();
+        }
+        await db.collection('suggested_questions').doc(docId).update(updateData);
         if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
         fetchAndRenderAdminQuestions();
     } catch (e) {
@@ -2987,7 +3019,7 @@ async function deleteSuggestedQuestion(docId) {
     showCustomConfirm(
         'هل تريد حقاً حذف هذا السؤال المقترح نهائياً؟',
         async () => {
-            if (!db) return;
+            if (typeof db === 'undefined' || !db) return;
             await db.collection('suggested_questions').doc(docId).delete().catch(() => {});
             fetchAndRenderAdminQuestions();
         },
@@ -2999,27 +3031,27 @@ async function deleteSuggestedQuestion(docId) {
     );
 }
 
-async function copyQuestionAsCSV(docId) {
-    if (!db) return;
+async function copyQuestionAsTSV(docId) {
+    if (typeof db === 'undefined' || !db) return;
     try {
         const doc = await db.collection('suggested_questions').doc(docId).get();
         if (!doc.exists) return;
         const q = doc.data();
 
-        // format: ID,Category,Difficulty,Question,Opt1,Opt2,Opt3,Opt4,Correct,Image,Author
-        const csvLine = `[ID],${q.category},${q.difficulty},"${q.question.replace(/"/g, '""')}","${(q.options[0]||'').replace(/"/g, '""')}","${(q.options[1]||'').replace(/"/g, '""')}","${(q.options[2]||'').replace(/"/g, '""')}","${(q.options[3]||'').replace(/"/g, '""')}",0,,${q.authorName || 'لاعب'}`;
+        const assignedId = q.assignedId || getNextAvailableQuestionId();
+        const tsvLine = formatQuestionToTSV(q, assignedId);
 
         if (navigator.clipboard) {
-            await navigator.clipboard.writeText(csvLine);
-            showCustomAlert('تم نسخ سطر السؤال بصيغة CSV وجاهز للصق في الشيت مباشرة!', 'تم النسخ', '📋');
+            await navigator.clipboard.writeText(tsvLine);
+            showCustomAlert(`تم نسخ السؤال بالمعرف #${assignedId} بصيغة TSV! الصقه مباشرة في شيت جوجل في خلية ID وسيتوزع تلقائياً على الأعمدة الـ 11.`, 'تم النسخ كـ TSV', '📋');
         }
     } catch (e) {
         console.error(e);
     }
 }
 
-async function copyAllApprovedAsCSV() {
-    if (!db) return;
+async function copyAllApprovedAsTSV() {
+    if (typeof db === 'undefined' || !db) return;
     try {
         const snapshot = await db.collection('suggested_questions').where('status', '==', 'approved').get();
         if (snapshot.empty) {
@@ -3027,16 +3059,22 @@ async function copyAllApprovedAsCSV() {
             return;
         }
 
+        let startId = getNextAvailableQuestionId();
         let lines = [];
+        let count = 0;
+
         snapshot.forEach(doc => {
             const q = doc.data();
-            const csvLine = `[ID],${q.category},${q.difficulty},"${q.question.replace(/"/g, '""')}","${(q.options[0]||'').replace(/"/g, '""')}","${(q.options[1]||'').replace(/"/g, '""')}","${(q.options[2]||'').replace(/"/g, '""')}","${(q.options[3]||'').replace(/"/g, '""')}",0,,${q.authorName || 'لاعب'}`;
-            lines.push(csvLine);
+            const currentId = q.assignedId || (startId + count);
+            lines.push(formatQuestionToTSV(q, currentId));
+            count++;
         });
 
+        const tsvPayload = lines.join('\n');
+
         if (navigator.clipboard) {
-            await navigator.clipboard.writeText(lines.join('\n'));
-            showCustomAlert(`تم نسخ ${lines.length} سؤال معتمد كـ CSV ومستعد للصق في شيت جوجل!`, 'تم النسخ الشامل', '📋');
+            await navigator.clipboard.writeText(tsvPayload);
+            showCustomAlert(`تم نسخ ${count} سؤال معتمد بمعرفات تسلسلية فريدة (من #${startId} إلى #${startId + count - 1}) بصيغة TSV جاهزة للصق في شيت جوجل مباشرة!`, 'تم النسخ الشامل', '📋');
         }
     } catch (e) {
         console.error(e);

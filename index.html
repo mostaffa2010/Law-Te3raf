@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=49">
+    <link rel="stylesheet" href="./style.css?v=50">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -708,8 +708,8 @@
             </div>
 
             <!-- زر النسخ الجماعي المباشر لشيت جوجل -->
-            <button class="btn-copy-all-approved" onclick="copyAllApprovedAsCSV()">
-                <i class="fa-solid fa-file-csv"></i> نسخ كل المقبول كـ CSV للشيت 📋
+            <button class="btn-copy-all-approved" onclick="copyAllApprovedAsTSV()">
+                <i class="fa-solid fa-table-cells"></i> نسخ كل المقبول كـ TSV للشيت 📋
             </button>
 
             <!-- تغذية بطاقات الأسئلة المقترحة -->
@@ -776,18 +776,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=49"></script>
-    <script src="./js/audio.js?v=49"></script>
-    <script src="./js/questions-engine.js?v=49"></script>
-    <script src="./js/ranked.js?v=49"></script>
-    <script src="./js/effects.js?v=49"></script>
-    <script src="./js/game.js?v=49"></script>
-    <script src="./js/pvp.js?v=49"></script>
-    <script src="./js/community.js?v=49"></script>
-    <script src="./js/customization.js?v=49"></script>
-    <script src="./js/features.js?v=49"></script>
-    <script src="./js/auth-nav.js?v=49"></script>
-    <script src="./js/app.js?v=49"></script>
+    <script src="./js/config.js?v=50"></script>
+    <script src="./js/audio.js?v=50"></script>
+    <script src="./js/questions-engine.js?v=50"></script>
+    <script src="./js/ranked.js?v=50"></script>
+    <script src="./js/effects.js?v=50"></script>
+    <script src="./js/game.js?v=50"></script>
+    <script src="./js/pvp.js?v=50"></script>
+    <script src="./js/community.js?v=50"></script>
+    <script src="./js/customization.js?v=50"></script>
+    <script src="./js/features.js?v=50"></script>
+    <script src="./js/auth-nav.js?v=50"></script>
+    <script src="./js/app.js?v=50"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -805,7 +805,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=49')
+          navigator.serviceWorker.register('./sw.js?v=50')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -1024,18 +1024,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=49"></script>
-    <script src="./js/audio.js?v=49"></script>
-    <script src="./js/questions-engine.js?v=49"></script>
-    <script src="./js/ranked.js?v=49"></script>
-    <script src="./js/effects.js?v=49"></script>
-    <script src="./js/game.js?v=49"></script>
-    <script src="./js/pvp.js?v=49"></script>
-    <script src="./js/community.js?v=49"></script>
-    <script src="./js/customization.js?v=49"></script>
-    <script src="./js/features.js?v=49"></script>
-    <script src="./js/auth-nav.js?v=49"></script>
-    <script src="./js/app.js?v=49"></script>
+    <script src="./js/config.js?v=50"></script>
+    <script src="./js/audio.js?v=50"></script>
+    <script src="./js/questions-engine.js?v=50"></script>
+    <script src="./js/ranked.js?v=50"></script>
+    <script src="./js/effects.js?v=50"></script>
+    <script src="./js/game.js?v=50"></script>
+    <script src="./js/pvp.js?v=50"></script>
+    <script src="./js/community.js?v=50"></script>
+    <script src="./js/customization.js?v=50"></script>
+    <script src="./js/features.js?v=50"></script>
+    <script src="./js/auth-nav.js?v=50"></script>
+    <script src="./js/app.js?v=50"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -1053,7 +1053,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=49')
+          navigator.serviceWorker.register('./sw.js?v=50')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
