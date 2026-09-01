@@ -1,6 +1,6 @@
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 
-var SHEET_CSV_URL = window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
+var SHEET_CSV_URL = window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?gid=0&single=true&output=csv";
 
 // إعدادات Firebase
 var firebaseConfig = window.firebaseConfig = {
