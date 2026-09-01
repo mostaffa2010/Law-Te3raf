@@ -82,13 +82,77 @@ window.wheelCurrentAngle = wheelCurrentAngle;
 
 // إعدادات الإنجازات
 var INFINITE_ACHIEVEMENTS = window.INFINITE_ACHIEVEMENTS = [
-    { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
-    { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
-    { id: 'ach_streak', name: 'القناص الذي لا يخطئ', desc: 'أجب على أسئلة متتالية صحيحة في نفس الجلسة', icon: '🏹', stat: 'maxCorrectStreak', baseGoal: 5, stepGoal: 10, baseReward: 15, stepReward: 8, maxLevel: 5 },
-    { id: 'ach_speed', name: 'سريع كالبرق', desc: 'أجب على الأسئلة في أقل من 3 ثوانٍ', icon: '⚡', stat: 'fastAnswersCount', baseGoal: 10, stepGoal: 20, baseReward: 15, stepReward: 8, maxLevel: 5 },
-    { id: 'ach_endless', name: 'أسطورة الصمود', desc: 'حقق نقاطاً قياسية في المود اللانهائي', icon: '🔥', stat: 'highScore', baseGoal: 30, stepGoal: 40, baseReward: 20, stepReward: 10, maxLevel: 5 },
-    { id: 'ach_daily', name: 'المثابر الحديدي', desc: 'حافظ على سلسلة التحدي اليومي', icon: '📅', stat: 'dailyStreak', baseGoal: 3, stepGoal: 5, baseReward: 25, stepReward: 12, maxLevel: 5 },
-    { id: 'ach_shopper', name: 'تاجر الأدوات', desc: 'اشترِ وسائل مساعدة من المتجر لدعم رحلتك', icon: '🛍️', stat: 'itemsPurchased', baseGoal: 3, stepGoal: 5, baseReward: 15, stepReward: 8, maxLevel: 5 }
+    {
+        id: 'ach_correct',
+        title: 'موسوعة المعرفة الكبرى',
+        icon: 'fa-solid fa-brain',
+        color: '#f59e0b',
+        levels: [
+            { target: 100, reward: 50, rewardName: '50 عملة' },
+            { target: 300, reward: 150, rewardName: '150 عملة + لقب المفكر الذكي' },
+            { target: 700, reward: 300, rewardName: '300 عملة' },
+            { target: 1500, reward: 600, rewardName: '600 عملة + أفاتار صقر المعرفة الأسطوري 🦅' },
+            { target: 2500, reward: 1200, rewardName: '1,200 عملة + شارة العبقرية الخالدة' }
+        ],
+        getProgress: (p) => p.totalCorrect || 0,
+        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح عبر جميع أنماط اللعب.`
+    },
+    {
+        id: 'ach_speed',
+        title: 'السرعة الخاطفة',
+        icon: 'fa-solid fa-bolt',
+        color: '#38bdf8',
+        levels: [
+            { target: 25, reward: 40, rewardName: '40 عملة' },
+            { target: 75, reward: 100, rewardName: '100 عملة' },
+            { target: 150, reward: 250, rewardName: '250 عملة + لقب صاعقة السرعة ⚡' },
+            { target: 200, reward: 500, rewardName: '500 عملة + أفاتار البرق الخاطف ⚡' }
+        ],
+        getProgress: (p) => p.fastAnswersCount || 0,
+        desc: (target) => `أجب على ${target} سؤالاً بشكل صحيح خلال أقل من 3 ثوانٍ.`
+    },
+    {
+        id: 'ach_pvp',
+        title: 'سيد التحديات والرانك',
+        icon: 'fa-solid fa-trophy',
+        color: '#a855f7',
+        levels: [
+            { target: 10, reward: 50, rewardName: '50 عملة' },
+            { target: 30, reward: 150, rewardName: '150 عملة' },
+            { target: 60, reward: 350, rewardName: '350 عملة + لقب قاهر الرانك ⚔️' },
+            { target: 100, reward: 800, rewardName: '800 عملة + أفاتار ملك التحديات 👑' }
+        ],
+        getProgress: (p) => p.rankedWins || 0,
+        desc: (target) => `حقق الفوز في ${target} مباراة تصنيف (Ranked 1v1).`
+    },
+    {
+        id: 'ach_streak',
+        title: 'القناص الذي لا يخطئ',
+        icon: 'fa-solid fa-fire',
+        color: '#ef4444',
+        levels: [
+            { target: 3, reward: 30, rewardName: '30 عملة' },
+            { target: 5, reward: 80, rewardName: '80 عملة' },
+            { target: 7, reward: 200, rewardName: '200 عملة + لقب البروفيسور 🎓' },
+            { target: 10, reward: 500, rewardName: '500 عملة + إطار اللهب الناري المتوهج 🔥' }
+        ],
+        getProgress: (p) => p.rankedWinStreak || 0,
+        desc: (target) => `حقق سلسلة ${target} انتصارات متتالية في مباريات الرانك دون أي هزيمة.`
+    },
+    {
+        id: 'ach_high_score',
+        title: 'أسطورة الصمود',
+        icon: 'fa-solid fa-infinity',
+        color: '#10b981',
+        levels: [
+            { target: 50, reward: 40, rewardName: '40 عملة' },
+            { target: 100, reward: 100, rewardName: '100 عملة' },
+            { target: 200, reward: 250, rewardName: '250 عملة' },
+            { target: 350, reward: 600, rewardName: '600 عملة' }
+        ],
+        getProgress: (p) => p.highScore || 0,
+        desc: (target) => `حقق سكور ${target} نقطة في النمط اللانهائي.`
+    }
 ];
 
 // أيقونات وتنسيقات الأقسام

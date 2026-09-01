@@ -181,6 +181,18 @@ function selectAnswer(selectedIndex, btnElement) {
     const isCorrect = selectedIndex === q.correct;
 
     if (isCorrect) {
+    // تسجيل إحصائيات دقة الأقسام
+    if (q && q.category) {
+        if (!userProgress.categoryStats) userProgress.categoryStats = {};
+        if (!userProgress.categoryStats[q.category]) {
+            userProgress.categoryStats[q.category] = { total: 0, correct: 0 };
+        }
+        userProgress.categoryStats[q.category].total++;
+        if (isCorrect) {
+            userProgress.categoryStats[q.category].correct++;
+        }
+    }
+
         if (typeof AudioEngine !== 'undefined') AudioEngine.playCorrect();
         btnElement.classList.add('correct');
         btnElement.querySelector('i').className = 'fa-solid fa-circle-check';

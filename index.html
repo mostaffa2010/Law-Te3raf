@@ -149,7 +149,7 @@
     <!-- القائمة الرئيسية -->
     <div id="main-menu" class="screen">
         <div class="header-bar">
-            <div class="user-profile-widget" onclick="openRankedInfoModal()">
+            <div class="user-profile-widget" onclick="openPlayerProfileModal()">
                 <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
                 <div class="user-name-box">
                     <span id="user-name">لاعب</span>
@@ -221,7 +221,10 @@
                     <i class="fa-solid fa-trophy"></i>
                 </div>
                 <div class="mode-info">
-                    <h4>مباراة التصنيف 1v1 👑</h4>
+                    <div class="ranked-card-title-row">
+                        <h4>مباراة التصنيف 1v1 👑</h4>
+                        <button class="btn-info-circle-rank" onclick="event.stopPropagation(); openRankedInfoModal();" title="تفاصيل الدوريات والمواسم"><i class="fa-solid fa-circle-info"></i></button>
+                    </div>
                     <p>نافس لاعبين في نفس مستواك، اجمع النجوم، واصعد لقمة الدوريات!</p>
                 </div>
                 <div class="ranked-badge-tag" id="modes-current-rank-tag">الحديدي</div>
@@ -838,6 +841,89 @@
             <div class="result-actions">
                 <button class="btn-secondary" onclick="switchScreen('modes-screen')">القائمة الرئيسية</button>
                 <button class="btn-primary" onclick="startRankedMatchmaking()">مباراة جديدة ⚔️</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- نافذة الملف الشخصي الشامل وبطاقة الإحصائيات والتخصيص -->
+    <div id="player-profile-modal" class="custom-modal-overlay" onclick="closePlayerProfileModal()">
+        <div class="player-profile-card" onclick="event.stopPropagation()">
+            <!-- ترويسة الملف الشخصي -->
+            <div class="profile-card-header">
+                <div class="prof-header-left">
+                    <div class="prof-avatar-frame-box" id="prof-header-avatar-wrap">
+                        <img id="prof-header-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
+                    </div>
+                    <div class="prof-user-titles">
+                        <h3 id="prof-header-name">لاعب</h3>
+                        <span class="prof-badge-title" id="prof-header-title">لاعب</span>
+                        <div id="prof-header-rank" class="prof-rank-tag">الحديدي ٣</div>
+                    </div>
+                </div>
+                <button class="btn-close-prof-modal" onclick="closePlayerProfileModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- أزرار التبديل بين الإحصائيات والتخصيص -->
+            <div class="profile-nav-tabs">
+                <button class="profile-nav-tab active" id="tab-prof-stats" onclick="switchProfileTab('stats')">
+                    <i class="fa-solid fa-chart-simple"></i> الإحصائيات
+                </button>
+                <button class="profile-nav-tab" id="tab-prof-customize" onclick="switchProfileTab('customize')">
+                    <i class="fa-solid fa-palette"></i> المظهر والتخصيص
+                </button>
+            </div>
+
+            <!-- قسم 1: بطاقة الإحصائيات ونسب الأقسام -->
+            <div id="profile-stats-section" class="profile-tab-content">
+                <div class="prof-records-grid">
+                    <div class="prof-record-box">
+                        <span class="record-title">انتصارات الرانك</span>
+                        <b class="record-val" id="stat-val-rk-wins" style="color: var(--accent-yellow);">0</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">نسبة الفوز</span>
+                        <b class="record-val" id="stat-val-winrate" style="color: var(--accent-green);">0%</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">أعلى سكور</span>
+                        <b class="record-val" id="stat-val-highscore" style="color: var(--accent-blue);">0</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">أطول سلسلة</span>
+                        <b class="record-val" id="stat-val-maxstreak" style="color: var(--accent-pink);">0</b>
+                    </div>
+                </div>
+
+                <button class="btn-view-ranked-leagues" onclick="openRankedInfoModal()">
+                    <i class="fa-solid fa-trophy"></i> استعراض تفاصيل الدوريات والمواسم 🏆
+                </button>
+
+                <div class="profile-section-title">
+                    <h4>دقة الإجابات حسب الأقسام (12 قسماً) 📊</h4>
+                </div>
+
+                <div class="profile-category-list" id="profile-category-accuracy-list">
+                    <!-- تُولد الصفوف ديناميكياً بأشرطة أفقية مريحة -->
+                </div>
+            </div>
+
+            <!-- قسم 2: تخصيص الأفاتارات والإطارات والألقاب -->
+            <div id="profile-custom-section" class="profile-tab-content" style="display: none;">
+                <div class="custom-group-header">
+                    <h4>🎭 الصور الرمزية (Avatars)</h4>
+                </div>
+                <div class="custom-grid-container" id="custom-avatars-grid"></div>
+
+                <div class="custom-group-header" style="margin-top: 18px;">
+                    <h4>🖼️ إطارات الملف الشخصي (Frames)</h4>
+                </div>
+                <div class="custom-grid-container" id="custom-frames-grid"></div>
+
+                <div class="custom-group-header" style="margin-top: 18px;">
+                    <h4>🏷️ ألقاب الحساب (Titles)</h4>
+                </div>
+                <div class="custom-titles-box" id="custom-titles-list"></div>
             </div>
         </div>
     </div>
