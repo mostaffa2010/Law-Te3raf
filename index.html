@@ -216,7 +216,12 @@
         </div>
 
         <div class="modes-container">
-                        <div class="mode-card ranked-mode" onclick="startRankedMatchmaking()">
+                                <div class="season-timer-banner" id="modes-season-timer-banner">
+            <i class="fa-solid fa-clock"></i>
+            <span id="season-countdown-text">الموسم الحالي: جاري التحميل...</span>
+        </div>
+
+<div class="mode-card ranked-mode" onclick="startRankedMatchmaking()">
                 <div class="mode-icon ranked-icon-wrap">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
@@ -705,7 +710,6 @@
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
     <script src="./js/config.js?v=30"></script>
     <script src="./js/audio.js?v=30"></script>
-    <script src="./js/questions.js?v=30"></script>
     <script src="./js/questions-engine.js?v=30"></script>
     <script src="./js/ranked.js?v=30"></script>
     <script src="./js/game.js?v=30"></script>
@@ -743,6 +747,7 @@
             <div class="custom-modal-icon">🏆</div>
             <h3>دوريات التصنيف والمواسم</h3>
             <p>10 دوريات تنافسية، فُز بالمباريات واجمع النجوم للترقية إلى قمة التصنيف!</p>
+            <div class="season-modal-pill" id="ranked-modal-season-text">📅 الموسم الحالي: جاري الحساب...</div>
             <div class="ranked-tiers-list" id="ranked-tiers-list"></div>
             <button class="btn-modal-close" style="margin-top: 15px;" onclick="closeRankedInfoModal()">حسناً</button>
         </div>

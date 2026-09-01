@@ -2895,3 +2895,34 @@ html, body {
     background: rgba(99, 102, 241, 0.25) !important;
     border-color: var(--accent-purple) !important;
 }
+
+
+/* ==========================================
+   Season Countdown Banner & Modal Pill
+   ========================================== */
+.season-timer-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(99, 102, 241, 0.12));
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 16px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--accent-yellow);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.season-modal-pill {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--accent-yellow);
+    margin: 8px 0 12px;
+}

@@ -34,6 +34,7 @@ function initAuthAndApp() {
                     updateUserProfileUI(user);
                     await loadCloudProgress(user.uid);
                     
+                    if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
@@ -48,7 +49,8 @@ function initAuthAndApp() {
                         try {
                             currentUser = JSON.parse(localGuest);
                             updateUserProfileUI(currentUser);
-                            if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                            if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
+                    if (typeof updateHeaderStats === 'function') updateHeaderStats();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();
