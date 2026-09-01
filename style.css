@@ -121,9 +121,7 @@ html, body {
    ========================================== */
 
 
-.screen.active {
-    display: flex;
-}
+
 
 .header-bar {
     display: flex;
@@ -4556,6 +4554,13 @@ img[src*="frame_challenger_crown"] {
    ========================================== */
 .screen {
     display: none;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 16px 14px 40px;
+    box-sizing: border-box;
     opacity: 0;
     transform: translateY(10px) scale(0.99);
     transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -4564,6 +4569,7 @@ img[src*="frame_challenger_crown"] {
 
 .screen.active {
     display: flex !important;
+    flex-direction: column !important;
     opacity: 1 !important;
     transform: translateY(0) scale(1) !important;
 }
