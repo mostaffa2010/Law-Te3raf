@@ -3794,43 +3794,46 @@ img[src*="frame_challenger_crown"] {
 }
 
 
+
 /* ==========================================
    Customization Sub-Tabs (Avatars / Frames / Titles)
    ========================================== */
 .custom-sub-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 4px;
+    display: flex !important;
+    gap: 8px !important;
+    margin-bottom: 18px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    padding: 5px !important;
 }
 
 .custom-sub-tab {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    padding: 8px 6px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    flex: 1 !important;
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-secondary) !important;
+    padding: 10px 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
 }
 
 .custom-sub-tab.active {
-    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
-    color: #000000;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706) !important;
+    color: #000000 !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.45) !important;
+    transform: scale(1.02) !important;
 }
 
 .custom-subtab-content {
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.25s ease !important;
 }
+

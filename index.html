@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=37">
+    <link rel="stylesheet" href="./style.css?v=38">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -712,16 +712,16 @@
     </div>
 
         <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=37"></script>
-    <script src="./js/audio.js?v=37"></script>
-    <script src="./js/questions-engine.js?v=37"></script>
-    <script src="./js/ranked.js?v=37"></script>
-    <script src="./js/game.js?v=37"></script>
-    <script src="./js/pvp.js?v=37"></script>
-    <script src="./js/customization.js?v=37"></script>
-    <script src="./js/features.js?v=37"></script>
-    <script src="./js/auth-nav.js?v=37"></script>
-    <script src="./js/app.js?v=37"></script>
+    <script src="./js/config.js?v=38"></script>
+    <script src="./js/audio.js?v=38"></script>
+    <script src="./js/questions-engine.js?v=38"></script>
+    <script src="./js/ranked.js?v=38"></script>
+    <script src="./js/game.js?v=38"></script>
+    <script src="./js/pvp.js?v=38"></script>
+    <script src="./js/customization.js?v=38"></script>
+    <script src="./js/features.js?v=38"></script>
+    <script src="./js/auth-nav.js?v=38"></script>
+    <script src="./js/app.js?v=38"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -739,7 +739,253 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=37')
+          navigator.serviceWorker.register('./sw.js?v=38')
+            .then(reg => console.log('SW Registered successfully:', reg))
+            .catch(err => console.log('SW Registration error:', err));
+        });
+      }
+    </script>
+
+    <!-- نافذة تفاصيل وشرح دوريات الرانك (Ranked Info Modal) -->
+    <div id="ranked-info-modal" class="custom-modal-overlay" onclick="closeRankedInfoModal()">
+        <div class="custom-modal-card ranked-info-modal-card" onclick="event.stopPropagation()">
+            <div class="custom-modal-icon">🏆</div>
+            <h3>دوريات التصنيف والمواسم</h3>
+            <p>10 دوريات تنافسية، فُز بالمباريات واجمع النجوم للترقية إلى قمة التصنيف!</p>
+            <div class="season-modal-pill" id="ranked-modal-season-text">📅 الموسم الحالي: جاري الحساب...</div>
+            <div class="ranked-tiers-list" id="ranked-tiers-list"></div>
+            <button class="btn-modal-close" style="margin-top: 15px;" onclick="closeRankedInfoModal()">حسناً</button>
+        </div>
+    </div>
+
+    <!-- نافذة البحث عن منافس (Matchmaking Overlay) -->
+    <div id="matchmaking-overlay" class="custom-modal-overlay">
+        <div class="matchmaking-card">
+            <div class="radar-box">
+                <div class="radar-circle"></div>
+                <div class="radar-pulse"></div>
+                <i class="fa-solid fa-crosshairs radar-icon"></i>
+            </div>
+            <h3>جاري البحث عن منافس...</h3>
+            <div class="mm-rank-badge" id="mm-player-rank-badge">🛡️ حديدي</div>
+            <div class="mm-timer" id="mm-timer-text">00:00</div>
+            <button class="btn-cancel-mm" onclick="cancelRankedMatchmaking()">
+                <i class="fa-solid fa-xmark"></i> إلغاء البحث
+            </button>
+        </div>
+    </div>
+
+    <!-- شاشة المواجهة (Versus Screen) -->
+    <div id="ranked-versus-screen" class="screen versus-screen">
+        <div class="versus-container">
+            <div class="vs-player-card left">
+                <img class="vs-avatar" id="vs-my-avatar" src="" alt="Player">
+                <h3 id="vs-my-name">أنت</h3>
+                <div class="vs-rank-badge" id="vs-my-rank">🛡️ حديدي</div>
+            </div>
+
+            <div class="vs-badge-center">
+                <span>VS</span>
+            </div>
+
+            <div class="vs-player-card right">
+                <img class="vs-avatar" id="vs-opp-avatar" src="" alt="Opponent">
+                <h3 id="vs-opp-name">المنافس</h3>
+                <div class="vs-rank-badge" id="vs-opp-rank">🛡️ حديدي</div>
+            </div>
+        </div>
+        <p class="vs-starting-note">ينطلق التحدي السريع (5 أسئلة)... استعد!</p>
+    </div>
+
+    <!-- شاشة نتيجة مباراة الرانك (Ranked Result Screen) -->
+    
+    <!-- شاشة انتظار إنهاء المنافس لأسئلته في الرانك -->
+    <div id="ranked-waiting-opponent-screen" class="screen">
+        <div class="pvp-waiting-opp-card">
+            <div class="splash-loader" style="margin-bottom: 20px;"></div>
+            <h3>أحسنت! أنهيت أسئلتك الخمسة بنجاح 🎯</h3>
+            <p id="rk-wait-opp-sub">في انتظار إنهاء المنافس لجولته لإعلان النتيجة والتصنيف...</p>
+
+            <div class="rk-wait-opp-box">
+                <img id="rk-wait-opp-avatar" src="" alt="Opponent">
+                <div class="rk-wait-opp-info">
+                    <span id="rk-wait-opp-name" style="font-weight: bold;">المنافس</span>
+                    <span id="rk-wait-opp-status" style="font-size: 0.8rem; color: var(--accent-yellow);">جاري الإجابة...</span>
+                </div>
+            </div>
+            <div class="opp-progress-dots" id="rk-wait-opp-dots" style="justify-content: center; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+<div id="ranked-result-screen" class="screen">
+        <div class="result-card ranked-res-card">
+            <div class="result-icon" id="rk-res-icon">🏆</div>
+            <h2 id="rk-res-title">انتصار!</h2>
+            <p id="rk-res-sub">ملخص نتيجة المواجهة التنافسية:</p>
+
+            <div class="rk-score-compare-box">
+                <div class="rk-player-stat">
+                    <span>نقاطك</span>
+                    <b id="rk-my-final-score" style="color: var(--accent-yellow);">0</b>
+                </div>
+                <div class="rk-vs-divider">ضد</div>
+                <div class="rk-player-stat">
+                    <span id="rk-res-opp-name">المنافس</span>
+                    <b id="rk-opp-final-score" style="color: var(--text-secondary);">0</b>
+                </div>
+            </div>
+
+            <div class="rk-progress-display-card">
+                <div id="rk-res-rank-emblem">🛡️</div>
+                <div class="rk-progress-details">
+                    <h4 id="rk-res-rank-title">الحديدي</h4>
+                    <div class="rk-stars-row" id="rk-res-stars-box"></div>
+                </div>
+            </div>
+
+            <div class="rk-streak-badge" id="rk-streak-bonus-badge" style="display: none;"></div>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="switchScreen('modes-screen')">القائمة الرئيسية</button>
+                <button class="btn-primary" onclick="startRankedMatchmaking()">مباراة جديدة ⚔️</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- نافذة الملف الشخصي الشامل وبطاقة الإحصائيات والتخصيص -->
+    <div id="player-profile-modal" class="custom-modal-overlay" onclick="closePlayerProfileModal()">
+        <div class="player-profile-card" onclick="event.stopPropagation()">
+            <!-- ترويسة الملف الشخصي -->
+            <div class="profile-card-header">
+                <div class="prof-header-left">
+                    <div class="prof-avatar-frame-box" id="prof-header-avatar-wrap">
+                        <img id="prof-header-avatar" class="avatar-face-img" src="./assets/avatars/avatar_warrior.svg" alt="Avatar">
+                        <img id="prof-header-frame-overlay" class="avatar-frame-overlay" src="" alt="Frame" style="display: none;">
+                    </div>
+                    <div class="prof-user-titles">
+                        <h3 id="prof-header-name">لاعب</h3>
+                        <span class="prof-badge-title" id="prof-header-title">لاعب</span>
+                        <div id="prof-header-rank" class="prof-rank-tag">الحديدي ٣</div>
+                    </div>
+                </div>
+                <button class="btn-close-prof-modal" onclick="closePlayerProfileModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- أزرار التبديل بين الإحصائيات والتخصيص -->
+            <div class="profile-nav-tabs">
+                <button class="profile-nav-tab active" id="tab-prof-stats" onclick="switchProfileTab('stats')">
+                    <i class="fa-solid fa-chart-simple"></i> الإحصائيات
+                </button>
+                <button class="profile-nav-tab" id="tab-prof-customize" onclick="switchProfileTab('customize')">
+                    <i class="fa-solid fa-palette"></i> المظهر والتخصيص
+                </button>
+            </div>
+
+            <!-- قسم 1: بطاقة الإحصائيات ونسب الأقسام -->
+            <div id="profile-stats-section" class="profile-tab-content">
+                <div class="prof-records-grid">
+                    <div class="prof-record-box">
+                        <span class="record-title">انتصارات الرانك</span>
+                        <b class="record-val" id="stat-val-rk-wins" style="color: var(--accent-yellow);">0</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">نسبة الفوز</span>
+                        <b class="record-val" id="stat-val-winrate" style="color: var(--accent-green);">0%</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">أعلى سكور</span>
+                        <b class="record-val" id="stat-val-highscore" style="color: var(--accent-blue);">0</b>
+                    </div>
+                    <div class="prof-record-box">
+                        <span class="record-title">أطول سلسلة</span>
+                        <b class="record-val" id="stat-val-maxstreak" style="color: var(--accent-pink);">0</b>
+                    </div>
+                </div>
+
+                <button class="btn-view-ranked-leagues" onclick="openRankedInfoModal()">
+                    <i class="fa-solid fa-trophy"></i> استعراض تفاصيل الدوريات والمواسم 🏆
+                </button>
+
+                <div class="profile-section-title">
+                    <h4>دقة الإجابات حسب الأقسام (12 قسماً) 📊</h4>
+                </div>
+
+                <div class="profile-category-list" id="profile-category-accuracy-list">
+                    <!-- تُولد الصفوف ديناميكياً بأشرطة أفقية مريحة -->
+                </div>
+            </div>
+
+            <!-- قسم 2: تخصيص الأفاتارات والإطارات والألقاب -->
+            <div id="profile-custom-section" class="profile-tab-content" style="display: none;">
+                <!-- التبويبات الفرعية الثلاثة للتخصيص -->
+                <div class="custom-sub-tabs">
+                    <button class="custom-sub-tab active" id="subtab-avatars" onclick="switchCustomSubTab('avatars')">
+                        🎭 الصور الرمزية
+                    </button>
+                    <button class="custom-sub-tab" id="subtab-frames" onclick="switchCustomSubTab('frames')">
+                        🖼️ الإطارات
+                    </button>
+                    <button class="custom-sub-tab" id="subtab-titles" onclick="switchCustomSubTab('titles')">
+                        الألقاب
+                    </button>
+                </div>
+
+                <!-- محتوى تبويب الصور الرمزية -->
+                <div id="subtab-content-avatars" class="custom-subtab-content">
+                    <div class="custom-grid-container" id="custom-avatars-grid"></div>
+                </div>
+
+                <!-- محتوى تبويب الإطارات -->
+                <div id="subtab-content-frames" class="custom-subtab-content" style="display: none;">
+                    <div class="custom-grid-container" id="custom-frames-grid"></div>
+                </div>
+
+                <!-- محتوى تبويب الألقاب -->
+                <div id="subtab-content-titles" class="custom-subtab-content" style="display: none;">
+                    <div class="custom-titles-box" id="custom-titles-list"></div>
+                </div>
+                
+                <!-- زر الحفظ والتطبيق الدائم -->
+                <div class="save-custom-btn-wrap">
+                    <button class="btn-save-customization-sticky" onclick="saveAndApplyCustomization()">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ وتطبيق المظهر الجديد 💾
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
+    <script src="./js/config.js?v=38"></script>
+    <script src="./js/audio.js?v=38"></script>
+    <script src="./js/questions-engine.js?v=38"></script>
+    <script src="./js/ranked.js?v=38"></script>
+    <script src="./js/game.js?v=38"></script>
+    <script src="./js/pvp.js?v=38"></script>
+    <script src="./js/customization.js?v=38"></script>
+    <script src="./js/features.js?v=38"></script>
+    <script src="./js/auth-nav.js?v=38"></script>
+    <script src="./js/app.js?v=38"></script>
+
+    <!-- تسجيل Service Worker للـ PWA -->
+    
+    <!-- أمان إغلاق شاشة البداية دائماً -->
+    <script>
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash && !splash.classList.contains('hide')) {
+          splash.classList.add('hide');
+          setTimeout(() => { splash.style.display = 'none'; }, 500);
+        }
+      }, 2000);
+    </script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=38')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });

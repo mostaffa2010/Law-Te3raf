@@ -2258,6 +2258,7 @@ function switchProfileTab(tabName) {
         if (statsSec) statsSec.style.display = 'none';
         if (customSec) customSec.style.display = 'block';
         renderCustomizationContent();
+        switchCustomSubTab(activeCustomSubTab || 'avatars');
     }
 }
 
