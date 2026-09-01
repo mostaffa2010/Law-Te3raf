@@ -1,3 +1,34 @@
+// الإعدادات الديناميكية القابلة للتعديل المباشر من لوحة المشرف
+var APP_CONFIG = window.APP_CONFIG = {
+    prices: {
+        hint5050: 20,
+        addTime: 15,
+        skip: 30,
+        dailyFreeReward: 30,
+        wheelExtraSpin: 25
+    },
+    customPrices: {
+        av_detective: 400,
+        av_viking: 600,
+        av_samurai: 800,
+        av_pharaoh: 1000,
+        av_astro: 1200,
+        av_gladiator: 1400,
+        av_pirate: 1600,
+        av_alchemist: 1800,
+        av_wizard: 2000,
+        av_lion: 2500,
+        frame_cyber_neon: 500,
+        frame_royal_laurel: 800,
+        frame_dragon_fire: 1000,
+        title_mastermind: 300,
+        title_puzzle_king: 500,
+        title_sniper: 600
+    },
+    announcement: "",
+    announcementActive: false
+};
+
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 
 var SHEET_CSV_URL = window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?gid=0&single=true&output=csv";

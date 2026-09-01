@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=51">
+    <link rel="stylesheet" href="./style.css?v=52">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -177,6 +177,11 @@
                 <span>ثبّت اللعبة على هاتفك لتجربة أسرع بدون متصفح!</span>
             </div>
             <button id="btn-pwa-install" class="install-btn" onclick="installAppPWA()">تثبيت الآن</button>
+        </div>
+
+                <div id="global-live-announcement-banner" class="global-announcement-banner" style="display: none;">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span id="global-announcement-text">إعلان هام يظهر لجميع اللاعبين</span>
         </div>
 
         <div class="menu-hero-card">
@@ -683,38 +688,149 @@
 
     
     <!-- شاشة لوحة تحكم المشرف السرية -->
+    <!-- شاشة لوحة تحكم المشرف الشاملة (Admin Dashboard) -->
     <div id="admin-panel-screen" class="screen">
         <div class="header-bar">
             <button class="btn-back" onclick="switchScreen('settings-screen')"><i class="fa-solid fa-arrow-right"></i></button>
-            <h3>لوحة إدارة الأسئلة 🛡️</h3>
-            <button class="btn-header-refresh-admin" onclick="fetchAndRenderAdminQuestions()" title="تحديث"><i class="fa-solid fa-rotate-right"></i></button>
+            <h3>لوحة إدارة اللعبة 🛡️</h3>
+            <button class="btn-header-refresh-admin" onclick="switchAdminTab(activeAdminTab)" title="تحديث"><i class="fa-solid fa-rotate-right"></i></button>
         </div>
 
         <div class="admin-panel-content">
-            <!-- شريط الإحصائيات السريع -->
-            <div class="admin-stats-summary">
-                <div class="adm-stat-box pending">
-                    <span>⏳ معلقة</span>
-                    <b id="admin-stat-pending">0</b>
+            <!-- تبويبات لوحة التحكم الأربعة -->
+            <div class="admin-dashboard-tabs">
+                <button class="adm-sub-tab active" id="adm-tab-questions" onclick="switchAdminTab('questions')">
+                    📝 الأسئلة
+                </button>
+                <button class="adm-sub-tab" id="adm-tab-prices" onclick="switchAdminTab('prices')">
+                    🪙 المساعدات
+                </button>
+                <button class="adm-sub-tab" id="adm-tab-custom-prices" onclick="switchAdminTab('custom-prices')">
+                    🎨 المظهر
+                </button>
+                <button class="adm-sub-tab" id="adm-tab-announcement" onclick="switchAdminTab('announcement')">
+                    📢 إعلان عام
+                </button>
+            </div>
+
+            <!-- تبويب 1: مراجعة الأسئلة المقترحة -->
+            <div id="adm-sec-questions" class="adm-tab-content">
+                <div class="admin-stats-summary">
+                    <div class="adm-stat-box pending">
+                        <span>⏳ معلقة</span>
+                        <b id="admin-stat-pending">0</b>
+                    </div>
+                    <div class="adm-stat-box approved">
+                        <span>✅ مقبولة</span>
+                        <b id="admin-stat-approved">0</b>
+                    </div>
+                    <div class="adm-stat-box rejected">
+                        <span>❌ مرفوضة</span>
+                        <b id="admin-stat-rejected">0</b>
+                    </div>
                 </div>
-                <div class="adm-stat-box approved">
-                    <span>✅ مقبولة</span>
-                    <b id="admin-stat-approved">0</b>
-                </div>
-                <div class="adm-stat-box rejected">
-                    <span>❌ مرفوضة</span>
-                    <b id="admin-stat-rejected">0</b>
+
+                <button class="btn-copy-all-approved" onclick="copyAllApprovedAsTSV()" style="margin: 12px 0;">
+                    <i class="fa-solid fa-table-cells"></i> نسخ كل المقبول كـ TSV للشيت 📋
+                </button>
+
+                <div class="admin-feed-container" id="admin-questions-feed"></div>
+            </div>
+
+            <!-- تبويب 2: أسعار متجر المساعدات وعجلة الحظ -->
+            <div id="adm-sec-prices" class="adm-tab-content" style="display: none;">
+                <div class="adm-card-box">
+                    <h4>🪙 أسعار متجر المساعدات والمكافآت:</h4>
+                    <p class="adm-sub-hint">أي تعديل هنا يتحدث فوراً عند جميع اللاعبين في المتجر وشاشات اللعب.</p>
+
+                    <div class="adm-input-group">
+                        <label>حذف إجابتين (50:50):</label>
+                        <input type="number" id="adm-price-5050" value="20">
+                    </div>
+
+                    <div class="adm-input-group">
+                        <label>إضافة 10 ثواني (+10s):</label>
+                        <input type="number" id="adm-price-time" value="15">
+                    </div>
+
+                    <div class="adm-input-group">
+                        <label>تخطي السؤال (Skip):</label>
+                        <input type="number" id="adm-price-skip" value="30">
+                    </div>
+
+                    <div class="adm-input-group">
+                        <label>الهدية اليومية المجانية:</label>
+                        <input type="number" id="adm-reward-daily" value="30">
+                    </div>
+
+                    <div class="adm-input-group">
+                        <label>سعر لفة عجلة الحظ الإضافية:</label>
+                        <input type="number" id="adm-price-wheel" value="25">
+                    </div>
+
+                    <button class="btn-save-adm-action" onclick="saveAdminPrices()">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ ونشر أسعار المساعدات فوراً 💾
+                    </button>
                 </div>
             </div>
 
-            <!-- زر النسخ الجماعي المباشر لشيت جوجل -->
-            <button class="btn-copy-all-approved" onclick="copyAllApprovedAsTSV()">
-                <i class="fa-solid fa-table-cells"></i> نسخ كل المقبول كـ TSV للشيت 📋
-            </button>
+            <!-- تبويب 3: أسعار متجر المظهر (الأفاتارات والإطارات والألقاب) -->
+            <div id="adm-sec-custom-prices" class="adm-tab-content" style="display: none;">
+                <div class="adm-card-box">
+                    <h4>🎭 أسعار الأفاتارات المعروضة للبيع:</h4>
+                    <div class="adm-grid-2col">
+                        <div class="adm-input-group"><label>🕵️ المحقق الذكي:</label><input type="number" id="adm-price-av-detective" value="400"></div>
+                        <div class="adm-input-group"><label>🪓 محارب الفايكنج:</label><input type="number" id="adm-price-av-viking" value="600"></div>
+                        <div class="adm-input-group"><label>⚔️ الساموراي:</label><input type="number" id="adm-price-av-samurai" value="800"></div>
+                        <div class="adm-input-group"><label>👑 الفرعون الذهبي:</label><input type="number" id="adm-price-av-pharaoh" value="1000"></div>
+                        <div class="adm-input-group"><label>🚀 رائد الفضاء:</label><input type="number" id="adm-price-av-astro" value="1200"></div>
+                        <div class="adm-input-group"><label>🏛️ المصارع الروماني:</label><input type="number" id="adm-price-av-gladiator" value="1400"></div>
+                        <div class="adm-input-group"><label>🏴‍☠️ قبطان القراصنة:</label><input type="number" id="adm-price-av-pirate" value="1600"></div>
+                        <div class="adm-input-group"><label>🧪 عالم الكيمياء:</label><input type="number" id="adm-price-av-alchemist" value="1800"></div>
+                        <div class="adm-input-group"><label>🧙‍♂️ ساحر المعرفة:</label><input type="number" id="adm-price-av-wizard" value="2000"></div>
+                        <div class="adm-input-group"><label>🦁 الأسد الملكي:</label><input type="number" id="adm-price-av-lion" value="2500"></div>
+                    </div>
 
-            <!-- تغذية بطاقات الأسئلة المقترحة -->
-            <div class="admin-feed-container" id="admin-questions-feed">
-                <!-- تُولد البطاقات ديناميكياً من Firebase -->
+                    <h4 style="margin-top: 16px;">🖼️ أسعار الإطارات المتوهجة:</h4>
+                    <div class="adm-grid-2col">
+                        <div class="adm-input-group"><label>🔵 إطار السايبر:</label><input type="number" id="adm-price-frame-neon" value="500"></div>
+                        <div class="adm-input-group"><label>🌿 إطار الغار الملكي:</label><input type="number" id="adm-price-frame-laurel" value="800"></div>
+                        <div class="adm-input-group"><label>🐉 إطار التنين:</label><input type="number" id="adm-price-frame-dragon" value="1000"></div>
+                    </div>
+
+                    <h4 style="margin-top: 16px;">🏷️ أسعار الألقاب المتجر:</h4>
+                    <div class="adm-grid-2col">
+                        <div class="adm-input-group"><label>العقل المدبر:</label><input type="number" id="adm-price-title-mastermind" value="300"></div>
+                        <div class="adm-input-group"><label>ملك الألغاز:</label><input type="number" id="adm-price-title-puzzle" value="500"></div>
+                        <div class="adm-input-group"><label>قناص الإجابات:</label><input type="number" id="adm-price-title-sniper" value="600"></div>
+                    </div>
+
+                    <button class="btn-save-adm-action" onclick="saveAdminCustomPrices()" style="margin-top: 16px;">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ ونشر أسعار المظهر فوراً 💾
+                    </button>
+                </div>
+            </div>
+
+            <!-- تبويب 4: نشر إعلان أو رسالة عامة للاعبين -->
+            <div id="adm-sec-announcement" class="adm-tab-content" style="display: none;">
+                <div class="adm-card-box">
+                    <h4>📢 شريط الإعلان المباشر لجميع اللاعبين:</h4>
+                    <p class="adm-sub-hint">اكتب رسالة أو خبراً عاجلاً وسيظهر فوراً في شريط متحرك في أعلى القائمة الرئيسية لجميع اللاعبين في العالم.</p>
+
+                    <div class="adm-input-group" style="margin-top: 12px;">
+                        <label>نص الإعلان / الخبر:</label>
+                        <textarea id="adm-announce-text" rows="3" placeholder="مثال: 🎉 انطلاق الموسم الثاني وتحديات جديدة بجوائز مضاعفة!"></textarea>
+                    </div>
+
+                    <div class="adm-checkbox-row">
+                        <input type="checkbox" id="adm-announce-active" checked>
+                        <label for="adm-announce-active">تفعيل وإظهار شريط الإعلان للجميع</label>
+                    </div>
+
+                    <button class="btn-save-adm-action" onclick="saveAdminAnnouncement()">
+                        <i class="fa-solid fa-bullhorn"></i> نشر الإعلان فوراً 🚀
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -776,18 +892,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=51"></script>
-    <script src="./js/audio.js?v=51"></script>
-    <script src="./js/questions-engine.js?v=51"></script>
-    <script src="./js/ranked.js?v=51"></script>
-    <script src="./js/effects.js?v=51"></script>
-    <script src="./js/game.js?v=51"></script>
-    <script src="./js/pvp.js?v=51"></script>
-    <script src="./js/community.js?v=51"></script>
-    <script src="./js/customization.js?v=51"></script>
-    <script src="./js/features.js?v=51"></script>
-    <script src="./js/auth-nav.js?v=51"></script>
-    <script src="./js/app.js?v=51"></script>
+    <script src="./js/config.js?v=52"></script>
+    <script src="./js/audio.js?v=52"></script>
+    <script src="./js/questions-engine.js?v=52"></script>
+    <script src="./js/ranked.js?v=52"></script>
+    <script src="./js/effects.js?v=52"></script>
+    <script src="./js/game.js?v=52"></script>
+    <script src="./js/pvp.js?v=52"></script>
+    <script src="./js/community.js?v=52"></script>
+    <script src="./js/customization.js?v=52"></script>
+    <script src="./js/features.js?v=52"></script>
+    <script src="./js/auth-nav.js?v=52"></script>
+    <script src="./js/app.js?v=52"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -805,7 +921,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=51')
+          navigator.serviceWorker.register('./sw.js?v=52')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -1024,18 +1140,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=51"></script>
-    <script src="./js/audio.js?v=51"></script>
-    <script src="./js/questions-engine.js?v=51"></script>
-    <script src="./js/ranked.js?v=51"></script>
-    <script src="./js/effects.js?v=51"></script>
-    <script src="./js/game.js?v=51"></script>
-    <script src="./js/pvp.js?v=51"></script>
-    <script src="./js/community.js?v=51"></script>
-    <script src="./js/customization.js?v=51"></script>
-    <script src="./js/features.js?v=51"></script>
-    <script src="./js/auth-nav.js?v=51"></script>
-    <script src="./js/app.js?v=51"></script>
+    <script src="./js/config.js?v=52"></script>
+    <script src="./js/audio.js?v=52"></script>
+    <script src="./js/questions-engine.js?v=52"></script>
+    <script src="./js/ranked.js?v=52"></script>
+    <script src="./js/effects.js?v=52"></script>
+    <script src="./js/game.js?v=52"></script>
+    <script src="./js/pvp.js?v=52"></script>
+    <script src="./js/community.js?v=52"></script>
+    <script src="./js/customization.js?v=52"></script>
+    <script src="./js/features.js?v=52"></script>
+    <script src="./js/auth-nav.js?v=52"></script>
+    <script src="./js/app.js?v=52"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -1053,7 +1169,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=51')
+          navigator.serviceWorker.register('./sw.js?v=52')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });

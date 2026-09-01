@@ -40,6 +40,7 @@ function initAuthAndApp() {
                     if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
+    if (typeof initLiveConfigListener === 'function') initLiveConfigListener();
                     if (typeof checkWheelStatus === 'function') checkWheelStatus();
                     if (typeof checkAllAchievements === 'function') checkAllAchievements();
                     if (typeof drawWheel === 'function') drawWheel();
@@ -57,6 +58,7 @@ function initAuthAndApp() {
                     if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
+    if (typeof initLiveConfigListener === 'function') initLiveConfigListener();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();
                             if (typeof checkAllAchievements === 'function') checkAllAchievements();
                             if (typeof drawWheel === 'function') drawWheel();

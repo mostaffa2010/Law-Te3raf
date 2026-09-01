@@ -4395,3 +4395,163 @@ img[src*="frame_challenger_crown"] {
     border-radius: 10px;
     cursor: pointer;
 }
+
+
+/* ==========================================
+   Full In-Game Admin Dashboard Styles
+   ========================================== */
+.global-announcement-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(236, 72, 153, 0.2));
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    border-radius: 14px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+    animation: popIn 0.3s ease;
+}
+
+.global-announcement-banner i {
+    color: var(--accent-yellow);
+    font-size: 1.1rem;
+    animation: pulse 1.5s infinite;
+}
+
+.admin-dashboard-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 4px;
+    margin-bottom: 14px;
+}
+
+.adm-sub-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 9px 4px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.adm-sub-tab.active {
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.adm-card-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 18px 16px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.adm-card-box h4 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.adm-sub-hint {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.adm-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.adm-input-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.adm-input-group input, .adm-input-group textarea {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 800;
+    font-family: inherit;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.adm-input-group input:focus, .adm-input-group textarea:focus {
+    border-color: var(--accent-yellow);
+    outline: none;
+}
+
+.adm-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.adm-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+}
+
+.adm-checkbox-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-yellow);
+}
+
+.adm-checkbox-row label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.btn-save-adm-action {
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    border: none;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 800;
+    padding: 13px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    transition: transform 0.15s ease;
+}
+
+.btn-save-adm-action:active {
+    transform: scale(0.97);
+}
