@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_dragon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#18181b"/>
+    </linearGradient>
+    <linearGradient id="scale_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_dragon)" stroke="#ef4444" stroke-width="2.5"/>
+  <!-- Dragon Horns -->
+  <path d="M34 36 Q18 16 26 10 Q32 20 38 30 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+  <path d="M66 36 Q82 16 74 10 Q68 20 62 30 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+  <!-- Dragon Head / Snout -->
+  <path d="M32 38 L68 38 L62 70 L50 78 L38 70 Z" fill="url(#scale_grad)" stroke="#450a0a" stroke-width="2"/>
+  <!-- Glowing Fiery Slit Eyes -->
+  <polygon points="38,44 48,46 44,50 36,47" fill="#facc15"/>
+  <polygon points="62,44 52,46 56,50 64,47" fill="#facc15"/>
+  <line x1="42" y1="44" x2="42" y2="49" stroke="#7f1d1d" stroke-width="2"/>
+  <line x1="58" y1="44" x2="58" y2="49" stroke="#7f1d1d" stroke-width="2"/>
+  <!-- Fire Flames Nostrils -->
+  <circle cx="44" cy="64" r="2" fill="#f97316"/>
+  <circle cx="56" cy="64" r="2" fill="#f97316"/>
+</svg>

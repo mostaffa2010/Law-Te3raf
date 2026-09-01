@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="ice_cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <!-- Inner Crystal Ring -->
+  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#ice_cyan)" stroke-width="3.5"/>
+  <circle cx="60" cy="60" r="52" fill="none" stroke="#e0f2fe" stroke-width="1" stroke-dasharray="6,6"/>
+  <!-- 8 Diamond Gemstones -->
+  <polygon points="60,4 66,10 60,16 54,10" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="60,104 66,110 60,116 54,110" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="4,60 10,66 16,60 10,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="104,60 110,66 116,60 110,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="20,20 26,24 22,28 16,24" fill="#38bdf8"/>
+  <polygon points="100,20 104,24 98,28 94,24" fill="#38bdf8"/>
+  <polygon points="20,100 26,96 22,92 16,96" fill="#38bdf8"/>
+  <polygon points="100,100 104,96 98,92 94,96" fill="#38bdf8"/>
+</svg>

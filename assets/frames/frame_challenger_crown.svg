@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="chal_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <!-- Heavy Gold Border -->
+  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#chal_gold)" stroke-width="4.5"/>
+  <!-- Top Royal Imperial Crown -->
+  <path d="M40 22 L46 6 L60 16 L74 6 L80 22 L60 26 Z" fill="url(#chal_gold)" stroke="#78350f" stroke-width="1.5"/>
+  <!-- Crown Jewels -->
+  <circle cx="46" cy="7" r="2.5" fill="#ef4444"/>
+  <circle cx="60" cy="15" r="3.5" fill="#38bdf8"/>
+  <circle cx="74" cy="7" r="2.5" fill="#ef4444"/>
+  <!-- Bottom Eagle Crest Base -->
+  <path d="M36 102 L60 114 L84 102 L80 110 L60 118 L40 110 Z" fill="url(#chal_gold)" stroke="#78350f" stroke-width="1.5"/>
+  <circle cx="60" cy="108" r="3" fill="#ef4444"/>
+</svg>

@@ -149,9 +149,10 @@
     <!-- القائمة الرئيسية -->
     <div id="main-menu" class="screen">
         <div class="header-bar">
-            <div class="user-profile-widget" onclick="openPlayerProfileModal()">
+                        <div class="user-profile-widget" onclick="openPlayerProfileModal()">
                 <div class="user-avatar-frame-wrap" id="header-avatar-frame-wrap">
-                    <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png" alt="Avatar">
+                    <img id="user-avatar" class="avatar-face-img" src="./assets/avatars/avatar_warrior.svg" alt="Avatar">
+                    <img id="header-avatar-frame-overlay" class="avatar-frame-overlay" src="" alt="Frame" style="display: none;">
                 </div>
                 <div class="user-name-box">
                     <div class="user-name-title-row">
@@ -295,9 +296,11 @@
                 <i class="fa-solid fa-right-to-bracket pvp-card-icon" style="color: #ec4899;"></i>
                 <h4>الانضمام لغرفة صديق</h4>
                 <p>اكتب كود الغرفة المكوّن من 5 أرقام لدخول التحدي الجماعي.</p>
-                <div class="pvp-join-input-box">
+                <div class="pvp-join-box-centered">
                     <input type="number" id="pvp-room-code-input" placeholder="مثال: 58291" maxlength="5">
-                    <button class="btn-pvp-join" onclick="joinPvpRoom()">انضمام</button>
+                    <button class="btn-pvp-join-action" onclick="joinPvpRoom()">
+                        <i class="fa-solid fa-right-to-bracket"></i> انضمام للغرفة
+                    </button>
                 </div>
             </div>
         </div>
@@ -857,7 +860,8 @@
             <div class="profile-card-header">
                 <div class="prof-header-left">
                     <div class="prof-avatar-frame-box" id="prof-header-avatar-wrap">
-                        <img id="prof-header-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
+                        <img id="prof-header-avatar" class="avatar-face-img" src="./assets/avatars/avatar_warrior.svg" alt="Avatar">
+                        <img id="prof-header-frame-overlay" class="avatar-frame-overlay" src="" alt="Frame" style="display: none;">
                     </div>
                     <div class="prof-user-titles">
                         <h3 id="prof-header-name">لاعب</h3>

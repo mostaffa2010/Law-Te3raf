@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_cyber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="visor_cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_cyber)" stroke="#00f0ff" stroke-width="2.5"/>
+  <!-- Cyber Mecha Headset -->
+  <rect x="22" y="42" width="8" height="16" rx="3" fill="#00f0ff"/>
+  <rect x="70" y="42" width="8" height="16" rx="3" fill="#00f0ff"/>
+  <!-- Cyber Mask / Visor -->
+  <path d="M26 36 L74 36 L68 64 L50 76 L32 64 Z" fill="#090d16" stroke="#00f0ff" stroke-width="2"/>
+  <!-- Neon Visor Strip -->
+  <path d="M30 46 L70 46 L66 54 L34 54 Z" fill="url(#visor_cyan)"/>
+  <!-- Glowing Circuit Lines -->
+  <path d="M50 20 L50 36 M38 64 L50 72 L62 64" stroke="#ec4899" stroke-width="2" stroke-linecap="round"/>
+</svg>

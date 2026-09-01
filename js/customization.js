@@ -1,39 +1,50 @@
 // js/customization.js - إدارة تخصيص الحساب والأفاتارات والإطارات والألقاب وبطاقة إحصائيات اللاعب
 
-// قائمة الأفاتارات (شخصيات مرسومة مميزة ذات طابع ألعاب وتحديات)
+// قائمة الأفاتارات (20 شخصية فيكتور أصلية عالية الدقة)
 var AVATARS_DB = window.AVATARS_DB = [
-    { id: 'av_default', name: 'المحارب الفولاذي', type: 'free', price: 0, src: './assets/avatars/avatar_warrior.svg', unlockDesc: 'مجاني للجميع' },
+    // مجانية (2)
+    { id: 'av_warrior', name: 'المحارب الفولاذي', type: 'free', price: 0, src: './assets/avatars/avatar_warrior.svg', unlockDesc: 'مجاني للجميع' },
     { id: 'av_ninja', name: 'النينجا الخفي', type: 'free', price: 0, src: './assets/avatars/avatar_ninja.svg', unlockDesc: 'مجاني للجميع' },
     
-    // أفاتارات المتجر (تُشترى بالعملات الذهبية)
-    { id: 'av_pharaoh', name: 'الفرعون الذهبي', type: 'shop', price: 400, src: './assets/avatars/avatar_pharaoh.svg', unlockDesc: 'متجر: 400 عملة' },
-    { id: 'av_astro', name: 'رائد الفضاء الكوني', type: 'shop', price: 700, src: './assets/avatars/avatar_astronaut.svg', unlockDesc: 'متجر: 700 عملة' },
-    { id: 'av_pirate', name: 'قبطان القراصنة', type: 'shop', price: 1000, src: './assets/avatars/avatar_pirate.svg', unlockDesc: 'متجر: 1,000 عملة' },
-    { id: 'av_wizard', name: 'ساحر المعرفة الأكبر', type: 'shop', price: 1500, src: './assets/avatars/avatar_wizard.svg', unlockDesc: 'متجر: 1,500 عملة' },
-    { id: 'av_emperor', name: 'إمبراطور الثقافة', type: 'shop', price: 2000, src: './assets/avatars/avatar_emperor.svg', unlockDesc: 'متجر: 2,000 عملة' },
+    // متجر العملات (10)
+    { id: 'av_detective', name: 'المحقق الذكي', type: 'shop', price: 400, src: './assets/avatars/avatar_detective.svg', unlockDesc: 'متجر: 400 عملة' },
+    { id: 'av_viking', name: 'محارب الفايكنج', type: 'shop', price: 600, src: './assets/avatars/avatar_viking.svg', unlockDesc: 'متجر: 600 عملة' },
+    { id: 'av_samurai', name: 'الساموراي الصنديد', type: 'shop', price: 800, src: './assets/avatars/avatar_samurai.svg', unlockDesc: 'متجر: 800 عملة' },
+    { id: 'av_pharaoh', name: 'الفرعون الذهبي', type: 'shop', price: 1000, src: './assets/avatars/avatar_pharaoh.svg', unlockDesc: 'متجر: 1,000 عملة' },
+    { id: 'av_astro', name: 'رائد الفضاء الكوني', type: 'shop', price: 1200, src: './assets/avatars/avatar_astronaut.svg', unlockDesc: 'متجر: 1,200 عملة' },
+    { id: 'av_gladiator', name: 'المصارع الروماني', type: 'shop', price: 1400, src: './assets/avatars/avatar_gladiator.svg', unlockDesc: 'متجر: 1,400 عملة' },
+    { id: 'av_pirate', name: 'قبطان القراصنة', type: 'shop', price: 1600, src: './assets/avatars/avatar_pirate.svg', unlockDesc: 'متجر: 1,600 عملة' },
+    { id: 'av_alchemist', name: 'عالم الكيمياء', type: 'shop', price: 1800, src: './assets/avatars/avatar_alchemist.svg', unlockDesc: 'متجر: 1,800 عملة' },
+    { id: 'av_wizard', name: 'ساحر المعرفة الأكبر', type: 'shop', price: 2000, src: './assets/avatars/avatar_wizard.svg', unlockDesc: 'متجر: 2,000 عملة' },
+    { id: 'av_lion', name: 'الأسد الملكي', type: 'shop', price: 2500, src: './assets/avatars/avatar_lion.svg', unlockDesc: 'متجر: 2,500 عملة' },
     
-    // أفاتارات حصرية بالإنجازات الصعبة والرانك
+    // حصرية بالإنجازات التعجيزية والرانك (8)
+    { id: 'av_cyberpunk', name: 'السايبورغ المتطور', type: 'achievement', reqAch: 'ach_high_score', reqLvl: 3, src: './assets/avatars/avatar_cyberpunk.svg', unlockDesc: 'إنجاز: 200 نقطة باللانهائي' },
+    { id: 'av_dragon', name: 'فارس التنين الناري', type: 'achievement', reqAch: 'ach_streak', reqLvl: 3, src: './assets/avatars/avatar_dragon.svg', unlockDesc: 'إنجاز: سلسلة 7 انتصارات' },
+    { id: 'av_emperor', name: 'إمبراطور الثقافة', type: 'achievement', reqAch: 'ach_correct', reqLvl: 3, src: './assets/avatars/avatar_emperor.svg', unlockDesc: 'إنجاز: 700 سؤال صحيح' },
+    { id: 'av_phoenix', name: 'طائر الفينيق الخالد', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 3, src: './assets/avatars/avatar_phoenix.svg', unlockDesc: 'إنجاز: 60 فوز بالرانك' },
     { id: 'av_falcon', name: 'صقر الأساطير', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: './assets/avatars/avatar_falcon.svg', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
     { id: 'av_lightning', name: 'سيد الصاعقة والبرق', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: './assets/avatars/avatar_lightning.svg', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
-    { id: 'av_warlord', name: 'بطل التحديات والرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: './assets/avatars/avatar_champion.svg', unlockDesc: 'إنجاز: 100 فوز بالرانك' }
+    { id: 'av_warlord', name: 'بطل التحديات والرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: './assets/avatars/avatar_champion.svg', unlockDesc: 'إنجاز: 100 فوز بالرانك' },
+    { id: 'av_cosmic_god', name: 'كيان الكون الأسطوري', type: 'rank', reqRankTier: 'challenger', src: './assets/avatars/avatar_cosmic_god.svg', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
 ];
 
-// قائمة الإطارات المتوهجة والمتحركة
+// قائمة الإطارات المزخرفة الأصلية (Ornate SVG Frame Overlays)
 var FRAMES_DB = window.FRAMES_DB = [
-    { id: 'frame_none', name: 'بدون إطار', type: 'free', price: 0, className: 'frame-none', borderCss: 'none', unlockDesc: 'مجاني' },
+    { id: 'frame_none', name: 'بدون إطار', type: 'free', price: 0, overlaySvg: '', unlockDesc: 'مجاني للجميع' },
     
-    // إطارات المتجر
-    { id: 'frame_neon_cyan', name: 'النيون السماوي المشع 🔵', type: 'shop', price: 500, className: 'frame-neon-cyan', borderCss: '3.5px solid #00f0ff', unlockDesc: 'متجر: 500 عملة' },
-    { id: 'frame_imperial_purple', name: 'البنفسجي الإمبراطوري 🟣', type: 'shop', price: 800, className: 'frame-imperial-purple', borderCss: '3.5px solid #a855f7', unlockDesc: 'متجر: 800 عملة' },
-    { id: 'frame_radiant_gold', name: 'الذهب الملكي البراق 🟡', type: 'shop', price: 1000, className: 'frame-radiant-gold', borderCss: '3.5px solid #f59e0b', unlockDesc: 'متجر: 1,000 عملة' },
+    // متجر العملات
+    { id: 'frame_cyber_neon', name: 'السايبر والنيون التكنولوجي', type: 'shop', price: 500, overlaySvg: './assets/frames/frame_cyber_neon.svg', unlockDesc: 'متجر: 500 عملة' },
+    { id: 'frame_royal_laurel', name: 'أوراق الغار الملكية والياقوت', type: 'shop', price: 800, overlaySvg: './assets/frames/frame_royal_laurel.svg', unlockDesc: 'متجر: 800 عملة' },
+    { id: 'frame_dragon_fire', name: 'أجنحة التنين واللهب المشع', type: 'shop', price: 1000, overlaySvg: './assets/frames/frame_dragon_fire.svg', unlockDesc: 'متجر: 1,000 عملة' },
     
     // إطارات حصرية خارقة
-    { id: 'frame_flame_animated', name: 'اللهب الناري المتوهج والمتحرك 🔥', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, className: 'frame-flame-animated', borderCss: '3.5px solid #ef4444', unlockDesc: 'إنجاز: سلسلة 10 انتصارات متتالية' },
-    { id: 'frame_diamond_crystal', name: 'الكريستال الماسي الأسطوري 💎', type: 'rank', reqRankTier: 'diamond', className: 'frame-diamond-crystal', borderCss: '3.5px solid #38bdf8', unlockDesc: 'بلوغ دوري الماسي' },
-    { id: 'frame_challenger_apex', name: 'تاج المتحدي الأسطوري المذهب 👑', type: 'rank', reqRankTier: 'challenger', className: 'frame-challenger-apex', borderCss: '4px solid #fbbf24', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
+    { id: 'frame_inferno_flame', name: 'اللهب البركاني المتوهج', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, overlaySvg: './assets/frames/frame_inferno_flame.svg', unlockDesc: 'إنجاز: سلسلة 10 انتصارات متتالية' },
+    { id: 'frame_diamond_crystal', name: 'الكريستال الماسي الأسطوري', type: 'rank', reqRankTier: 'diamond', overlaySvg: './assets/frames/frame_diamond_crystal.svg', unlockDesc: 'بلوغ دوري الماسي' },
+    { id: 'frame_challenger_crown', name: 'تاج المتحدي الأسطوري المذهب', type: 'rank', reqRankTier: 'challenger', overlaySvg: './assets/frames/frame_challenger_crown.svg', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
-// قائمة الألقاب الشرفية الموسعة
+// قائمة الألقاب الشرفية النقية (بدون أي إيموجي)
 var TITLES_DB = window.TITLES_DB = [
     { id: 'title_player', title: 'لاعب', type: 'free', unlockDesc: 'اللقب الافتراضي' },
     { id: 'title_thinker', title: 'المفكر العبقري', type: 'achievement', reqAch: 'ach_correct', reqLvl: 2, unlockDesc: 'إنجاز: 300 سؤال صحيح' },
@@ -63,7 +74,7 @@ function openPlayerProfileModal() {
     const modal = document.getElementById('player-profile-modal');
     if (!modal) return;
 
-    pendingAvatar = userProgress.equippedAvatar || 'av_default';
+    pendingAvatar = userProgress.equippedAvatar || 'av_warrior';
     pendingFrame = userProgress.equippedFrame || 'frame_none';
     pendingTitle = userProgress.equippedTitle || 'لاعب';
 
@@ -103,10 +114,10 @@ function switchProfileTab(tabName) {
 
 function renderPlayerProfileHeader() {
     const avatarImg = document.getElementById('prof-header-avatar');
+    const frameImg = document.getElementById('prof-header-frame-overlay');
     const nameElem = document.getElementById('prof-header-name');
     const titleElem = document.getElementById('prof-header-title');
     const rankElem = document.getElementById('prof-header-rank');
-    const frameWrap = document.getElementById('prof-header-avatar-wrap');
 
     const displayName = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'لاعب';
     const currentAvObj = AVATARS_DB.find(a => a.id === pendingAvatar) || AVATARS_DB[0];
@@ -117,8 +128,13 @@ function renderPlayerProfileHeader() {
     if (titleElem) titleElem.innerText = pendingTitle || 'لاعب';
     if (avatarImg) avatarImg.src = currentAvObj.src;
 
-    if (frameWrap) {
-        frameWrap.className = `prof-avatar-frame-box ${currentFrObj.className || ''}`;
+    if (frameImg) {
+        if (currentFrObj.overlaySvg) {
+            frameImg.src = currentFrObj.overlaySvg;
+            frameImg.style.display = 'block';
+        } else {
+            frameImg.style.display = 'none';
+        }
     }
 
     if (rankElem) {
@@ -205,6 +221,11 @@ function isAvatarUnlocked(av) {
         const achLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[av.reqAch]) || 0;
         return achLvl >= av.reqLvl;
     }
+    if (av.type === 'rank') {
+        const userRank = getUserCurrentRank();
+        const reqRank = getRankData(av.reqRankTier);
+        return userRank.tier >= reqRank.tier;
+    }
     return false;
 }
 
@@ -264,7 +285,9 @@ function renderAvatarsGrid() {
         }
 
         card.innerHTML = `
-            <img class="custom-card-img" src="${av.src}" alt="${av.name}">
+            <div class="custom-avatar-wrapper">
+                <img class="custom-card-img" src="${av.src}" alt="${av.name}">
+            </div>
             <span class="custom-card-name">${av.name}</span>
             ${actionBtnHtml}
         `;
@@ -297,8 +320,9 @@ function renderFramesGrid() {
         const card = document.createElement('div');
         card.className = `custom-item-card ${isSelected ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
         card.innerHTML = `
-            <div class="frame-preview-box ${fr.className || ''}">
-                <img src="${currentAvObj.src}" alt="Preview">
+            <div class="frame-preview-box">
+                <img class="avatar-face-img" src="${currentAvObj.src}" alt="Preview">
+                ${fr.overlaySvg ? `<img class="avatar-frame-overlay" src="${fr.overlaySvg}" alt="Frame">` : ''}
             </div>
             <span class="custom-card-name">${fr.name}</span>
             ${actionBtnHtml}
@@ -369,7 +393,7 @@ function buyAvatar(avId, price) {
     }
 
     userProgress.coins -= price;
-    if (!userProgress.unlockedAvatars) userProgress.unlockedAvatars = ['av_default', 'av_ninja'];
+    if (!userProgress.unlockedAvatars) userProgress.unlockedAvatars = ['av_warrior', 'av_ninja'];
     if (!userProgress.unlockedAvatars.includes(avId)) {
         userProgress.unlockedAvatars.push(avId);
     }
@@ -437,7 +461,7 @@ function buyTitle(tiId, titleStr, price) {
 
 // زر حفظ وتطبيق المظهر ومزامنته مع القائمة الرئيسية فوراً
 function saveAndApplyCustomization() {
-    userProgress.equippedAvatar = pendingAvatar || 'av_default';
+    userProgress.equippedAvatar = pendingAvatar || 'av_warrior';
     userProgress.equippedFrame = pendingFrame || 'frame_none';
     userProgress.equippedTitle = pendingTitle || 'لاعب';
 
@@ -451,26 +475,32 @@ function saveAndApplyCustomization() {
     saveProgress();
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
 
-    // تحديث ترويسة القائمة الرئيسية مباشرة وبشكل حي
     applyCustomizationToHeader(avObj, frObj, userProgress.equippedTitle);
 
-    showCustomAlert('✨ تم حفظ وتطبيق المظهر الجديد بنجاح!', 'تم الحفظ!', '🎨');
+    showCustomAlert('✨ تم حفظ وتطبيق مظهرك الجديد بنجاح!', 'تم الحفظ!', '🎨');
     closePlayerProfileModal();
 }
 
 function applyCustomizationToHeader(avObj, frObj, titleStr) {
     const headerAvatar = document.getElementById('user-avatar');
-    const headerAvatarBox = document.getElementById('header-avatar-frame-wrap');
+    const headerFrameOverlay = document.getElementById('header-avatar-frame-overlay');
     const headerTitleElem = document.getElementById('header-user-title-display');
 
-    if (!avObj) avObj = AVATARS_DB.find(a => a.id === (userProgress.equippedAvatar || 'av_default')) || AVATARS_DB[0];
+    if (!avObj) avObj = AVATARS_DB.find(a => a.id === (userProgress.equippedAvatar || 'av_warrior')) || AVATARS_DB[0];
     if (!frObj) frObj = FRAMES_DB.find(f => f.id === (userProgress.equippedFrame || 'frame_none')) || FRAMES_DB[0];
     if (!titleStr) titleStr = userProgress.equippedTitle || 'لاعب';
 
     if (headerAvatar) headerAvatar.src = avObj.src;
-    if (headerAvatarBox) {
-        headerAvatarBox.className = `user-avatar-frame-wrap ${frObj.className || ''}`;
+
+    if (headerFrameOverlay) {
+        if (frObj.overlaySvg) {
+            headerFrameOverlay.src = frObj.overlaySvg;
+            headerFrameOverlay.style.display = 'block';
+        } else {
+            headerFrameOverlay.style.display = 'none';
+        }
     }
+
     if (headerTitleElem) {
         headerTitleElem.innerText = `${titleStr}`;
     }

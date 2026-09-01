@@ -3517,3 +3517,180 @@ html, body {
 .btn-save-customization-sticky:active {
     transform: scale(0.97);
 }
+
+
+/* ==========================================
+   High-Impact Ornate SVG Frame Overlays
+   ========================================== */
+.user-avatar-frame-wrap, .prof-avatar-frame-box, .frame-preview-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-face-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.avatar-frame-overlay {
+    position: absolute;
+    top: -14%;
+    left: -14%;
+    width: 128%;
+    height: 128%;
+    pointer-events: none;
+    object-fit: contain;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.frame-preview-box {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.custom-avatar-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.custom-avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+/* ==========================================
+   PvP Lobby Cards & Centered Join Input
+   ========================================== */
+.pvp-lobby-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 440px;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.pvp-action-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    border-radius: 22px;
+    padding: 22px 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.pvp-card-icon {
+    font-size: 2.4rem;
+    margin-bottom: 6px;
+}
+
+.pvp-action-card h4 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.pvp-action-card p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.btn-pvp-create {
+    width: 100%;
+    max-width: 300px;
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 13px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s ease;
+}
+
+.btn-pvp-create:active {
+    transform: scale(0.97);
+}
+
+.pvp-join-box-centered {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.pvp-join-box-centered input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    padding: 12px 14px;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 4px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.pvp-join-box-centered input:focus {
+    border-color: var(--accent-pink);
+    background: rgba(236, 72, 153, 0.08);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+    outline: none;
+}
+
+.btn-pvp-join-action {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-pink), #db2777);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 13px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s ease;
+}
+
+.btn-pvp-join-action:active {
+    transform: scale(0.97);
+}

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_lion" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="mane_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_lion)" stroke="#f59e0b" stroke-width="2.5"/>
+  <!-- Regal Lion Mane -->
+  <path d="M22 44 Q14 26 34 22 Q50 12 66 22 Q86 26 78 44 Q88 64 74 78 Q50 90 26 78 Q12 64 22 44 Z" fill="url(#mane_grad)" stroke="#92400e" stroke-width="2"/>
+  <!-- Golden Crown -->
+  <path d="M36 22 L42 32 L50 18 L58 32 L64 22 L62 36 L38 36 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+  <!-- Lion Face -->
+  <ellipse cx="50" cy="52" rx="18" ry="16" fill="#fde047"/>
+  <!-- Majestic Eyes -->
+  <ellipse cx="42" cy="46" rx="3.5" ry="2.5" fill="#78350f"/>
+  <ellipse cx="58" cy="46" rx="3.5" ry="2.5" fill="#78350f"/>
+  <!-- Snout & Whiskers -->
+  <polygon points="46,54 54,54 50,58" fill="#78350f"/>
+  <path d="M50 58 Q46 64 42 62 M50 58 Q54 64 58 62" stroke="#78350f" stroke-width="2" fill="none"/>
+</svg>

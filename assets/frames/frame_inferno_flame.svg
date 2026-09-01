@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="lava_g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dc2626"/>
+      <stop offset="50%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#lava_g)" stroke-width="4.5" stroke-dasharray="14,3"/>
+  <!-- Radiating Plasma Flares -->
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.6"/>
+  <!-- 8 Fiery Tongue Embers -->
+  <polygon points="60,2 63,10 57,10" fill="#fde047"/>
+  <polygon points="60,118 63,110 57,110" fill="#fde047"/>
+  <polygon points="2,60 10,63 10,57" fill="#fde047"/>
+  <polygon points="118,60 110,63 110,57" fill="#fde047"/>
+  <polygon points="18,18 26,23 23,26" fill="#f97316"/>
+  <polygon points="102,18 94,23 97,26" fill="#f97316"/>
+  <polygon points="18,102 26,97 23,94" fill="#f97316"/>
+  <polygon points="102,102 94,97 97,94" fill="#f97316"/>
+</svg>

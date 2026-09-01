@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_alch" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </linearGradient>
+    <linearGradient id="potion_green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_alch)" stroke="#10b981" stroke-width="2.5"/>
+  <!-- Alchemist Flask / Potion Bottle -->
+  <path d="M44 24 L56 24 L56 36 L72 68 C74 76 68 84 50 84 C32 84 26 76 28 68 L44 36 Z" fill="rgba(255,255,255,0.15)" stroke="#6ee7b7" stroke-width="2.5"/>
+  <!-- Glowing Liquid Level -->
+  <path d="M30 68 C34 82 66 82 70 68 Q50 64 30 68 Z" fill="url(#potion_green)"/>
+  <!-- Bubbles -->
+  <circle cx="44" cy="62" r="3" fill="#bbf7d0" opacity="0.8"/>
+  <circle cx="56" cy="54" r="2" fill="#bbf7d0" opacity="0.8"/>
+  <circle cx="50" cy="72" r="4" fill="#ffffff" opacity="0.9"/>
+  <!-- Flask Stopper -->
+  <rect x="42" y="16" width="16" height="8" rx="2" fill="#78350f" stroke="#f59e0b" stroke-width="1.5"/>
+</svg>

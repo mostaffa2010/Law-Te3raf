@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_glad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="bronze_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_glad)" stroke="#f59e0b" stroke-width="2.5"/>
+  <!-- Red Feather Crest -->
+  <path d="M50 10 Q58 20 54 36 L46 36 Q42 20 50 10 Z" fill="#dc2626"/>
+  <!-- Bronze Helmet -->
+  <path d="M26 36 Q50 24 74 36 L72 58 Q70 76 50 82 Q30 76 28 58 Z" fill="url(#bronze_gold)" stroke="#78350f" stroke-width="2"/>
+  <!-- T-Shape Visor Face Slit -->
+  <path d="M34 46 L66 46 L66 52 L54 52 L54 74 L46 74 L46 52 L34 52 Z" fill="#0f172a"/>
+  <!-- Fierce Eyes Glow Inside Visor -->
+  <circle cx="42" cy="49" r="2" fill="#ef4444"/>
+  <circle cx="58" cy="49" r="2" fill="#ef4444"/>
+</svg>

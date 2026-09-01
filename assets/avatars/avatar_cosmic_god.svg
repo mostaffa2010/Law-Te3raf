@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_cosmic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="sun_core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_cosmic)" stroke="#a855f7" stroke-width="2.5"/>
+  <!-- Cosmic Orbit Ring -->
+  <ellipse cx="50" cy="50" rx="36" ry="14" fill="none" stroke="#38bdf8" stroke-width="2" transform="rotate(-25 50 50)"/>
+  <ellipse cx="50" cy="50" rx="36" ry="14" fill="none" stroke="#ec4899" stroke-width="2" transform="rotate(35 50 50)"/>
+  <!-- Central Glowing Stellar Core -->
+  <circle cx="50" cy="50" r="16" fill="url(#sun_core)"/>
+  <!-- Supernova Rays -->
+  <polygon points="50,22 53,42 73,42 57,54 63,74 50,62 37,74 43,54 27,42 47,42" fill="#ffffff" opacity="0.85"/>
+</svg>

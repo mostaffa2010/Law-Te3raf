@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_phoe" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9a3412"/>
+      <stop offset="100%" stop-color="#431407"/>
+    </linearGradient>
+    <linearGradient id="fire_feathers" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_phoe)" stroke="#f97316" stroke-width="2.5"/>
+  <!-- Fiery Wings -->
+  <path d="M16 54 Q28 20 48 30 Q32 40 26 62 Z" fill="url(#fire_feathers)"/>
+  <path d="M84 54 Q72 20 52 30 Q68 40 74 62 Z" fill="url(#fire_feathers)"/>
+  <!-- Phoenix Crown Feathers -->
+  <path d="M50 14 Q58 22 54 34 Q50 26 46 34 Q42 22 50 14 Z" fill="#fde047"/>
+  <!-- Phoenix Head & Golden Beak -->
+  <circle cx="50" cy="44" r="14" fill="#ea580c"/>
+  <polygon points="46,46 54,46 50,56" fill="#facc15"/>
+  <circle cx="45" cy="40" r="2" fill="#fef08a"/>
+  <circle cx="55" cy="40" r="2" fill="#fef08a"/>
+</svg>
