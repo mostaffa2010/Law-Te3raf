@@ -13,14 +13,30 @@ const firebaseConfig = {
     measurementId: "G-RFXCZ62K8F"
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-const db = firebase.firestore();
+let auth = null;
+let db = null;
 
-if (typeof firebase.analytics === 'function') {
-    firebase.analytics();
+if (typeof firebase !== 'undefined') {
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        auth = firebase.auth();
+        db = firebase.firestore();
+
+        // تفعيل حفظ البيانات أوفلاين في Firestore
+        if (db && db.enablePersistence) {
+            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                console.warn('Firestore offline persistence status:', err.code);
+            });
+        }
+
+        if (typeof firebase.analytics === 'function') {
+            firebase.analytics();
+        }
+    } catch (e) {
+        console.warn('Firebase init warning (offline mode):', e);
+    }
 }
 
 // المتغيرات العامة للحالة
@@ -64,7 +80,7 @@ const WHEEL_SECTORS = [
 let isWheelSpinning = false;
 let wheelCurrentAngle = 0;
 
-// إعدادات الإنجازات (تمت إزالة إنجازات المراحل)
+// إعدادات الإنجازات
 const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
@@ -113,6 +129,14 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     claimedInfiniteLevels: {},
     endlessSeenAt: {}
 };
+
+// استعادة الجلسة المحفوظة أوفلاين إن وجدت
+const savedOfflineGuest = localStorage.getItem('local_offline_guest');
+if (savedOfflineGuest) {
+    try {
+        currentUser = JSON.parse(savedOfflineGuest);
+    } catch(e) {}
+}
 
 // دوال المساعدة الأساسية
 function showCustomAlert(message, title = 'تنبيه', icon = '💡') {
@@ -211,7 +235,7 @@ function getAchReward(ach, level) {
 function saveProgress() {
     localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
 
-    if (currentUser && currentUser.uid) {
+    if (db && currentUser && currentUser.uid && !currentUser.isOffline) {
         const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
         const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
@@ -229,6 +253,7 @@ function saveProgress() {
 }
 
 async function loadCloudProgress(uid) {
+    if (!db) return;
     try {
         const doc = await db.collection('users').doc(uid).get();
         if (doc.exists && doc.data().progress) {

@@ -1,26 +1,71 @@
 // js/auth-nav.js - إدارة الحسابات، تسجيل الدخول، والتنقل بين الشاشات
 
-auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        currentUser = user;
-        updateUserProfileUI(user);
-        await loadCloudProgress(user.uid);
-        
-        updateHeaderStats();
-        checkDailyStatus();
-        checkWheelStatus();
-        checkAllAchievements();
-        drawWheel();
+if (typeof auth !== 'undefined' && auth) {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            updateUserProfileUI(user);
+            await loadCloudProgress(user.uid);
+            
+            updateHeaderStats();
+            checkDailyStatus();
+            checkWheelStatus();
+            checkAllAchievements();
+            drawWheel();
 
-        switchScreen('main-menu', false);
+            switchScreen('main-menu', false);
+        } else {
+            // فحص هل يوجد مستخدم ضيف محفوظ محلياً
+            const localGuest = localStorage.getItem('local_offline_guest');
+            if (localGuest) {
+                try {
+                    currentUser = JSON.parse(localGuest);
+                    updateUserProfileUI(currentUser);
+                    updateHeaderStats();
+                    checkDailyStatus();
+                    checkWheelStatus();
+                    checkAllAchievements();
+                    drawWheel();
+                    switchScreen('main-menu', false);
+                } catch(e) {
+                    currentUser = null;
+                    switchScreen('auth-screen', false);
+                }
+            } else {
+                currentUser = null;
+                switchScreen('auth-screen', false);
+            }
+        }
+        hideSplashScreenNow();
+    });
+} else {
+    // حالة العمل بدون فايربيس تماماً
+    const localGuest = localStorage.getItem('local_offline_guest');
+    if (localGuest) {
+        try {
+            currentUser = JSON.parse(localGuest);
+            updateUserProfileUI(currentUser);
+            updateHeaderStats();
+            checkDailyStatus();
+            checkWheelStatus();
+            checkAllAchievements();
+            drawWheel();
+            switchScreen('main-menu', false);
+        } catch(e) {
+            switchScreen('auth-screen', false);
+        }
     } else {
-        currentUser = null;
         switchScreen('auth-screen', false);
     }
-    hideSplashScreenNow();
-});
+    setTimeout(hideSplashScreenNow, 500);
+}
 
 function loginWithGoogle() {
+    if (!navigator.onLine || typeof auth === 'undefined' || !auth) {
+        showCustomAlert('أنت غير متصل بالإنترنت حالياً. يمكنك استخدام خيار "اللعب كضيف" لمتابعة اللعب أوفلاين!', 'غير متصل', '📶');
+        return;
+    }
+
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch((error) => {
         if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
@@ -32,19 +77,54 @@ function loginWithGoogle() {
 }
 
 function loginAsGuest() {
-    auth.signInAnonymously().catch((error) => {
-        showCustomAlert('خطأ أثناء الدخول كضيف: ' + error.message, 'خطأ', '⚠️');
-    });
+    if (typeof auth !== 'undefined' && auth && navigator.onLine) {
+        auth.signInAnonymously().catch(() => {
+            setupLocalOfflineGuest();
+        });
+    } else {
+        setupLocalOfflineGuest();
+    }
+}
+
+function setupLocalOfflineGuest() {
+    const offlineUid = localStorage.getItem('law_offline_uid') || ('guest_' + Math.floor(10000 + Math.random() * 90000));
+    localStorage.setItem('law_offline_uid', offlineUid);
+    
+    currentUser = {
+        uid: offlineUid,
+        displayName: 'ضيف اللعبة',
+        isAnonymous: true,
+        isOffline: true,
+        photoURL: 'https://cdn-icons-png.flaticon.com/512/847/847969.png'
+    };
+    
+    localStorage.setItem('local_offline_guest', JSON.stringify(currentUser));
+    updateUserProfileUI(currentUser);
+    updateHeaderStats();
+    checkDailyStatus();
+    checkWheelStatus();
+    checkAllAchievements();
+    drawWheel();
+    
+    switchScreen('main-menu', false);
+    hideSplashScreenNow();
 }
 
 function logoutCurrentUser() {
     showCustomConfirm(
         'هل ترغب حقاً في تسجيل الخروج من حسابك الحالي؟',
         () => {
-            auth.signOut().then(() => {
-                localStorage.removeItem('law_ta3raf_progress');
+            localStorage.removeItem('local_offline_guest');
+            if (typeof auth !== 'undefined' && auth) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('law_ta3raf_progress');
+                    switchScreen('auth-screen', false);
+                }).catch(() => {
+                    switchScreen('auth-screen', false);
+                });
+            } else {
                 switchScreen('auth-screen', false);
-            });
+            }
         },
         null,
         'تسجيل الخروج',
@@ -58,7 +138,7 @@ function updateUserProfileUI(user) {
     const nameElem = document.getElementById('user-name');
     const avatarElem = document.getElementById('user-avatar');
 
-    if (nameElem) nameElem.innerText = user.isAnonymous ? 'ضيف اللعبة' : (user.displayName || 'لاعب');
+    if (nameElem) nameElem.innerText = (user.isAnonymous || user.isOffline) ? 'ضيف اللعبة' : (user.displayName || 'لاعب');
     if (avatarElem) avatarElem.src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 }
 
@@ -165,7 +245,10 @@ function resetAllProgress() {
         () => {
             localStorage.removeItem('law_ta3raf_progress');
             localStorage.removeItem('cached_questions_bank');
-            if (currentUser) db.collection('users').doc(currentUser.uid).delete();
+            localStorage.removeItem('local_offline_guest');
+            if (db && currentUser && !currentUser.isOffline) {
+                db.collection('users').doc(currentUser.uid).delete().catch(() => {});
+            }
             showCustomAlert('تمت إعادة ضبط اللعبة بالكامل بنجاح!', 'تم الضبط', '🔄');
             setTimeout(() => location.reload(), 1200);
         },

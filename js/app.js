@@ -9,7 +9,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (banner) banner.style.display = 'flex';
     }
 
-    if (!auth.currentUser) switchScreen('auth-screen', false);
-    if (navigator.onLine) await loadQuestionsFromPublishedSheet();
-    setTimeout(hideSplashScreenNow, 1200);
+    // فحص المستخدم الحالي
+    if (!currentUser) {
+        const saved = localStorage.getItem('local_offline_guest');
+        if (saved) {
+            try {
+                currentUser = JSON.parse(saved);
+                updateUserProfileUI(currentUser);
+                switchScreen('main-menu', false);
+            } catch(e) {
+                switchScreen('auth-screen', false);
+            }
+        } else {
+            switchScreen('auth-screen', false);
+        }
+    }
+
+    if (navigator.onLine) {
+        try {
+            await loadQuestionsFromPublishedSheet();
+        } catch(e) {}
+    }
+
+    setTimeout(hideSplashScreenNow, 1000);
 });

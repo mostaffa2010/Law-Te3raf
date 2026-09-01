@@ -15,14 +15,30 @@ const firebaseConfig = {
     measurementId: "G-RFXCZ62K8F"
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-const db = firebase.firestore();
+let auth = null;
+let db = null;
 
-if (typeof firebase.analytics === 'function') {
-    firebase.analytics();
+if (typeof firebase !== 'undefined') {
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        auth = firebase.auth();
+        db = firebase.firestore();
+
+        // تفعيل حفظ البيانات أوفلاين في Firestore
+        if (db && db.enablePersistence) {
+            db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                console.warn('Firestore offline persistence status:', err.code);
+            });
+        }
+
+        if (typeof firebase.analytics === 'function') {
+            firebase.analytics();
+        }
+    } catch (e) {
+        console.warn('Firebase init warning (offline mode):', e);
+    }
 }
 
 // المتغيرات العامة للحالة
@@ -66,7 +82,7 @@ const WHEEL_SECTORS = [
 let isWheelSpinning = false;
 let wheelCurrentAngle = 0;
 
-// إعدادات الإنجازات (تمت إزالة إنجازات المراحل)
+// إعدادات الإنجازات
 const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
@@ -115,6 +131,14 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     claimedInfiniteLevels: {},
     endlessSeenAt: {}
 };
+
+// استعادة الجلسة المحفوظة أوفلاين إن وجدت
+const savedOfflineGuest = localStorage.getItem('local_offline_guest');
+if (savedOfflineGuest) {
+    try {
+        currentUser = JSON.parse(savedOfflineGuest);
+    } catch(e) {}
+}
 
 // دوال المساعدة الأساسية
 function showCustomAlert(message, title = 'تنبيه', icon = '💡') {
@@ -213,7 +237,7 @@ function getAchReward(ach, level) {
 function saveProgress() {
     localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
 
-    if (currentUser && currentUser.uid) {
+    if (db && currentUser && currentUser.uid && !currentUser.isOffline) {
         const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
         const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
@@ -231,6 +255,7 @@ function saveProgress() {
 }
 
 async function loadCloudProgress(uid) {
+    if (!db) return;
     try {
         const doc = await db.collection('users').doc(uid).get();
         if (doc.exists && doc.data().progress) {
@@ -364,27 +389,72 @@ function getSmartQuestions(count = 10, categoryFilter = null) {
 
 // js/auth-nav.js - إدارة الحسابات، تسجيل الدخول، والتنقل بين الشاشات
 
-auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        currentUser = user;
-        updateUserProfileUI(user);
-        await loadCloudProgress(user.uid);
-        
-        updateHeaderStats();
-        checkDailyStatus();
-        checkWheelStatus();
-        checkAllAchievements();
-        drawWheel();
+if (typeof auth !== 'undefined' && auth) {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            updateUserProfileUI(user);
+            await loadCloudProgress(user.uid);
+            
+            updateHeaderStats();
+            checkDailyStatus();
+            checkWheelStatus();
+            checkAllAchievements();
+            drawWheel();
 
-        switchScreen('main-menu', false);
+            switchScreen('main-menu', false);
+        } else {
+            // فحص هل يوجد مستخدم ضيف محفوظ محلياً
+            const localGuest = localStorage.getItem('local_offline_guest');
+            if (localGuest) {
+                try {
+                    currentUser = JSON.parse(localGuest);
+                    updateUserProfileUI(currentUser);
+                    updateHeaderStats();
+                    checkDailyStatus();
+                    checkWheelStatus();
+                    checkAllAchievements();
+                    drawWheel();
+                    switchScreen('main-menu', false);
+                } catch(e) {
+                    currentUser = null;
+                    switchScreen('auth-screen', false);
+                }
+            } else {
+                currentUser = null;
+                switchScreen('auth-screen', false);
+            }
+        }
+        hideSplashScreenNow();
+    });
+} else {
+    // حالة العمل بدون فايربيس تماماً
+    const localGuest = localStorage.getItem('local_offline_guest');
+    if (localGuest) {
+        try {
+            currentUser = JSON.parse(localGuest);
+            updateUserProfileUI(currentUser);
+            updateHeaderStats();
+            checkDailyStatus();
+            checkWheelStatus();
+            checkAllAchievements();
+            drawWheel();
+            switchScreen('main-menu', false);
+        } catch(e) {
+            switchScreen('auth-screen', false);
+        }
     } else {
-        currentUser = null;
         switchScreen('auth-screen', false);
     }
-    hideSplashScreenNow();
-});
+    setTimeout(hideSplashScreenNow, 500);
+}
 
 function loginWithGoogle() {
+    if (!navigator.onLine || typeof auth === 'undefined' || !auth) {
+        showCustomAlert('أنت غير متصل بالإنترنت حالياً. يمكنك استخدام خيار "اللعب كضيف" لمتابعة اللعب أوفلاين!', 'غير متصل', '📶');
+        return;
+    }
+
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch((error) => {
         if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
@@ -396,19 +466,54 @@ function loginWithGoogle() {
 }
 
 function loginAsGuest() {
-    auth.signInAnonymously().catch((error) => {
-        showCustomAlert('خطأ أثناء الدخول كضيف: ' + error.message, 'خطأ', '⚠️');
-    });
+    if (typeof auth !== 'undefined' && auth && navigator.onLine) {
+        auth.signInAnonymously().catch(() => {
+            setupLocalOfflineGuest();
+        });
+    } else {
+        setupLocalOfflineGuest();
+    }
+}
+
+function setupLocalOfflineGuest() {
+    const offlineUid = localStorage.getItem('law_offline_uid') || ('guest_' + Math.floor(10000 + Math.random() * 90000));
+    localStorage.setItem('law_offline_uid', offlineUid);
+    
+    currentUser = {
+        uid: offlineUid,
+        displayName: 'ضيف اللعبة',
+        isAnonymous: true,
+        isOffline: true,
+        photoURL: 'https://cdn-icons-png.flaticon.com/512/847/847969.png'
+    };
+    
+    localStorage.setItem('local_offline_guest', JSON.stringify(currentUser));
+    updateUserProfileUI(currentUser);
+    updateHeaderStats();
+    checkDailyStatus();
+    checkWheelStatus();
+    checkAllAchievements();
+    drawWheel();
+    
+    switchScreen('main-menu', false);
+    hideSplashScreenNow();
 }
 
 function logoutCurrentUser() {
     showCustomConfirm(
         'هل ترغب حقاً في تسجيل الخروج من حسابك الحالي؟',
         () => {
-            auth.signOut().then(() => {
-                localStorage.removeItem('law_ta3raf_progress');
+            localStorage.removeItem('local_offline_guest');
+            if (typeof auth !== 'undefined' && auth) {
+                auth.signOut().then(() => {
+                    localStorage.removeItem('law_ta3raf_progress');
+                    switchScreen('auth-screen', false);
+                }).catch(() => {
+                    switchScreen('auth-screen', false);
+                });
+            } else {
                 switchScreen('auth-screen', false);
-            });
+            }
         },
         null,
         'تسجيل الخروج',
@@ -422,7 +527,7 @@ function updateUserProfileUI(user) {
     const nameElem = document.getElementById('user-name');
     const avatarElem = document.getElementById('user-avatar');
 
-    if (nameElem) nameElem.innerText = user.isAnonymous ? 'ضيف اللعبة' : (user.displayName || 'لاعب');
+    if (nameElem) nameElem.innerText = (user.isAnonymous || user.isOffline) ? 'ضيف اللعبة' : (user.displayName || 'لاعب');
     if (avatarElem) avatarElem.src = user.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 }
 
@@ -529,7 +634,10 @@ function resetAllProgress() {
         () => {
             localStorage.removeItem('law_ta3raf_progress');
             localStorage.removeItem('cached_questions_bank');
-            if (currentUser) db.collection('users').doc(currentUser.uid).delete();
+            localStorage.removeItem('local_offline_guest');
+            if (db && currentUser && !currentUser.isOffline) {
+                db.collection('users').doc(currentUser.uid).delete().catch(() => {});
+            }
             showCustomAlert('تمت إعادة ضبط اللعبة بالكامل بنجاح!', 'تم الضبط', '🔄');
             setTimeout(() => location.reload(), 1200);
         },
@@ -2042,7 +2150,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (banner) banner.style.display = 'flex';
     }
 
-    if (!auth.currentUser) switchScreen('auth-screen', false);
-    if (navigator.onLine) await loadQuestionsFromPublishedSheet();
-    setTimeout(hideSplashScreenNow, 1200);
+    // فحص المستخدم الحالي
+    if (!currentUser) {
+        const saved = localStorage.getItem('local_offline_guest');
+        if (saved) {
+            try {
+                currentUser = JSON.parse(saved);
+                updateUserProfileUI(currentUser);
+                switchScreen('main-menu', false);
+            } catch(e) {
+                switchScreen('auth-screen', false);
+            }
+        } else {
+            switchScreen('auth-screen', false);
+        }
+    }
+
+    if (navigator.onLine) {
+        try {
+            await loadQuestionsFromPublishedSheet();
+        } catch(e) {}
+    }
+
+    setTimeout(hideSplashScreenNow, 1000);
 });

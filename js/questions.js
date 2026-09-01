@@ -507,6 +507,275 @@ const questionsBank = [
     options: ["المسجد الإبراهيمي", "مسجد قبة الصخرة", "المسجد الأموي", "مسجد القبلتين"],
     correct: 1,
     image: "https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2412,
+    category: "جغرافيا",
+    difficulty: 2,
+    question: "ما اسم هذا البرج الشهير المائل الواقع في إيطاليا؟",
+    options: ["برج بيزا المائل", "برج إيفل", "برج لندن", "برج خليفة"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2413,
+    category: "جغرافيا",
+    difficulty: 3,
+    question: "إلى أي دولة ينتمي هذا العلم الذي يتوسطه رسم لأرزة خضراء؟",
+    options: ["لبنان", "الأردن", "سوريا", "فلسطين"],
+    correct: 0,
+    image: "https://flagcdn.com/w640/lb.png"
+  },
+  {
+    id: 2414,
+    category: "جغرافيا",
+    difficulty: 6,
+    question: "هذا العلم الوطني المميز باللونين الأزرق والأصفر ينتمي إلى أي دولة أوروبية؟",
+    options: ["السويد", "فنلندا", "أوكرانيا", "النرويج"],
+    correct: 0,
+    image: "https://flagcdn.com/w640/se.png"
+  },
+  {
+    id: 2415,
+    category: "جغرافيا",
+    difficulty: 4,
+    question: "في أي مدينة أمريكية يقع تمثال الحرية الشهير الظاهر في الصورة؟",
+    options: ["واشنطن", "نيويورك", "لوس أنجلوس", "شيكاغو"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2416,
+    category: "جغرافيا",
+    difficulty: 5,
+    question: "ما اسم هذه القلعة البيضاء الخيالية الشهيرة الواقعة في ولاية بافاريا بألمانيا؟",
+    options: ["قلعة نويشفانشتاين", "قلعة وندسور", "قصر فرساي", "قصر الحمراء"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2417,
+    category: "جغرافيا",
+    difficulty: 7,
+    question: "ما اسم هذا الجبل البركاني المخروطي الشهير والمقدس في اليابان؟",
+    options: ["جبل إيفرست", "جبل فوجي", "جبل كيليمنجارو", "جبل تاي"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2418,
+    category: "تاريخ",
+    difficulty: 3,
+    question: "في أي دولة تقع هذه الأهرامات الضخمة وتمثال أبو الهول؟",
+    options: ["المكسيك", "مصر", "السودان", "بيرو"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2419,
+    category: "تاريخ",
+    difficulty: 5,
+    question: "ما اسم هذا المعبد الإغريقي القديم المشيد فوق تل الأكروبوليس في أثينا؟",
+    options: ["البارثينون", "الكولوسيوم", "البتراء", "أفسس"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2420,
+    category: "تاريخ",
+    difficulty: 4,
+    question: "ما اسم هذا السور العظيم الذي يمتد لآلاف الكيلومترات في آسيا؟",
+    options: ["سور برلين", "سور الصين العظيم", "سور القسطنطينية", "سور مجرى العيون"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2421,
+    category: "تاريخ",
+    difficulty: 6,
+    question: "من هو العالم الفيزيائي صاحب النظرية النسبية الظاهر في هذه الصورة الشهيرة؟",
+    options: ["إسحاق نيوتن", "ألبرت أينشتاين", "نيكولا تسلا", "ستيفن هوكينج"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2422,
+    category: "تاريخ",
+    difficulty: 8,
+    question: "ما اسم هذه المدينة الصخرية الوردية المنحوتة في الأردن؟",
+    options: ["البتراء", "تدمر", "بابل", "جرش"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1579606032834-deaff9700c5b?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2423,
+    category: "تاريخ",
+    difficulty: 9,
+    question: "ما اسم هذه التماثيل الصخرية الضخمة الغامضة الموجودة في جزيرة الفصح (جزيرة إيستر)؟",
+    options: ["تماثيل المواي (Moai)", "أبو الهول", "تماثيل عين غزال", "أعمدة هرقل"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2424,
+    category: "علوم وفضاء",
+    difficulty: 2,
+    question: "ما هو هذا الكوكب ذو اللون الأحمر المميز في نظامنا الشمسي؟",
+    options: ["المريخ", "الزهرة", "عطارد", "المشتري"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2425,
+    category: "علوم وفضاء",
+    difficulty: 5,
+    question: "ما اسم هذه الظاهرة الفلكية الضوئية الساحرة التي تظهر في القطبين الشمالي والجنوبي؟",
+    options: ["الشفق القطبي (الأورورا)", "كسوف الشمس", "خسوف القمر", "الانفجار النجمي"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2426,
+    category: "علوم وفضاء",
+    difficulty: 8,
+    question: "ما اسم مجرتنا الحلزونية التي تضم مجموعتنا الشمسية والظاهرة في سماء الليل؟",
+    options: ["درب التبانة", "مجرة أندروميدا", "مجرة المثلث", "مجرة السومبريرو"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2427,
+    category: "طبيعة وحيوانات",
+    difficulty: 1,
+    question: "ما اسم هذا الطائر الذي يعيش في المناطق القطبية الجليدية ولا يطير بل يسبح بمهارة؟",
+    options: ["البطريق", "البومة", "النسر", "البجع"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2428,
+    category: "طبيعة وحيوانات",
+    difficulty: 3,
+    question: "ما اسم أطول حيوان ثديي في العالم الظاهر في الصورة؟",
+    options: ["الفيل", "الزرافة", "الحصان", "الجمل"],
+    correct: 1,
+    image: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2429,
+    category: "طبيعة وحيوانات",
+    difficulty: 4,
+    question: "ما اسم هذا الحيوان الأسترالي اللطيف الذي يتغذى فقط على أوراق شجر الكافور (الكينا)؟",
+    options: ["الكوالا", "الكنغر", "الكسلان", "الأبوسوم"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2430,
+    category: "طبيعة وحيوانات",
+    difficulty: 7,
+    question: "ما اسم هذا الحيوان البحري الذكي جداً والودود مع البشر؟",
+    options: ["الدلفين", "القرش", "الحوت القاتل", "فقمة البحر"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1607153333879-c1a07d26572d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2431,
+    category: "سينما وفن",
+    difficulty: 2,
+    question: "ما اسم أشهر لوحة في العالم رسمها الفنان الإيطالي ليوناردو دا فينشي؟",
+    options: ["الموناليزا", "ليلة النجوم", "الصرخة", "خلق آدم"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2432,
+    category: "سينما وفن",
+    difficulty: 6,
+    question: "هذه اللوحة الفنية التعبيرية الشهيرة (The Starry Night) تعود لأي رسام هولندي؟",
+    options: ["فينسنت فان جوخ", "كلود مونيه", "بابلو بيكاسو", "سلفادور دالي"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2433,
+    category: "سينما وفن",
+    difficulty: 9,
+    question: "ما اسم هذا التمثال الرخامي الأيقوني لعصر النهضة الذي نحته الفنان مايكل أنجلو؟",
+    options: ["تمثال داود (David)", "تمثال المفكر", "تمثال فينوس", "أبوللو"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2434,
+    category: "إسلاميات",
+    difficulty: 2,
+    question: "ما هو هذا البناء المقدس الذي يتجه نحوه المسلمون في صلواتهم ويقع بمكة المكرمة؟",
+    options: ["الكعبة المشرفة", "المسجد النبوي", "المسجد الأقصى", "مسجد قباء"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2435,
+    category: "إسلاميات",
+    difficulty: 4,
+    question: "ما اسم هذا المسجد الأثري الشهير الواقع في إسطنبول بتركيا بقبابه ومآذنه الست؟",
+    options: ["مسجد السلطان أحمد (المسجد الأزرق)", "جامع الزيتونة", "مسجد القرويين", "المسجد الأموي"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2436,
+    category: "رياضة وكورة",
+    difficulty: 3,
+    question: "من هو أسطورة كرة القدم البرتغالية الفائز بجائزة الكرة الذهبية 5 مرات الظاهر في الصورة؟",
+    options: ["كريستيانو رونالدو", "لويس فيغو", "برونو فيرنانديز", "أوزيبيو"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2437,
+    category: "رياضة وكورة",
+    difficulty: 6,
+    question: "ما اسم هذا الملعب الأسطوري الضخم في مدينة برشلونة الإسبانية؟",
+    options: ["كامب نو (Camp Nou)", "سانتياغو برنابيو", "أليانز أرينا", "ويمبلي"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2438,
+    category: "تكنولوجيا وألعاب",
+    difficulty: 2,
+    question: "هذا الشعار المضيء الشهير للتفاحة المقضومة يعود إلى أي شركة تكنولوجية؟",
+    options: ["آبل (Apple)", "مايكروسوفت", "جوجل", "سامسونج"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2439,
+    category: "تكنولوجيا وألعاب",
+    difficulty: 5,
+    question: "ما اسم هذا الجهاز الكلاسيكي المحمول الذي أطلقته شركة نينتندو عام 1989 وأحدث ثورة؟",
+    options: ["جيم بوي (Game Boy)", "بلايستيشن بورتابل", "نينتندو دي إس", "سيجا جينيسيس"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2440,
+    category: "سيارات ومحركات",
+    difficulty: 4,
+    question: "ما هي علامة السيارات الألمانية الفاخرة صاحبة هذا الشعار المكون من نجمة ثلاثية داخل دائرة؟",
+    options: ["مرسيدس-بنز", "بي إم دبليو", "أودي", "بورشه"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: 2441,
+    category: "سيارات ومحركات",
+    difficulty: 7,
+    question: "ما هي شركة السيارات الألمانية صاحبة شعار الدوائر الأربع المتداخلة؟",
+    options: ["أودي (Audi)", "فولكس فاجن", "أوبل", "بورشه"],
+    correct: 0,
+    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=600&q=80"
   }
-
 ];
