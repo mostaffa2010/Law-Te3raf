@@ -141,7 +141,7 @@
                 <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
                 <div class="user-name-box">
                     <span id="user-name">لاعب</span>
-                    <span class="user-rank-pill" id="header-user-rank-pill">🛡️ حديدي</span>
+                    <span class="user-rank-pill" id="header-user-rank-pill">الحديدي</span>
                 </div>
             </div>
             <div class="header-coins" onclick="openShopScreen()">
@@ -212,7 +212,7 @@
                     <h4>مباراة التصنيف 1v1 (Ranked) 👑</h4>
                     <p>نافس لاعبين في نفس مستواك، اجمع النجوم، واصعد لقمة الدوريات!</p>
                 </div>
-                <div class="ranked-badge-tag" id="modes-current-rank-tag">🛡️ الحديدي</div>
+                <div class="ranked-badge-tag" id="modes-current-rank-tag">الحديدي</div>
             </div>
 
 <div class="mode-card pvp-mode" onclick="openPvpLobbyScreen()">
@@ -725,7 +725,26 @@
     </div>
 
     <!-- شاشة نتيجة مباراة الرانك (Ranked Result Screen) -->
-    <div id="ranked-result-screen" class="screen">
+    
+    <!-- شاشة انتظار إنهاء المنافس لأسئلته في الرانك -->
+    <div id="ranked-waiting-opponent-screen" class="screen">
+        <div class="pvp-waiting-opp-card">
+            <div class="splash-loader" style="margin-bottom: 20px;"></div>
+            <h3>أحسنت! أنهيت أسئلتك الخمسة بنجاح 🎯</h3>
+            <p id="rk-wait-opp-sub">في انتظار إنهاء المنافس لجولته لإعلان النتيجة والتصنيف...</p>
+
+            <div class="rk-wait-opp-box">
+                <img id="rk-wait-opp-avatar" src="" alt="Opponent">
+                <div class="rk-wait-opp-info">
+                    <span id="rk-wait-opp-name" style="font-weight: bold;">المنافس</span>
+                    <span id="rk-wait-opp-status" style="font-size: 0.8rem; color: var(--accent-yellow);">جاري الإجابة...</span>
+                </div>
+            </div>
+            <div class="opp-progress-dots" id="rk-wait-opp-dots" style="justify-content: center; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+<div id="ranked-result-screen" class="screen">
         <div class="result-card ranked-res-card">
             <div class="result-icon" id="rk-res-icon">🏆</div>
             <h2 id="rk-res-title">انتصار!</h2>

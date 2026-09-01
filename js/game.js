@@ -296,6 +296,23 @@ function proceedNext() {
 
 async function finishGameSession() {
     if (gameState.mode === 'ranked') {
+        const oppWidget = document.getElementById('game-ranked-opp-bar');
+        if (oppWidget) oppWidget.style.display = 'none';
+
+        // فحص هل المنافس أنهى أسئلته الـ 5 كاملة أم لا يزال يجاوب
+        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+            isPlayerWaitingForOpponent = true;
+            updateWaitingOpponentUI();
+            switchScreen('ranked-waiting-opponent-screen', false);
+            // أقصى مهلة انتظار أمان 8 ثوانٍ
+            setTimeout(() => {
+                if (isPlayerWaitingForOpponent) {
+                    finishRankedMatchSession();
+                }
+            }, 8000);
+            return;
+        }
+
         if (typeof finishRankedMatchSession === 'function') {
             finishRankedMatchSession();
         }

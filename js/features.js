@@ -79,8 +79,8 @@ async function fetchAndRenderLeaderboard() {
 
 function formatLeaderboardScore(p, tab) {
     if (tab === 'ranked') {
-        const rk = (typeof getRankData === 'function') ? getRankData(p.rankTier) : { icon: '🛡️', name: 'الحديدي' };
-        return `${rk.icon} ${rk.name} (${p.rankStars || 0} ⭐)`;
+        const rk = (typeof getRankData === 'function') ? getRankData(p.rankTier) : { icon: 'fa-solid fa-shield', name: 'الحديدي', color: '#94a3b8' };
+        return `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span> (${p.rankStars || 0} ⭐)`;
     }
     if (tab === 'pvp') return `${p.pvpWins || 0} فوز ⚔️`;
     return `${p.highScore || 0} نقطة`;
@@ -190,9 +190,9 @@ function updateMyRankFooter(players, tab) {
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
     if (tab === 'ranked') {
-        const rk = (typeof getUserCurrentRank === 'function') ? getUserCurrentRank() : { icon: '🛡️', name: 'الحديدي' };
+        const rk = (typeof getUserCurrentRank === 'function') ? getUserCurrentRank() : { icon: 'fa-solid fa-shield', name: 'الحديدي', color: '#94a3b8' };
         if (subElem) subElem.innerText = `انتصارات الرانك: ${userProgress.rankedWins || 0}`;
-        if (valElem) valElem.innerText = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+        if (valElem) valElem.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span> (${userProgress.rankStars || 0} ⭐)`;
     } else if (tab === 'pvp') {
         if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
         if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
@@ -551,8 +551,10 @@ function updateHeaderStats() {
         const rk = getUserCurrentRank();
         const headerRank = document.getElementById('header-user-rank-pill');
         const modesTag = document.getElementById('modes-current-rank-tag');
-        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;">${rk.icon} ${rk.name}</span>`;
-        if (modesTag) modesTag.innerHTML = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span>`;
+        if (modesTag) modesTag.innerHTML = `<span style="color: #000; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name} (${userProgress.rankStars || 0} ⭐)</span>`;
+    }
+} (${userProgress.rankStars || 0} ⭐)`;
     }
 }
 

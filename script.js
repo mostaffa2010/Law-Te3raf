@@ -952,6 +952,23 @@ function proceedNext() {
 
 async function finishGameSession() {
     if (gameState.mode === 'ranked') {
+        const oppWidget = document.getElementById('game-ranked-opp-bar');
+        if (oppWidget) oppWidget.style.display = 'none';
+
+        // فحص هل المنافس أنهى أسئلته الـ 5 كاملة أم لا يزال يجاوب
+        if (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+            isPlayerWaitingForOpponent = true;
+            updateWaitingOpponentUI();
+            switchScreen('ranked-waiting-opponent-screen', false);
+            // أقصى مهلة انتظار أمان 8 ثوانٍ
+            setTimeout(() => {
+                if (isPlayerWaitingForOpponent) {
+                    finishRankedMatchSession();
+                }
+            }, 8000);
+            return;
+        }
+
         if (typeof finishRankedMatchSession === 'function') {
             finishRankedMatchSession();
         }
@@ -1587,23 +1604,24 @@ function selectPvpCategory(catId, catLabel) {
 // js/ranked.js - محرك دوريات التصنيف (Ranked Leagues) والبحث السريع عن منافس أونلاين 1v1
 
 const RANKS_CONFIG = [
-    { id: 'iron', name: 'الحديدي', nameEn: 'Iron', tier: 1, starsToPromote: 3, color: '#94a3b8', bgGradient: 'linear-gradient(135deg, #475569, #334155)', icon: '🛡️', faIcon: 'fa-shield', protectLoss: true },
-    { id: 'bronze', name: 'البرونزي', nameEn: 'Bronze', tier: 2, starsToPromote: 3, color: '#cd7f32', bgGradient: 'linear-gradient(135deg, #b45309, #78350f)', icon: '🥉', faIcon: 'fa-shield-halved', protectLoss: true },
-    { id: 'silver', name: 'الفضي', nameEn: 'Silver', tier: 3, starsToPromote: 4, color: '#e2e8f0', bgGradient: 'linear-gradient(135deg, #94a3b8, #64748b)', icon: '🥈', faIcon: 'fa-shield-virus', protectLoss: false },
-    { id: 'gold', name: 'الذهبي', nameEn: 'Gold', tier: 4, starsToPromote: 4, color: '#f59e0b', bgGradient: 'linear-gradient(135deg, #f59e0b, #d97706)', icon: '🥇', faIcon: 'fa-award', protectLoss: false },
-    { id: 'platinum', name: 'البلاتيني', nameEn: 'Platinum', tier: 5, starsToPromote: 5, color: '#06b6d4', bgGradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', icon: '💠', faIcon: 'fa-gem', protectLoss: false },
-    { id: 'emerald', name: 'الزمردي', nameEn: 'Emerald', tier: 6, starsToPromote: 5, color: '#10b981', bgGradient: 'linear-gradient(135deg, #10b981, #059669)', icon: '🟢', faIcon: 'fa-clover', protectLoss: false },
-    { id: 'diamond', name: 'الماسي', nameEn: 'Diamond', tier: 7, starsToPromote: 5, color: '#38bdf8', bgGradient: 'linear-gradient(135deg, #38bdf8, #0284c7)', icon: '💎', faIcon: 'fa-diamond', protectLoss: false },
-    { id: 'master', name: 'الماستر', nameEn: 'Master', tier: 8, starsToPromote: 6, color: '#a855f7', bgGradient: 'linear-gradient(135deg, #a855f7, #7e22ce)', icon: '🟣', faIcon: 'fa-crown', protectLoss: false },
-    { id: 'grandmaster', name: 'جراند ماستر', nameEn: 'Grandmaster', tier: 9, starsToPromote: 6, color: '#ef4444', bgGradient: 'linear-gradient(135deg, #ef4444, #b91c1c)', icon: '🔴', faIcon: 'fa-fire-flame-curved', protectLoss: false },
-    { id: 'challenger', name: 'تشالنجر الأسطوري', nameEn: 'Challenger', tier: 10, starsToPromote: 999, color: '#fbbf24', bgGradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)', icon: '👑', faIcon: 'fa-trophy', protectLoss: false }
+    { id: 'iron', name: 'الحديدي', tier: 1, starsToPromote: 3, color: '#94a3b8', bgGradient: 'linear-gradient(135deg, #475569, #334155)', icon: 'fa-solid fa-shield', protectLoss: true },
+    { id: 'bronze', name: 'البرونزي', tier: 2, starsToPromote: 3, color: '#cd7f32', bgGradient: 'linear-gradient(135deg, #b45309, #78350f)', icon: 'fa-solid fa-shield-halved', protectLoss: true },
+    { id: 'silver', name: 'الفضي', tier: 3, starsToPromote: 4, color: '#e2e8f0', bgGradient: 'linear-gradient(135deg, #94a3b8, #64748b)', icon: 'fa-solid fa-shield-heart', protectLoss: false },
+    { id: 'gold', name: 'الذهبي', tier: 4, starsToPromote: 4, color: '#f59e0b', bgGradient: 'linear-gradient(135deg, #f59e0b, #d97706)', icon: 'fa-solid fa-award', protectLoss: false },
+    { id: 'platinum', name: 'البلاتيني', tier: 5, starsToPromote: 5, color: '#06b6d4', bgGradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', icon: 'fa-solid fa-gem', protectLoss: false },
+    { id: 'emerald', name: 'الزمردي', tier: 6, starsToPromote: 5, color: '#10b981', bgGradient: 'linear-gradient(135deg, #10b981, #059669)', icon: 'fa-solid fa-clover', protectLoss: false },
+    { id: 'diamond', name: 'الماسي', tier: 7, starsToPromote: 5, color: '#38bdf8', bgGradient: 'linear-gradient(135deg, #38bdf8, #0284c7)', icon: 'fa-solid fa-diamond', protectLoss: false },
+    { id: 'master', name: 'أستاذ', tier: 8, starsToPromote: 6, color: '#a855f7', bgGradient: 'linear-gradient(135deg, #a855f7, #7e22ce)', icon: 'fa-solid fa-chess-knight', protectLoss: false },
+    { id: 'grandmaster', name: 'أستاذ أعظم', tier: 9, starsToPromote: 6, color: '#ef4444', bgGradient: 'linear-gradient(135deg, #ef4444, #b91c1c)', icon: 'fa-solid fa-fire-flame-curved', protectLoss: false },
+    { id: 'challenger', name: 'متحدي أسطوري', tier: 10, starsToPromote: 999, color: '#fbbf24', bgGradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)', icon: 'fa-solid fa-trophy', protectLoss: false }
 ];
 
 let matchmakingInterval = null;
 let matchmakingTimer = 0;
 let isMatchmakingActive = false;
 let currentRankedOpponent = null;
-let opponentSimInterval = null;
+let opponentSimTimeout = null;
+let isPlayerWaitingForOpponent = false;
 
 // أسماء رمزية وصور لمنافسي الرانك الأذكياء
 const SMART_RIVALS_POOL = [
@@ -1634,6 +1652,10 @@ function getUserCurrentRank() {
     return getRankData(userProgress.rankTier);
 }
 
+function getRankBadgeHtml(rank, size = '1rem') {
+    return `<span class="rk-icon-emblem" style="color: ${rank.color}; font-size: ${size};"><i class="${rank.icon}"></i></span>`;
+}
+
 function openRankedInfoModal() {
     const modal = document.getElementById('ranked-info-modal');
     const ranksListElem = document.getElementById('ranked-tiers-list');
@@ -1647,10 +1669,10 @@ function openRankedInfoModal() {
             const card = document.createElement('div');
             card.className = `ranked-tier-card ${isCurrent ? 'current-tier' : ''}`;
             card.innerHTML = `
-                <div class="ranked-tier-icon" style="color: ${r.color};">${r.icon}</div>
+                <div class="ranked-tier-icon" style="color: ${r.color};"><i class="${r.icon}"></i></div>
                 <div class="ranked-tier-details">
-                    <h4>${r.name} <small>(${r.nameEn})</small> ${isCurrent ? '<span class="tier-curr-badge">رتبتك</span>' : ''}</h4>
-                    <p>${r.tier === 10 ? 'أعلى قمة في اللعبة (لأفضل اللاعبين)' : `يتطلب ${r.starsToPromote} نجوم للترقية`}</p>
+                    <h4>${r.name} ${isCurrent ? '<span class="tier-curr-badge">رتبتك الحالية</span>' : ''}</h4>
+                    <p>${r.tier === 10 ? 'أعلى قمة في اللعبة لأفضل اللاعبين' : `يتطلب ${r.starsToPromote} نجوم للترقية`}</p>
                 </div>
             `;
             ranksListElem.appendChild(card);
@@ -1670,12 +1692,13 @@ function closeRankedInfoModal() {
 // بدء البحث السريع عن منافس
 function startRankedMatchmaking() {
     if (!navigator.onLine) {
-        showCustomAlert('يجب أن تكون متصلاً بالإنترنت للعب مباريات التصنيف (Ranked)!', 'تنبيه', '📶');
+        showCustomAlert('يجب أن تكون متصلاً بالإنترنت للعب مباريات التصنيف!', 'تنبيه', '📶');
         return;
     }
 
     isMatchmakingActive = true;
     matchmakingTimer = 0;
+    isPlayerWaitingForOpponent = false;
 
     const modal = document.getElementById('matchmaking-overlay');
     const timerElem = document.getElementById('mm-timer-text');
@@ -1683,7 +1706,7 @@ function startRankedMatchmaking() {
     const userRank = getUserCurrentRank();
 
     if (rankElem) {
-        rankElem.innerHTML = `<span style="color: ${userRank.color};">${userRank.icon} ${userRank.name}</span>`;
+        rankElem.innerHTML = `<span style="color: ${userRank.color};">${getRankBadgeHtml(userRank)} ${userRank.name}</span>`;
     }
 
     if (modal) modal.classList.add('show');
@@ -1698,8 +1721,8 @@ function startRankedMatchmaking() {
         const secs = String(matchmakingTimer % 60).padStart(2, '0');
         if (timerElem) timerElem.innerText = `${mins}:${secs}`;
 
-        // محاكاة إيجاد منافس حقيقي أو ذكي بعد 4 إلى 7 ثوانٍ
-        if (matchmakingTimer >= 5) {
+        // إيجاد منافس ذكي بعد 3 إلى 5 ثوانٍ
+        if (matchmakingTimer >= 4) {
             clearInterval(matchmakingInterval);
             foundRankedMatch();
         }
@@ -1721,7 +1744,7 @@ function foundRankedMatch() {
     const userRank = getUserCurrentRank();
     const userIdx = getRankIndex(userRank.id);
 
-    // اختيار رتبة قريبة للخصم (نفس الرتبة أو ±1)
+    // اختيار رتبة قريبة للخصم
     const opponentIdx = Math.max(0, Math.min(RANKS_CONFIG.length - 1, userIdx + (Math.random() > 0.6 ? (Math.random() > 0.5 ? 1 : -1) : 0)));
     const oppRank = RANKS_CONFIG[opponentIdx];
 
@@ -1734,10 +1757,9 @@ function foundRankedMatch() {
         score: 0,
         correctCount: 0,
         answeredIndex: 0,
-        // دقة الخصم تزداد كلما زادت الرتبة
-        accuracy: Math.min(0.95, 0.45 + (oppRank.tier * 0.05)),
-        minAnswerTime: Math.max(2, 6 - Math.floor(oppRank.tier * 0.4)),
-        maxAnswerTime: Math.max(4, 9 - Math.floor(oppRank.tier * 0.5))
+        accuracy: Math.min(0.92, 0.50 + (oppRank.tier * 0.045)),
+        minAnswerTime: Math.max(1.8, 4.5 - (oppRank.tier * 0.25)),
+        maxAnswerTime: Math.max(3.2, 6.5 - (oppRank.tier * 0.3))
     };
 
     const modal = document.getElementById('matchmaking-overlay');
@@ -1749,7 +1771,6 @@ function foundRankedMatch() {
 }
 
 function showRankedVersusScreen(opponent) {
-    const versusScreen = document.getElementById('ranked-versus-screen');
     const myNameElem = document.getElementById('vs-my-name');
     const myAvatarElem = document.getElementById('vs-my-avatar');
     const myRankElem = document.getElementById('vs-my-rank');
@@ -1763,18 +1784,18 @@ function showRankedVersusScreen(opponent) {
     if (myNameElem) myNameElem.innerText = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'أنت';
     if (myAvatarElem) myAvatarElem.src = (currentUser && currentUser.photoURL) || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
     if (myRankElem) {
-        myRankElem.innerHTML = `<span style="color: ${myRank.color};">${myRank.icon} ${myRank.name} (${userProgress.rankStars || 0} ⭐)</span>`;
+        myRankElem.innerHTML = `<span style="color: ${myRank.color};">${getRankBadgeHtml(myRank)} ${myRank.name} (${userProgress.rankStars || 0} ⭐)</span>`;
     }
 
     if (oppNameElem) oppNameElem.innerText = opponent.name;
     if (oppAvatarElem) oppAvatarElem.src = opponent.avatar;
     if (oppRankElem) {
-        oppRankElem.innerHTML = `<span style="color: ${opponent.rank.color};">${opponent.rank.icon} ${opponent.rank.name}</span>`;
+        oppRankElem.innerHTML = `<span style="color: ${opponent.rank.color};">${getRankBadgeHtml(opponent.rank)} ${opponent.rank.name}</span>`;
     }
 
     switchScreen('ranked-versus-screen', false);
 
-    // بعد 2.5 ثانية ينطلق التحدي في شاشة اللعب
+    // بعد 2.4 ثانية ينطلق التحدي في شاشة اللعب
     setTimeout(() => {
         launchRankedGameSession();
     }, 2400);
@@ -1791,13 +1812,14 @@ function launchRankedGameSession() {
     gameState.usedPowerupInSession = false;
     gameState.sessionCorrectStreak = 0;
     gameState.sessionMistakes = [];
+    isPlayerWaitingForOpponent = false;
 
     currentRankedOpponent.score = 0;
     currentRankedOpponent.correctCount = 0;
     currentRankedOpponent.answeredIndex = 0;
 
     const pwrBar = document.getElementById('game-powerups-bar');
-    if (pwrBar) pwrBar.style.display = 'none'; // بدون مساعدات في الرانك لضمان العدالة التنافسية!
+    if (pwrBar) pwrBar.style.display = 'none';
 
     const oppWidget = document.getElementById('game-ranked-opp-bar');
     if (oppWidget) {
@@ -1811,18 +1833,22 @@ function launchRankedGameSession() {
 }
 
 function startOpponentSimulation() {
-    clearInterval(opponentSimInterval);
+    clearTimeout(opponentSimTimeout);
 
     function scheduleNextOpponentAnswer() {
-        if (gameState.mode !== 'ranked' || !currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) {
-            clearInterval(opponentSimInterval);
+        if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) {
+            // المنافس أنهى الـ 5 أسئلة كاملة
+            if (isPlayerWaitingForOpponent) {
+                // إذا كان اللاعب البشري ينتظر المنافس، ننتقل فوراً للنتيجة
+                setTimeout(finishRankedMatchSession, 600);
+            }
             return;
         }
 
         const answerDelay = (currentRankedOpponent.minAnswerTime + Math.random() * (currentRankedOpponent.maxAnswerTime - currentRankedOpponent.minAnswerTime)) * 1000;
 
-        opponentSimInterval = setTimeout(() => {
-            if (gameState.mode !== 'ranked' || !currentRankedOpponent) return;
+        opponentSimTimeout = setTimeout(() => {
+            if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 5) return;
 
             const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
             const timeBonus = Math.floor(Math.random() * 8) + 4;
@@ -1835,8 +1861,14 @@ function startOpponentSimulation() {
             currentRankedOpponent.answeredIndex++;
             updateRankedOpponentUI();
 
+            if (isPlayerWaitingForOpponent) {
+                updateWaitingOpponentUI();
+            }
+
             if (currentRankedOpponent.answeredIndex < 5) {
                 scheduleNextOpponentAnswer();
+            } else if (isPlayerWaitingForOpponent) {
+                setTimeout(finishRankedMatchSession, 800);
             }
         }, answerDelay);
     }
@@ -1866,9 +1898,45 @@ function updateRankedOpponentUI() {
     }
 }
 
+function updateWaitingOpponentUI() {
+    const oppNameElem = document.getElementById('rk-wait-opp-name');
+    const oppAvatarElem = document.getElementById('rk-wait-opp-avatar');
+    const oppStatusElem = document.getElementById('rk-wait-opp-status');
+    const dotsContainer = document.getElementById('rk-wait-opp-dots');
+
+    if (!currentRankedOpponent) return;
+
+    if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
+    if (oppAvatarElem) oppAvatarElem.src = currentRankedOpponent.avatar;
+    if (oppStatusElem) {
+        oppStatusElem.innerText = `أجاب على ${currentRankedOpponent.answeredIndex} من 5 أسئلة (${currentRankedOpponent.score} نقطة)...`;
+    }
+
+    if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+            const dot = document.createElement('span');
+            dot.className = `opp-progress-dot ${i < currentRankedOpponent.answeredIndex ? 'answered' : ''}`;
+            dotsContainer.appendChild(dot);
+        }
+    }
+}
+
 // إنهاء ومعالجة نتيجة مباراة الرانك
 function finishRankedMatchSession() {
-    clearInterval(opponentSimInterval);
+    clearTimeout(opponentSimTimeout);
+    isPlayerWaitingForOpponent = false;
+
+    // التأكد من أن المنافس قد أتم الـ 5 أسئلة كاملة
+    while (currentRankedOpponent && currentRankedOpponent.answeredIndex < 5) {
+        const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
+        const timeBonus = Math.floor(Math.random() * 8) + 4;
+        if (isCorrect) {
+            currentRankedOpponent.correctCount++;
+            currentRankedOpponent.score += (100 + timeBonus * 10);
+        }
+        currentRankedOpponent.answeredIndex++;
+    }
 
     const isWinner = (gameState.score > currentRankedOpponent.score) || 
                      (gameState.score === currentRankedOpponent.score && gameState.correctCount >= currentRankedOpponent.correctCount);
@@ -1974,7 +2042,7 @@ function renderRankedResultScreen(isWinner, rankBefore, starsBefore, isPromoted,
     if (oppNameElem) oppNameElem.innerText = currentRankedOpponent.name;
 
     if (rankEmblemElem) {
-        rankEmblemElem.innerHTML = `<span style="font-size: 42px; color: ${currentRank.color};">${currentRank.icon}</span>`;
+        rankEmblemElem.innerHTML = `<span style="font-size: 38px; color: ${currentRank.color};"><i class="${currentRank.icon}"></i></span>`;
     }
     if (rankTitleElem) {
         rankTitleElem.innerHTML = `<span style="color: ${currentRank.color}; font-weight: 900;">${currentRank.name}</span> (${userProgress.rankStars || 0} / ${currentRank.tier === 10 ? '∞' : currentRank.starsToPromote} ⭐)`;
@@ -2011,7 +2079,7 @@ function renderRankedResultScreen(isWinner, rankBefore, starsBefore, isPromoted,
 
     if (isPromoted) {
         setTimeout(() => {
-            showCustomAlert(`🎉 مبروك! لقد ارتقيت إلى دوري [ ${currentRank.name} ${currentRank.icon} ]! استمر نحو القمة!`, 'ترقية جديدة!', '🚀');
+            showCustomAlert(`🎉 مبروك! لقد ارتقيت إلى دوري [ ${currentRank.name} ]! استمر نحو القمة!`, 'ترقية جديدة!', '🚀');
         }, 1200);
     }
 }
@@ -2098,8 +2166,8 @@ async function fetchAndRenderLeaderboard() {
 
 function formatLeaderboardScore(p, tab) {
     if (tab === 'ranked') {
-        const rk = (typeof getRankData === 'function') ? getRankData(p.rankTier) : { icon: '🛡️', name: 'الحديدي' };
-        return `${rk.icon} ${rk.name} (${p.rankStars || 0} ⭐)`;
+        const rk = (typeof getRankData === 'function') ? getRankData(p.rankTier) : { icon: 'fa-solid fa-shield', name: 'الحديدي', color: '#94a3b8' };
+        return `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span> (${p.rankStars || 0} ⭐)`;
     }
     if (tab === 'pvp') return `${p.pvpWins || 0} فوز ⚔️`;
     return `${p.highScore || 0} نقطة`;
@@ -2209,9 +2277,9 @@ function updateMyRankFooter(players, tab) {
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
     if (tab === 'ranked') {
-        const rk = (typeof getUserCurrentRank === 'function') ? getUserCurrentRank() : { icon: '🛡️', name: 'الحديدي' };
+        const rk = (typeof getUserCurrentRank === 'function') ? getUserCurrentRank() : { icon: 'fa-solid fa-shield', name: 'الحديدي', color: '#94a3b8' };
         if (subElem) subElem.innerText = `انتصارات الرانك: ${userProgress.rankedWins || 0}`;
-        if (valElem) valElem.innerText = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+        if (valElem) valElem.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span> (${userProgress.rankStars || 0} ⭐)`;
     } else if (tab === 'pvp') {
         if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
         if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
@@ -2570,8 +2638,10 @@ function updateHeaderStats() {
         const rk = getUserCurrentRank();
         const headerRank = document.getElementById('header-user-rank-pill');
         const modesTag = document.getElementById('modes-current-rank-tag');
-        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;">${rk.icon} ${rk.name}</span>`;
-        if (modesTag) modesTag.innerHTML = `${rk.icon} ${rk.name} (${userProgress.rankStars || 0} ⭐)`;
+        if (headerRank) headerRank.innerHTML = `<span style="color: ${rk.color}; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name}</span>`;
+        if (modesTag) modesTag.innerHTML = `<span style="color: #000; font-weight:bold;"><i class="${rk.icon}"></i> ${rk.name} (${userProgress.rankStars || 0} ⭐)</span>`;
+    }
+} (${userProgress.rankStars || 0} ⭐)`;
     }
 }
 
