@@ -2155,12 +2155,13 @@ html, body {
 .ranked-tier-card {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 10px 12px;
+    border-radius: 16px;
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     text-align: right;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .ranked-tier-card.current-tier {

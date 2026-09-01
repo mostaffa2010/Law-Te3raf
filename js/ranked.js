@@ -141,15 +141,11 @@ function openRankedInfoModal() {
             const isCurrent = (r.id === currentRank.id);
             const card = document.createElement('div');
             card.className = `ranked-tier-card ${isCurrent ? 'current-tier' : ''}`;
-            const divText = r.isApex 
-                ? 'دوري النخبة المفتوح (بالنقاط LP)' 
-                : `${r.divisions} تقسيمات (${toArabicNumerals(r.divisions)} ➔ ١) - كل تقسيم ${r.starsPerDiv} نجوم`;
 
             card.innerHTML = `
                 <div class="ranked-tier-icon" style="color: ${r.color};"><i class="${r.icon}"></i></div>
                 <div class="ranked-tier-details">
                     <h4>${r.name} ${isCurrent ? `<span class="tier-curr-badge">${formatUserFullRankName()}</span>` : ''}</h4>
-                    <p>${divText}</p>
                 </div>
             `;
             ranksListElem.appendChild(card);
