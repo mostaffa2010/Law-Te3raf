@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=41">
+    <link rel="stylesheet" href="./style.css?v=42">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -40,6 +40,9 @@
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
+    <!-- كانفاس الألعاب النارية والكونفيتي الاحتفالي -->
+    <canvas id="celebration-canvas" class="celebration-canvas"></canvas>
+
     <!-- صندوق الرياكشنات العائمة المتحركة -->
     <div id="floating-reactions-box" class="floating-reactions-box"></div>
     
@@ -719,16 +722,17 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=41"></script>
-    <script src="./js/audio.js?v=41"></script>
-    <script src="./js/questions-engine.js?v=41"></script>
-    <script src="./js/ranked.js?v=41"></script>
-    <script src="./js/game.js?v=41"></script>
-    <script src="./js/pvp.js?v=41"></script>
-    <script src="./js/customization.js?v=41"></script>
-    <script src="./js/features.js?v=41"></script>
-    <script src="./js/auth-nav.js?v=41"></script>
-    <script src="./js/app.js?v=41"></script>
+    <script src="./js/config.js?v=42"></script>
+    <script src="./js/audio.js?v=42"></script>
+    <script src="./js/questions-engine.js?v=42"></script>
+    <script src="./js/ranked.js?v=42"></script>
+    <script src="./js/effects.js?v=42"></script>
+    <script src="./js/game.js?v=42"></script>
+    <script src="./js/pvp.js?v=42"></script>
+    <script src="./js/customization.js?v=42"></script>
+    <script src="./js/features.js?v=42"></script>
+    <script src="./js/auth-nav.js?v=42"></script>
+    <script src="./js/app.js?v=42"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -746,7 +750,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=41')
+          navigator.serviceWorker.register('./sw.js?v=42')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -965,16 +969,17 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=41"></script>
-    <script src="./js/audio.js?v=41"></script>
-    <script src="./js/questions-engine.js?v=41"></script>
-    <script src="./js/ranked.js?v=41"></script>
-    <script src="./js/game.js?v=41"></script>
-    <script src="./js/pvp.js?v=41"></script>
-    <script src="./js/customization.js?v=41"></script>
-    <script src="./js/features.js?v=41"></script>
-    <script src="./js/auth-nav.js?v=41"></script>
-    <script src="./js/app.js?v=41"></script>
+    <script src="./js/config.js?v=42"></script>
+    <script src="./js/audio.js?v=42"></script>
+    <script src="./js/questions-engine.js?v=42"></script>
+    <script src="./js/ranked.js?v=42"></script>
+    <script src="./js/effects.js?v=42"></script>
+    <script src="./js/game.js?v=42"></script>
+    <script src="./js/pvp.js?v=42"></script>
+    <script src="./js/customization.js?v=42"></script>
+    <script src="./js/features.js?v=42"></script>
+    <script src="./js/auth-nav.js?v=42"></script>
+    <script src="./js/app.js?v=42"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -992,7 +997,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=41')
+          navigator.serviceWorker.register('./sw.js?v=42')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });

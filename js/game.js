@@ -200,6 +200,7 @@ function selectAnswer(selectedIndex, btnElement) {
 
         if (typeof AudioEngine !== 'undefined') AudioEngine.playCorrect();
         btnElement.classList.add('correct');
+        if (typeof EffectsEngine !== 'undefined') EffectsEngine.burstCorrectParticles(btnElement);
         btnElement.querySelector('i').className = 'fa-solid fa-circle-check';
         gameState.correctCount++;
         if (gameState.mode === 'ranked') {
@@ -318,6 +319,9 @@ async function finishGameSession() {
     }
 
     switchScreen('result-screen');
+    if (gameState.score >= 50 && typeof EffectsEngine !== 'undefined') {
+        EffectsEngine.launchVictoryFireworks();
+    }
 
     const resultIcon = document.getElementById('result-icon');
     const resultTitle = document.getElementById('result-title');

@@ -151,6 +151,33 @@ var AudioEngine = window.AudioEngine = {
     },
 
     // صوت خافت عند الفوز بالمرحلة
+    
+    // صوت انفجار الألعاب النارية والشرارات
+    playSparkle() {
+        if (!this.isSoundEnabled()) return;
+        this.init();
+        if (!this.ctx) return;
+
+        try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(900 + Math.random() * 400, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.15);
+
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.15);
+        } catch (e) {}
+    },
+
     playWin() {
         if (this.isSoundEnabled()) {
             this.init();

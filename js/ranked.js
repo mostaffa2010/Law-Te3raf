@@ -523,6 +523,9 @@ function finishRankedMatchSession() {
     updateHeaderStats();
 
     renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus);
+    if (isWinner && typeof EffectsEngine !== 'undefined') {
+        EffectsEngine.launchVictoryFireworks();
+    }
 }
 
 function renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus) {
