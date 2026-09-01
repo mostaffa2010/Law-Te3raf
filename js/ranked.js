@@ -1,3 +1,75 @@
+// --- محرك الذكاء الاصطناعي السلوكي المتطور لمنافسي الرانك (Behavioral AI Rivals) ---
+
+const SMART_RIVAL_NAMES = [
+    "أحمد الشناوي", "سارة محمود", "عمر الفاروق", "نور الدين", "مريم خالد",
+    "كريم يوسف", "ياسمين عادل", "حمزة طارق", "فاطمة الزهراء", "زياد إبراهيم",
+    "كابتن حازم", "منى سليم", "طارق العوضي", "هند مصطفى", "رامي صبري",
+    "د. آية رضوان", "مهند الشافعي", "ليلى عبد الله", "أنس البحيري", "سلمى النجار",
+    "خالد العقاد", "ريم الجابري", "حسام عاشور", "ندى إيهاب", "إبراهيم الجمل"
+];
+
+const ALL_GAME_CATEGORIES = [
+    'إسلاميات', 'رياضة وكورة', 'علوم وفضاء', 'تاريخ', 'جغرافيا', 'سينما وفن',
+    'طبيعة وحيوانات', 'تكنولوجيا وألعاب', 'أدب ولغات', 'سيارات ومحركات', 'ألغاز وذكاء', 'معلومات عامة'
+];
+
+function generateSmartRivalProfile(oppRank, oppDiv) {
+    const name = SMART_RIVAL_NAMES[Math.floor(Math.random() * SMART_RIVAL_NAMES.length)];
+    
+    // اختيار أفاتار وإطار ولقب عشوائي من قاعدة البيانات الأصلية للعبة
+    const avatars = (typeof AVATARS_DB !== 'undefined' && AVATARS_DB.length > 0) ? AVATARS_DB : [{ src: './assets/avatars/avatar_warrior.svg' }];
+    const frames = (typeof FRAMES_DB !== 'undefined' && FRAMES_DB.length > 0) ? FRAMES_DB : [{ overlaySvg: '' }];
+    const titles = (typeof TITLES_DB !== 'undefined' && TITLES_DB.length > 0) ? TITLES_DB : [{ title: 'لاعب' }];
+
+    const randomAv = avatars[Math.floor(Math.random() * avatars.length)];
+    const randomFr = frames[Math.floor(Math.random() * frames.length)];
+    const randomTitle = titles[Math.floor(Math.random() * titles.length)].title;
+
+    // تحديد أسلوب اللعب السلوكي (Playstyle)
+    const playstyles = ['rusher', 'tactician', 'streaker'];
+    const playstyle = playstyles[Math.floor(Math.random() * playstyles.length)];
+
+    // تحديد تخصص وقوة المنافس في قسم أو قسمين
+    const shuffledCats = [...ALL_GAME_CATEGORIES].sort(() => Math.random() - 0.5);
+    const favoredCats = [shuffledCats[0], shuffledCats[1]];
+    const weakCat = shuffledCats[2];
+
+    // تحديد زمن التفكير والدقة حسب رتبة المنافس وأسلوب لعبه
+    let baseAccuracy = Math.min(0.92, 0.52 + (oppRank.tier * 0.042));
+    let minTime = Math.max(1.4, 4.2 - (oppRank.tier * 0.25));
+    let maxTime = Math.max(2.6, 6.2 - (oppRank.tier * 0.3));
+
+    if (playstyle === 'rusher') {
+        minTime = Math.max(1.2, minTime * 0.65);
+        maxTime = Math.max(2.2, maxTime * 0.7);
+        baseAccuracy -= 0.06;
+    } else if (playstyle === 'tactician') {
+        minTime = minTime * 1.25;
+        maxTime = maxTime * 1.3;
+        baseAccuracy += 0.07;
+    }
+
+    return {
+        name: name,
+        avatar: randomAv.src,
+        frameOverlay: randomFr.overlaySvg || '',
+        title: randomTitle,
+        rank: oppRank,
+        division: oppDiv,
+        playstyle: playstyle,
+        favoredCats: favoredCats,
+        weakCat: weakCat,
+        baseAccuracy: Math.min(0.94, Math.max(0.45, baseAccuracy)),
+        minTime: minTime,
+        maxTime: maxTime,
+        score: 0,
+        correctCount: 0,
+        answeredIndex: 0,
+        streak: 0,
+        answersHistory: []
+    };
+}
+
 // دالة حساب القوة الترتيبية للرانك لترتيب لوحة المتصدرين بدقة فائقة
 function calculateRankSortWeight(prog) {
     if (!prog) return 0;
@@ -247,21 +319,7 @@ function foundRankedMatch() {
     const oppRank = RANKS_CONFIG[opponentIdx];
     const oppDiv = oppRank.isApex ? 1 : (Math.floor(Math.random() * oppRank.divisions) + 1);
 
-    const randomRival = SMART_RIVALS_POOL[Math.floor(Math.random() * SMART_RIVALS_POOL.length)];
-
-    currentRankedOpponent = {
-        name: randomRival.name,
-        avatar: randomRival.avatar,
-        rank: oppRank,
-        division: oppDiv,
-        score: 0,
-        correctCount: 0,
-        answeredIndex: 0,
-        accuracy: Math.min(0.92, 0.50 + (oppRank.tier * 0.045)),
-        minAnswerTime: Math.max(1.8, 4.5 - (oppRank.tier * 0.25)),
-        maxAnswerTime: Math.max(3.2, 6.5 - (oppRank.tier * 0.3)),
-        answersHistory: []
-    };
+    currentRankedOpponent = generateSmartRivalProfile(oppRank, oppDiv);
 
     const modal = document.getElementById('matchmaking-overlay');
     if (modal) modal.classList.remove('show');
@@ -283,12 +341,15 @@ function showRankedVersusScreen(opponent) {
     const myRank = getUserCurrentRank();
 
     if (myNameElem) myNameElem.innerText = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'أنت';
-    if (myAvatarElem) myAvatarElem.src = (currentUser && currentUser.photoURL) || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+    if (myAvatarElem) {
+        const myAv = (typeof AVATARS_DB !== 'undefined' && AVATARS_DB.find(a => a.id === userProgress.equippedAvatar)) || { src: './assets/avatars/avatar_warrior.svg' };
+        myAvatarElem.src = (currentUser && currentUser.photoURL) || myAv.src;
+    }
     if (myRankElem) {
         myRankElem.innerHTML = `<span style="color: ${myRank.color};"><i class="${myRank.icon}"></i> ${formatUserFullRankName()} (${userProgress.rankStars || 0} ⭐)</span>`;
     }
 
-    if (oppNameElem) oppNameElem.innerText = opponent.name;
+    if (oppNameElem) oppNameElem.innerText = `${opponent.name} (${opponent.title})`;
     if (oppAvatarElem) oppAvatarElem.src = opponent.avatar;
     if (oppRankElem) {
         const oppRankTitle = opponent.rank.isApex ? opponent.rank.name : `${opponent.rank.name} ${toArabicNumerals(opponent.division)}`;
@@ -346,22 +407,73 @@ function startOpponentSimulation() {
             return;
         }
 
-        const answerDelay = (currentRankedOpponent.minAnswerTime + Math.random() * (currentRankedOpponent.maxAnswerTime - currentRankedOpponent.minAnswerTime)) * 1000;
+        const qIdx = currentRankedOpponent.answeredIndex;
+        const currentQ = (gameState.questions && gameState.questions[qIdx]) ? gameState.questions[qIdx] : null;
+
+        // 1. حساب الدقة بناءً على تخصص المنافس ونوع السؤال
+        let currentAccuracy = currentRankedOpponent.baseAccuracy;
+        let thinkMin = currentRankedOpponent.minTime;
+        let thinkMax = currentRankedOpponent.maxTime;
+
+        if (currentQ) {
+            if (currentRankedOpponent.favoredCats.includes(currentQ.category)) {
+                currentAccuracy = Math.min(0.96, currentAccuracy + 0.18); // متفوق في هذا القسم
+                thinkMin = Math.max(1.1, thinkMin * 0.8);
+            } else if (currentRankedOpponent.weakCat === currentQ.category) {
+                currentAccuracy = Math.max(0.35, currentAccuracy - 0.20); // نقطة ضعف المنافس
+                thinkMax = thinkMax * 1.35;
+            }
+
+            // صعوبة السؤال
+            if (currentQ.difficulty >= 7) {
+                currentAccuracy = Math.max(0.40, currentAccuracy - 0.10);
+                thinkMin += 0.8;
+                thinkMax += 1.5;
+            }
+        }
+
+        // تأثير الحماس والسلسلة للمنافس الحماسي
+        if (currentRankedOpponent.playstyle === 'streaker') {
+            if (currentRankedOpponent.streak >= 2) {
+                currentAccuracy = Math.min(0.95, currentAccuracy + 0.10);
+                thinkMin = Math.max(1.2, thinkMin * 0.85);
+            } else if (currentRankedOpponent.streak === 0 && currentRankedOpponent.answeredIndex > 0) {
+                currentAccuracy = Math.max(0.45, currentAccuracy - 0.08); // تشتت بعد الخطأ
+            }
+        }
+
+        // محاكاة زمن التفكير البشري الواقعي
+        const answerDelay = (thinkMin + Math.random() * (thinkMax - thinkMin)) * 1000;
 
         opponentSimTimeout = setTimeout(() => {
             if (!currentRankedOpponent || currentRankedOpponent.answeredIndex >= 10) return;
 
-            const isCorrect = Math.random() <= currentRankedOpponent.accuracy;
-            const timeBonus = Math.floor(Math.random() * 8) + 4;
+            const isCorrect = Math.random() <= currentAccuracy;
+            const timeRemainingRatio = Math.max(0.1, 1 - (answerDelay / 15000));
+            const timeBonus = Math.floor(timeRemainingRatio * 10);
 
             if (!currentRankedOpponent.answersHistory) currentRankedOpponent.answersHistory = [];
 
             if (isCorrect) {
                 currentRankedOpponent.correctCount++;
+                currentRankedOpponent.streak = (currentRankedOpponent.streak || 0) + 1;
                 currentRankedOpponent.score += (100 + timeBonus * 10);
                 currentRankedOpponent.answersHistory.push(true);
+
+                // إطلاق تفاعل تلقائي من المنافس عند تحقيق سلسلة انتصارات
+                if (currentRankedOpponent.streak === 3 && Math.random() > 0.4) {
+                    setTimeout(() => spawnLiveReactionBubble('🔥', currentRankedOpponent.name, currentRankedOpponent.avatar), 400);
+                } else if (currentRankedOpponent.streak >= 5 && Math.random() > 0.5) {
+                    setTimeout(() => spawnLiveReactionBubble('🚀', currentRankedOpponent.name, currentRankedOpponent.avatar), 400);
+                }
             } else {
+                currentRankedOpponent.streak = 0;
                 currentRankedOpponent.answersHistory.push(false);
+
+                // إطلاق تفاعل بكاء أو صدمة عند الخطأ في الأسئلة الحاسمة
+                if (currentRankedOpponent.answeredIndex >= 7 && Math.random() > 0.45) {
+                    setTimeout(() => spawnLiveReactionBubble('😭', currentRankedOpponent.name, currentRankedOpponent.avatar), 500);
+                }
             }
 
             currentRankedOpponent.answeredIndex++;
