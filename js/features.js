@@ -384,26 +384,44 @@ function openAchievementsScreen() {
     renderAchievementsList();
 }
 
+function getAchievementCurrentLevelData(ach, claimedLevel) {
+    const maxLvl = (ach.levels && ach.levels.length) ? ach.levels.length : 1;
+    const isMaxed = claimedLevel >= maxLvl;
+    const lvlIdx = isMaxed ? maxLvl - 1 : Math.max(0, Math.min(claimedLevel, maxLvl - 1));
+    const lvlData = (ach.levels && ach.levels[lvlIdx]) ? ach.levels[lvlIdx] : { target: 100, reward: 50, rewardName: '50 عملة' };
+    return { isMaxed, lvlData, maxLvl };
+}
+
 function checkAllAchievements() {
+    if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
+
     let newlyUnlocked = false;
 
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const currentLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        const currentVal = userProgress[ach.stat] || 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const val = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : (userProgress[ach.id] || 0);
+            let currentUnlockedLvl = userProgress.infiniteLevels[ach.id] || 0;
 
-        const targetGoal = getAchGoal(ach, claimedLvl);
+            if (ach.levels && Array.isArray(ach.levels)) {
+                ach.levels.forEach((lvl, idx) => {
+                    const levelNum = idx + 1;
+                    if (val >= lvl.target && levelNum > currentUnlockedLvl) {
+                        currentUnlockedLvl = levelNum;
+                        newlyUnlocked = true;
+                        showAchievementToast(ach, levelNum);
+                    }
+                });
+            }
 
-        if (claimedLvl < ach.maxLevel && currentVal >= targetGoal && currentLvl === claimedLvl) {
-            if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
-            userProgress.infiniteLevels[ach.id] = claimedLvl + 1;
-            newlyUnlocked = true;
-            showAchievementToast(ach, claimedLvl + 1);
-        }
-    });
+            userProgress.infiniteLevels[ach.id] = currentUnlockedLvl;
+        });
+    }
 
-    if (newlyUnlocked) saveProgress();
-    updateAchievementBadge();
+    if (newlyUnlocked) {
+        saveProgress();
+        updateAchievementBadge();
+    }
 }
 
 function showAchievementToast(ach, level) {
@@ -413,8 +431,8 @@ function showAchievementToast(ach, level) {
     const toastName = document.getElementById('toast-name');
 
     if (toast && toastIcon && toastName) {
-        toastIcon.innerText = ach.icon;
-        toastName.innerText = `${ach.name} (مستوى ${level})`;
+        toastIcon.innerHTML = `<i class="${ach.icon || 'fa-solid fa-trophy'}"></i>`;
+        toastName.innerText = `${ach.title || ach.name} (مستوى ${toArabicNumerals(level)})`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
@@ -424,82 +442,105 @@ function updateAchievementBadge() {
     const badge = document.getElementById('achievements-badge');
     if (!badge) return;
 
-    let unclaimedCount = 0;
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const clm = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        if (unl > clm) unclaimedCount += (unl - clm);
-    });
+    let claimableCount = 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const unlocked = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+            const claimed = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+            const maxLvl = ach.levels ? ach.levels.length : 1;
+            if (claimed < maxLvl && unlocked > claimed) {
+                claimableCount += (unlocked - claimed);
+            }
+        });
+    }
 
-    if (unclaimedCount > 0) {
+    if (claimableCount > 0) {
+        badge.innerText = toArabicNumerals(claimableCount);
         badge.style.display = 'flex';
-        badge.innerText = unclaimedCount;
     } else {
         badge.style.display = 'none';
     }
 }
 
 function renderAchievementsList() {
+    checkAllAchievements();
     const list = document.getElementById('achievements-list');
     const countDisplay = document.getElementById('ach-unlocked-count');
 
-    let totalClaimedLevels = 0;
-    INFINITE_ACHIEVEMENTS.forEach(a => {
-        totalClaimedLevels += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
-    });
+    let totalClaimed = 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(a => {
+            totalClaimed += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
+        });
+    }
 
-    if (countDisplay) countDisplay.innerText = `إجمالي المستويات المحققة: ${totalClaimedLevels}`;
+    if (countDisplay) countDisplay.innerText = `إجمالي المستويات المكتملة: ${toArabicNumerals(totalClaimed)}`;
     if (!list) return;
     list.innerHTML = '';
 
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        const currentVal = userProgress[ach.stat] || 0;
-        const isMaxed = claimedLvl >= ach.maxLevel;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+            const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+            const { isMaxed, lvlData, maxLvl } = getAchievementCurrentLevelData(ach, claimedLvl);
 
-        const currentTargetGoal = isMaxed ? getAchGoal(ach, ach.maxLevel - 1) : getAchGoal(ach, claimedLvl);
-        const currentReward = isMaxed ? 0 : getAchReward(ach, claimedLvl);
-        const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / currentTargetGoal) * 100));
-        const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
+            const currentVal = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : 0;
+            const targetGoal = lvlData.target;
+            const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
+            const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
 
-        const card = document.createElement('div');
-        card.className = `achievement-card ${canClaim ? 'completed' : ''}`;
+            const descText = typeof ach.desc === 'function' ? ach.desc(toArabicNumerals(targetGoal)) : (ach.desc || '');
 
-        card.innerHTML = `
-            <div class="ach-icon-box">${ach.icon}</div>
-            <div class="ach-info-box">
-                <div class="ach-title-row">
-                    <h4>${ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${claimedLvl + 1})`}</small></h4>
-                    ${isMaxed ? '' : `<div class="ach-reward"><i class="fa-solid fa-coins"></i> +${currentReward}</div>`}
+            const card = document.createElement('div');
+            card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isMaxed ? 'maxed' : ''}`;
+
+            let claimBtnHtml = '';
+            if (isMaxed) {
+                claimBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
+            } else if (canClaim) {
+                claimBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام (${lvlData.rewardName || (lvlData.reward + ' عملة')})</button>`;
+            } else {
+                claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> الجائزة: ${lvlData.rewardName || (lvlData.reward + ' عملة')}</span>`;
+            }
+
+            card.innerHTML = `
+                <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
+                    <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
                 </div>
-                <div class="ach-desc">${ach.desc}</div>
-                <div class="ach-progress-container">
-                    <div class="ach-progress-bar" style="width: ${progressPercent}%;"></div>
+                <div class="ach-info-box">
+                    <div class="ach-title-row">
+                        <h4>${ach.title || ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)})`}</small></h4>
+                        ${claimBtnHtml}
+                    </div>
+                    <div class="ach-desc">${descText}</div>
+                    <div class="ach-progress-container">
+                        <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${ach.color || 'var(--accent-green)'};"></div>
+                    </div>
                 </div>
-            </div>
-            ${isMaxed
-                ? `<span style="font-size: 1.1rem;">🏆</span>`
-                : canClaim
-                    ? `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}', ${currentReward})">استلام</button>`
-                    : `<span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 45px; text-align: left;">${currentVal}/${currentTargetGoal}</span>`}
-        `;
+                <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
+            `;
 
-        list.appendChild(card);
-    });
+            list.appendChild(card);
+        });
+    }
 }
 
-function claimAchievementReward(achId, rewardAmount) {
+function claimAchievementReward(achId) {
     const ach = INFINITE_ACHIEVEMENTS.find(a => a.id === achId);
+    if (!ach) return;
+
     if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
     const claimedLvl = userProgress.claimedInfiniteLevels[achId] || 0;
-    if (ach && claimedLvl >= ach.maxLevel) return;
+    const { isMaxed, lvlData } = getAchievementCurrentLevelData(ach, claimedLvl);
+    if (isMaxed) return;
 
     userProgress.claimedInfiniteLevels[achId] = claimedLvl + 1;
-    userProgress.coins = (userProgress.coins || 0) + rewardAmount;
-    
+    userProgress.coins = (userProgress.coins || 0) + (lvlData.reward || 50);
+
     saveProgress();
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    showCustomAlert(`🎉 مبروك! استلمت مكافأة [ ${ach.title || ach.name} ]: ${lvlData.rewardName || (lvlData.reward + ' عملة ذهبية')}!`, 'إنجاز مكتمل!', '🏆');
 
     checkAllAchievements();
     updateHeaderStats();

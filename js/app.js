@@ -36,6 +36,7 @@ function initAuthAndApp() {
                     
                     if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
                     if (typeof checkWheelStatus === 'function') checkWheelStatus();
@@ -51,6 +52,7 @@ function initAuthAndApp() {
                             updateUserProfileUI(currentUser);
                             if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();

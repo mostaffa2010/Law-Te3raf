@@ -2127,57 +2127,74 @@ function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
 }
 
 
-// js/customization.js - إدارة تخصيص الحساب (الأفاتارات، الإطارات، الألقاب) وبطاقة إحصائيات اللاعب
+// js/customization.js - إدارة تخصيص الحساب والأفاتارات والإطارات والألقاب وبطاقة إحصائيات اللاعب
 
-// قائمة الأفاتارات (صور مصغرة عالية الجودة عبر CDN)
+// قائمة الأفاتارات (شخصيات مرسومة مميزة ذات طابع ألعاب وتحديات)
 var AVATARS_DB = window.AVATARS_DB = [
-    { id: 'av_default', name: 'لاعب كلاسيكي', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/847/847969.png', unlockDesc: 'مجاني للجميع' },
-    { id: 'av_ninja', name: 'المحارب المقنع', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', unlockDesc: 'مجاني للجميع' },
+    { id: 'av_default', name: 'المحارب الكلاسيكي', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333609.png', unlockDesc: 'مجاني للجميع' },
+    { id: 'av_ninja', name: 'النينجا الخفي', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', unlockDesc: 'مجاني للجميع' },
     
     // أفاتارات المتجر (تُشترى بالعملات الذهبية)
-    { id: 'av_pharaoh', name: 'الفرعون الذهبي', type: 'shop', price: 400, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135768.png', unlockDesc: 'متجر: 400 عملة' },
-    { id: 'av_astro', name: 'رائد الفضاء', type: 'shop', price: 700, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135789.png', unlockDesc: 'متجر: 700 عملة' },
-    { id: 'av_pirate', name: 'القرصان المغامر', type: 'shop', price: 1000, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135755.png', unlockDesc: 'متجر: 1,000 عملة' },
-    { id: 'av_wizard', name: 'الحكيم العظيم', type: 'shop', price: 1500, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135823.png', unlockDesc: 'متجر: 1,500 عملة' },
-    { id: 'av_king', name: 'ملك المعرفة', type: 'shop', price: 2000, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135728.png', unlockDesc: 'متجر: 2,000 عملة' },
+    { id: 'av_pharaoh', name: 'الفرعون الذهبي 👑', type: 'shop', price: 400, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333624.png', unlockDesc: 'متجر: 400 عملة' },
+    { id: 'av_astro', name: 'رائد الفضاء الكوني 🚀', type: 'shop', price: 700, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333633.png', unlockDesc: 'متجر: 700 عملة' },
+    { id: 'av_pirate', name: 'قبطان القراصنة 🏴‍☠️', type: 'shop', price: 1000, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333615.png', unlockDesc: 'متجر: 1,000 عملة' },
+    { id: 'av_wizard', name: 'ساحر المعرفة الأكبر 🧙‍♂️', type: 'shop', price: 1500, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333639.png', unlockDesc: 'متجر: 1,500 عملة' },
+    { id: 'av_emperor', name: 'إمبراطور الثقافة الذهبي 🏛️', type: 'shop', price: 2000, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333621.png', unlockDesc: 'متجر: 2,000 عملة' },
     
-    // أفاتارات حصرية بالإنجازات والرانك
-    { id: 'av_falcon', name: 'صقر المعرفة الأسطوري', type: 'achievement', reqAch: 'ach_correct', reqLvl: 5, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135805.png', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
-    { id: 'av_lightning', name: 'البرق الخاطف', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135773.png', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
-    { id: 'av_warlord', name: 'ملك التحديات', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135798.png', unlockDesc: 'إنجاز: 100 فوز في الرانك' }
+    // أفاتارات حصرية بالإنجازات الصعبة والرانك
+    { id: 'av_falcon', name: 'صقر المعرفة الأسطوري 🦅', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333645.png', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
+    { id: 'av_lightning', name: 'سيد الصاعقة والبرق ⚡', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333612.png', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
+    { id: 'av_warlord', name: 'ملك التحديات والرانك 👑', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333627.png', unlockDesc: 'إنجاز: 100 فوز بالرانك' }
 ];
 
-// قائمة الإطارات الملونة والمتحركة
+// قائمة الإطارات المتوهجة والمتحركة
 var FRAMES_DB = window.FRAMES_DB = [
-    { id: 'frame_none', name: 'بدون إطار', type: 'free', price: 0, className: '', borderCss: 'none', unlockDesc: 'مجاني' },
+    { id: 'frame_none', name: 'بدون إطار', type: 'free', price: 0, className: 'frame-none', borderCss: 'none', unlockDesc: 'مجاني' },
     
     // إطارات المتجر
-    { id: 'frame_neon_blue', name: 'النيون السماوي', type: 'shop', price: 500, className: 'frame-neon-blue', borderCss: '3px solid #38bdf8', unlockDesc: 'متجر: 500 عملة' },
-    { id: 'frame_royal_purple', name: 'البنفسجي الملكي', type: 'shop', price: 800, className: 'frame-royal-purple', borderCss: '3px solid #a855f7', unlockDesc: 'متجر: 800 عملة' },
-    { id: 'frame_gold_shine', name: 'الذهب البراق', type: 'shop', price: 1000, className: 'frame-gold-shine', borderCss: '3px solid #f59e0b', unlockDesc: 'متجر: 1,000 عملة' },
+    { id: 'frame_neon_cyan', name: 'النيون السماوي المشع 🔵', type: 'shop', price: 500, className: 'frame-neon-cyan', borderCss: '3.5px solid #00f0ff', unlockDesc: 'متجر: 500 عملة' },
+    { id: 'frame_imperial_purple', name: 'البنفسجي الإمبراطوري 🟣', type: 'shop', price: 800, className: 'frame-imperial-purple', borderCss: '3.5px solid #a855f7', unlockDesc: 'متجر: 800 عملة' },
+    { id: 'frame_radiant_gold', name: 'الذهب الملكي البراق 🟡', type: 'shop', price: 1000, className: 'frame-radiant-gold', borderCss: '3.5px solid #f59e0b', unlockDesc: 'متجر: 1,000 عملة' },
     
-    // إطارات الإنجازات والرانك الحصرية
-    { id: 'frame_flame_animated', name: 'اللهب الناري المتوهج', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, className: 'frame-flame-animated', borderCss: '3px solid #ef4444', unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
-    { id: 'frame_diamond_crest', name: 'الماسي الملكي', type: 'rank', reqRankTier: 'diamond', className: 'frame-diamond-crest', borderCss: '3px solid #06b6d4', unlockDesc: 'بلوغ دوري الماسي' },
-    { id: 'frame_challenger_apex', name: 'المتحدي الأسطوري', type: 'rank', reqRankTier: 'challenger', className: 'frame-challenger-apex', borderCss: '3px solid #fbbf24', unlockDesc: 'بلوغ دوري تشالنجر الأسطوري' }
+    // إطارات حصرية خارقة
+    { id: 'frame_flame_animated', name: 'اللهب الناري المتوهج والمتحرك 🔥', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, className: 'frame-flame-animated', borderCss: '3.5px solid #ef4444', unlockDesc: 'إنجاز: سلسلة 10 انتصارات متتالية' },
+    { id: 'frame_diamond_crystal', name: 'الكريستال الماسي الأسطوري 💎', type: 'rank', reqRankTier: 'diamond', className: 'frame-diamond-crystal', borderCss: '3.5px solid #38bdf8', unlockDesc: 'بلوغ دوري الماسي' },
+    { id: 'frame_challenger_apex', name: 'تاج المتحدي الأسطوري المذهب 👑', type: 'rank', reqRankTier: 'challenger', className: 'frame-challenger-apex', borderCss: '4px solid #fbbf24', unlockDesc: 'بلوغ قمة المتحدي الأسطوري' }
 ];
 
-// قائمة الألقاب
+// قائمة الألقاب الشرفية الموسعة
 var TITLES_DB = window.TITLES_DB = [
     { id: 'title_player', title: 'لاعب', type: 'free', unlockDesc: 'اللقب الافتراضي' },
-    { id: 'title_thinker', title: 'المفكر الذكي', type: 'achievement', reqAch: 'ach_correct', reqLvl: 2, unlockDesc: 'إنجاز: 300 سؤال صحيح' },
-    { id: 'title_speedster', title: 'صاعقة السرعة', type: 'achievement', reqAch: 'ach_speed', reqLvl: 3, unlockDesc: 'إنجاز: 100 إجابة سريعة' },
-    { id: 'title_gladiator', title: 'قاهر الرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 3, unlockDesc: 'إنجاز: 50 فوز بالرانك' },
-    { id: 'title_professor', title: 'البروفيسور', type: 'achievement', reqAch: 'ach_streak', reqLvl: 3, unlockDesc: 'إنجاز: سلسلة 7 انتصارات' },
-    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'title_thinker', title: 'المفكر العبقري', type: 'achievement', reqAch: 'ach_correct', reqLvl: 2, unlockDesc: 'إنجاز: 300 سؤال صحيح' },
+    { id: 'title_challenger', title: 'عاشق التحدي', type: 'free', unlockDesc: 'متاح للجميع' },
+    { id: 'title_knight', title: 'فارس الثقافة', type: 'free', unlockDesc: 'متاح للجميع' },
+    { id: 'title_star_hunter', title: 'صياد النجوم', type: 'free', unlockDesc: 'متاح للجميع' },
+    { id: 'title_mastermind', title: 'العقل المدبر', type: 'shop', price: 300, unlockDesc: 'متجر: 300 عملة' },
+    { id: 'title_speedster', title: 'صاعقة السرعة ⚡', type: 'achievement', reqAch: 'ach_speed', reqLvl: 3, unlockDesc: 'إنجاز: 150 إجابة سريعة' },
+    { id: 'title_gladiator', title: 'قاهر الرانك ⚔️', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 3, unlockDesc: 'إنجاز: 60 فوز بالرانك' },
+    { id: 'title_professor', title: 'البروفيسور 🎓', type: 'achievement', reqAch: 'ach_streak', reqLvl: 3, unlockDesc: 'إنجاز: سلسلة 7 انتصارات' },
+    { id: 'title_puzzle_king', title: 'ملك الألغاز 🧩', type: 'shop', price: 500, unlockDesc: 'متجر: 500 عملة' },
+    { id: 'title_sniper', title: 'قناص الإجابات 🎯', type: 'shop', price: 600, unlockDesc: 'متجر: 600 عملة' },
+    { id: 'title_warlord_title', title: 'سيد التحديات 🏆', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, unlockDesc: 'إنجاز: 100 فوز بالرانك' },
+    { id: 'title_encyclopedia', title: 'موسوعة المعرفة 📚', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
+    { id: 'title_invincible', title: 'عقل لا يُقهر 🛡️', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
+    { id: 'title_champion', title: 'بطل الأبطال 🌟', type: 'rank', reqRankTier: 'master', unlockDesc: 'بلوغ دوري أستاذ (Master)' },
+    { id: 'title_legend', title: 'الأسطورة الخالدة 👑', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
 ];
 
 let activeProfileTab = 'stats';
+let pendingAvatar = null;
+let pendingFrame = null;
+let pendingTitle = null;
 
 function openPlayerProfileModal() {
     ensureUserProgressIntegrity();
     const modal = document.getElementById('player-profile-modal');
     if (!modal) return;
+
+    pendingAvatar = userProgress.equippedAvatar || 'av_default';
+    pendingFrame = userProgress.equippedFrame || 'frame_none';
+    pendingTitle = userProgress.equippedTitle || 'لاعب';
 
     renderPlayerProfileHeader();
     switchProfileTab(activeProfileTab || 'stats');
@@ -2221,18 +2238,16 @@ function renderPlayerProfileHeader() {
     const frameWrap = document.getElementById('prof-header-avatar-wrap');
 
     const displayName = (currentUser && !currentUser.isAnonymous) ? currentUser.displayName : 'لاعب';
-    const equippedAv = getEquippedAvatarObj();
-    const equippedFr = getEquippedFrameObj();
-    const equippedTitle = userProgress.equippedTitle || 'لاعب';
+    const currentAvObj = AVATARS_DB.find(a => a.id === pendingAvatar) || AVATARS_DB[0];
+    const currentFrObj = FRAMES_DB.find(f => f.id === pendingFrame) || FRAMES_DB[0];
     const userRank = getUserCurrentRank();
 
     if (nameElem) nameElem.innerText = displayName;
-    if (titleElem) titleElem.innerText = equippedTitle;
-    if (avatarImg) avatarImg.src = equippedAv.src;
+    if (titleElem) titleElem.innerText = pendingTitle || 'لاعب';
+    if (avatarImg) avatarImg.src = currentAvObj.src;
 
     if (frameWrap) {
-        frameWrap.className = `prof-avatar-frame-box ${equippedFr.className || ''}`;
-        frameWrap.style.borderColor = equippedFr.borderCss !== 'none' ? '' : 'transparent';
+        frameWrap.className = `prof-avatar-frame-box ${currentFrObj.className || ''}`;
     }
 
     if (rankElem) {
@@ -2241,7 +2256,6 @@ function renderPlayerProfileHeader() {
 }
 
 function renderPlayerStatsContent() {
-    // 1. General Records
     const totalRankedWins = userProgress.rankedWins || 0;
     const totalRankedLosses = userProgress.rankedLosses || 0;
     const totalRankedMatches = totalRankedWins + totalRankedLosses;
@@ -2251,15 +2265,12 @@ function renderPlayerStatsContent() {
     const winRateElem = document.getElementById('stat-val-winrate');
     const highScoreElem = document.getElementById('stat-val-highscore');
     const maxStreakElem = document.getElementById('stat-val-maxstreak');
-    const totalCorrectElem = document.getElementById('stat-val-totalcorrect');
 
-    if (rkWinsElem) rkWinsElem.innerText = totalRankedWins;
-    if (winRateElem) winRateElem.innerText = `${winRate}%`;
-    if (highScoreElem) highScoreElem.innerText = userProgress.highScore || 0;
-    if (maxStreakElem) maxStreakElem.innerText = userProgress.maxCorrectStreak || 0;
-    if (totalCorrectElem) totalCorrectElem.innerText = userProgress.totalCorrect || 0;
+    if (rkWinsElem) rkWinsElem.innerText = toArabicNumerals(totalRankedWins);
+    if (winRateElem) winRateElem.innerText = `${toArabicNumerals(winRate)}%`;
+    if (highScoreElem) highScoreElem.innerText = toArabicNumerals(userProgress.highScore || 0);
+    if (maxStreakElem) maxStreakElem.innerText = toArabicNumerals(userProgress.maxCorrectStreak || 0);
 
-    // 2. Category Accuracy Breakdown (Vertical List)
     const listContainer = document.getElementById('profile-category-accuracy-list');
     if (!listContainer) return;
     listContainer.innerHTML = '';
@@ -2278,19 +2289,14 @@ function renderPlayerStatsContent() {
         const accuracy = catData.total > 0 ? Math.round((catData.correct / catData.total) * 100) : 0;
 
         let barColor = 'var(--accent-green)';
-        let statusTag = 'ممتاز 🟢';
         if (catData.total === 0) {
             barColor = 'rgba(255, 255, 255, 0.2)';
-            statusTag = 'لم يُلعب بعد';
         } else if (accuracy < 40) {
             barColor = 'var(--accent-red)';
-            statusTag = 'يحتاج تدريب 🔴';
         } else if (accuracy < 65) {
             barColor = 'var(--accent-yellow)';
-            statusTag = 'متوسط 🟠';
         } else if (accuracy < 80) {
             barColor = 'var(--accent-purple)';
-            statusTag = 'جيد جداً 🔵';
         }
 
         const row = document.createElement('div');
@@ -2302,8 +2308,8 @@ function renderPlayerStatsContent() {
                     <span class="cat-stat-name">${cat}</span>
                 </div>
                 <div class="cat-stat-meta">
-                    <span class="cat-stat-percent" style="color: ${barColor};">${accuracy}%</span>
-                    <small class="cat-stat-ratio">(${catData.correct}/${catData.total})</small>
+                    <span class="cat-stat-percent" style="color: ${barColor};">${toArabicNumerals(accuracy)}%</span>
+                    <small class="cat-stat-ratio">(${toArabicNumerals(catData.correct)}/${toArabicNumerals(catData.total)})</small>
                 </div>
             </div>
             <div class="cat-stat-bar-track">
@@ -2318,16 +2324,6 @@ function renderCustomizationContent() {
     renderAvatarsGrid();
     renderFramesGrid();
     renderTitlesList();
-}
-
-function getEquippedAvatarObj() {
-    const eqId = userProgress.equippedAvatar || 'av_default';
-    return AVATARS_DB.find(a => a.id === eqId) || AVATARS_DB[0];
-}
-
-function getEquippedFrameObj() {
-    const eqId = userProgress.equippedFrame || 'frame_none';
-    return FRAMES_DB.find(f => f.id === eqId) || FRAMES_DB[0];
 }
 
 function isAvatarUnlocked(av) {
@@ -2378,22 +2374,20 @@ function renderAvatarsGrid() {
     if (!grid) return;
     grid.innerHTML = '';
 
-    const eqId = userProgress.equippedAvatar || 'av_default';
-
     AVATARS_DB.forEach(av => {
         const unlocked = isAvatarUnlocked(av);
-        const isEquipped = (av.id === eqId);
+        const isSelected = (av.id === pendingAvatar);
 
         const card = document.createElement('div');
-        card.className = `custom-item-card ${isEquipped ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
+        card.className = `custom-item-card ${isSelected ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
 
         let actionBtnHtml = '';
-        if (isEquipped) {
-            actionBtnHtml = `<span class="equipped-tag">مجهز ✅</span>`;
+        if (isSelected) {
+            actionBtnHtml = `<span class="equipped-tag">محدد ✅</span>`;
         } else if (unlocked) {
-            actionBtnHtml = `<button class="btn-equip" onclick="equipAvatar('${av.id}')">تجهيز</button>`;
+            actionBtnHtml = `<button class="btn-equip" onclick="selectPendingAvatar('${av.id}')">اختيار</button>`;
         } else if (av.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${av.price})"><i class="fa-solid fa-coins"></i> ${av.price}</button>`;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${av.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(av.price)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${av.unlockDesc}</span>`;
         }
@@ -2412,28 +2406,28 @@ function renderFramesGrid() {
     if (!grid) return;
     grid.innerHTML = '';
 
-    const eqId = userProgress.equippedFrame || 'frame_none';
+    const currentAvObj = AVATARS_DB.find(a => a.id === pendingAvatar) || AVATARS_DB[0];
 
     FRAMES_DB.forEach(fr => {
         const unlocked = isFrameUnlocked(fr);
-        const isEquipped = (fr.id === eqId);
+        const isSelected = (fr.id === pendingFrame);
 
         let actionBtnHtml = '';
-        if (isEquipped) {
-            actionBtnHtml = `<span class="equipped-tag">مجهز ✅</span>`;
+        if (isSelected) {
+            actionBtnHtml = `<span class="equipped-tag">محدد ✅</span>`;
         } else if (unlocked) {
-            actionBtnHtml = `<button class="btn-equip" onclick="equipFrame('${fr.id}')">تجهيز</button>`;
+            actionBtnHtml = `<button class="btn-equip" onclick="selectPendingFrame('${fr.id}')">اختيار</button>`;
         } else if (fr.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${fr.price})"><i class="fa-solid fa-coins"></i> ${fr.price}</button>`;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${fr.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(fr.price)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${fr.unlockDesc}</span>`;
         }
 
         const card = document.createElement('div');
-        card.className = `custom-item-card ${isEquipped ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
+        card.className = `custom-item-card ${isSelected ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
         card.innerHTML = `
-            <div class="frame-preview-box ${fr.className || ''}" style="${fr.borderCss !== 'none' ? '' : 'border: 2px dashed rgba(255,255,255,0.2);'}">
-                <img src="${getEquippedAvatarObj().src}" alt="Preview">
+            <div class="frame-preview-box ${fr.className || ''}">
+                <img src="${currentAvObj.src}" alt="Preview">
             </div>
             <span class="custom-card-name">${fr.name}</span>
             ${actionBtnHtml}
@@ -2447,23 +2441,23 @@ function renderTitlesList() {
     if (!list) return;
     list.innerHTML = '';
 
-    const eqTitle = userProgress.equippedTitle || 'لاعب';
-
     TITLES_DB.forEach(ti => {
         const unlocked = isTitleUnlocked(ti);
-        const isEquipped = (ti.title === eqTitle);
+        const isSelected = (ti.title === pendingTitle);
 
         let actionBtnHtml = '';
-        if (isEquipped) {
-            actionBtnHtml = `<span class="equipped-tag">مجهز ✅</span>`;
+        if (isSelected) {
+            actionBtnHtml = `<span class="equipped-tag">محدد ✅</span>`;
         } else if (unlocked) {
-            actionBtnHtml = `<button class="btn-equip" onclick="equipTitle('${ti.title}')">تجهيز</button>`;
+            actionBtnHtml = `<button class="btn-equip" onclick="selectPendingTitle('${ti.title}')">اختيار</button>`;
+        } else if (ti.type === 'shop') {
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyTitle('${ti.id}', '${ti.title}', ${ti.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(ti.price)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${ti.unlockDesc}</span>`;
         }
 
         const row = document.createElement('div');
-        row.className = `custom-title-row ${isEquipped ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
+        row.className = `custom-title-row ${isSelected ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
         row.innerHTML = `
             <div class="custom-title-name">🏷️ ${ti.title}</div>
             ${actionBtnHtml}
@@ -2472,22 +2466,26 @@ function renderTitlesList() {
     });
 }
 
-function equipAvatar(avId) {
-    const av = AVATARS_DB.find(a => a.id === avId);
-    if (!av || !isAvatarUnlocked(av)) return;
-
-    userProgress.equippedAvatar = av.id;
-    saveProgress();
-
-    if (currentUser) {
-        currentUser.photoURL = av.src;
-    }
-
+function selectPendingAvatar(avId) {
+    pendingAvatar = avId;
     renderPlayerProfileHeader();
     renderAvatarsGrid();
     renderFramesGrid();
-    updateUserProfileUI(currentUser);
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playPowerup();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function selectPendingFrame(frId) {
+    pendingFrame = frId;
+    renderPlayerProfileHeader();
+    renderFramesGrid();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function selectPendingTitle(titleStr) {
+    pendingTitle = titleStr;
+    renderPlayerProfileHeader();
+    renderTitlesList();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
 
 function buyAvatar(avId, price) {
@@ -2504,27 +2502,16 @@ function buyAvatar(avId, price) {
     if (!userProgress.unlockedAvatars.includes(avId)) {
         userProgress.unlockedAvatars.push(avId);
     }
-    userProgress.equippedAvatar = avId;
+    pendingAvatar = avId;
 
     saveProgress();
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
 
-    showCustomAlert(`🎉 مبروك! قمت بشراء وتجهيز أفاتار [ ${av.name} ]!`, 'تم الشراء!', '🎭');
+    showCustomAlert(`🎉 مبروك! قمت بشراء [ ${av.name} ]! اضغط "حفظ وتطبيق المظهر" لاعتماده.`, 'تم الشراء!', '🎭');
     renderPlayerProfileHeader();
     renderAvatarsGrid();
-    updateHeaderStats();
-}
-
-function equipFrame(frId) {
-    const fr = FRAMES_DB.find(f => f.id === frId);
-    if (!fr || !isFrameUnlocked(fr)) return;
-
-    userProgress.equippedFrame = fr.id;
-    saveProgress();
-
-    renderPlayerProfileHeader();
     renderFramesGrid();
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playPowerup();
+    updateHeaderStats();
 }
 
 function buyFrame(frId, price) {
@@ -2541,24 +2528,81 @@ function buyFrame(frId, price) {
     if (!userProgress.unlockedFrames.includes(frId)) {
         userProgress.unlockedFrames.push(frId);
     }
-    userProgress.equippedFrame = frId;
+    pendingFrame = frId;
 
     saveProgress();
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
 
-    showCustomAlert(`🎉 مبروك! قمت بشراء وتجهيز إطار [ ${fr.name} ]!`, 'تم الشراء!', '🖼️');
+    showCustomAlert(`🎉 مبروك! قمت بشراء إطار [ ${fr.name} ]! اضغط "حفظ وتطبيق المظهر" لاعتماده.`, 'تم الشراء!', '🖼️');
     renderPlayerProfileHeader();
     renderFramesGrid();
     updateHeaderStats();
 }
 
-function equipTitle(titleStr) {
-    userProgress.equippedTitle = titleStr;
-    saveProgress();
+function buyTitle(tiId, titleStr, price) {
+    const ti = TITLES_DB.find(t => t.id === tiId);
+    if (!ti) return;
 
+    if ((userProgress.coins || 0) < price) {
+        showCustomAlert('رصيدك من العملات غير كافٍ لشراء هذا اللقب!', 'رصيد غير كافٍ', '🪙');
+        return;
+    }
+
+    userProgress.coins -= price;
+    if (!userProgress.unlockedTitles) userProgress.unlockedTitles = ['title_player'];
+    if (!userProgress.unlockedTitles.includes(tiId)) {
+        userProgress.unlockedTitles.push(tiId);
+    }
+    pendingTitle = titleStr;
+
+    saveProgress();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    showCustomAlert(`🎉 مبروك! قمت بشراء لقب [ ${titleStr} ]! اضغط "حفظ وتطبيق المظهر" لاعتماده.`, 'تم الشراء!', '🏷️');
     renderPlayerProfileHeader();
     renderTitlesList();
-    if (typeof AudioEngine !== 'undefined') AudioEngine.playPowerup();
+    updateHeaderStats();
+}
+
+// زر حفظ وتطبيق المظهر ومزامنته مع القائمة الرئيسية فوراً
+function saveAndApplyCustomization() {
+    userProgress.equippedAvatar = pendingAvatar || 'av_default';
+    userProgress.equippedFrame = pendingFrame || 'frame_none';
+    userProgress.equippedTitle = pendingTitle || 'لاعب';
+
+    const avObj = AVATARS_DB.find(a => a.id === userProgress.equippedAvatar) || AVATARS_DB[0];
+    const frObj = FRAMES_DB.find(f => f.id === userProgress.equippedFrame) || FRAMES_DB[0];
+
+    if (currentUser) {
+        currentUser.photoURL = avObj.src;
+    }
+
+    saveProgress();
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    // تحديث ترويسة القائمة الرئيسية مباشرة وبشكل حي
+    applyCustomizationToHeader(avObj, frObj, userProgress.equippedTitle);
+
+    showCustomAlert('✨ تم حفظ وتطبيق المظهر الجديد بنجاح!', 'تم الحفظ!', '🎨');
+    closePlayerProfileModal();
+}
+
+function applyCustomizationToHeader(avObj, frObj, titleStr) {
+    const headerAvatar = document.getElementById('user-avatar');
+    const headerAvatarBox = document.getElementById('header-avatar-frame-wrap');
+    const headerTitleElem = document.getElementById('header-user-title-display');
+
+    if (!avObj) avObj = AVATARS_DB.find(a => a.id === (userProgress.equippedAvatar || 'av_default')) || AVATARS_DB[0];
+    if (!frObj) frObj = FRAMES_DB.find(f => f.id === (userProgress.equippedFrame || 'frame_none')) || FRAMES_DB[0];
+    if (!titleStr) titleStr = userProgress.equippedTitle || 'لاعب';
+
+    if (headerAvatar) headerAvatar.src = avObj.src;
+    if (headerAvatarBox) {
+        headerAvatarBox.className = `user-avatar-frame-wrap ${frObj.className || ''}`;
+    }
+    if (headerTitleElem) {
+        headerTitleElem.innerText = `🏷️ ${titleStr}`;
+    }
 }
 
 
@@ -2948,26 +2992,44 @@ function openAchievementsScreen() {
     renderAchievementsList();
 }
 
+function getAchievementCurrentLevelData(ach, claimedLevel) {
+    const maxLvl = (ach.levels && ach.levels.length) ? ach.levels.length : 1;
+    const isMaxed = claimedLevel >= maxLvl;
+    const lvlIdx = isMaxed ? maxLvl - 1 : Math.max(0, Math.min(claimedLevel, maxLvl - 1));
+    const lvlData = (ach.levels && ach.levels[lvlIdx]) ? ach.levels[lvlIdx] : { target: 100, reward: 50, rewardName: '50 عملة' };
+    return { isMaxed, lvlData, maxLvl };
+}
+
 function checkAllAchievements() {
+    if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
+    if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
+
     let newlyUnlocked = false;
 
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const currentLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        const currentVal = userProgress[ach.stat] || 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const val = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : (userProgress[ach.id] || 0);
+            let currentUnlockedLvl = userProgress.infiniteLevels[ach.id] || 0;
 
-        const targetGoal = getAchGoal(ach, claimedLvl);
+            if (ach.levels && Array.isArray(ach.levels)) {
+                ach.levels.forEach((lvl, idx) => {
+                    const levelNum = idx + 1;
+                    if (val >= lvl.target && levelNum > currentUnlockedLvl) {
+                        currentUnlockedLvl = levelNum;
+                        newlyUnlocked = true;
+                        showAchievementToast(ach, levelNum);
+                    }
+                });
+            }
 
-        if (claimedLvl < ach.maxLevel && currentVal >= targetGoal && currentLvl === claimedLvl) {
-            if (!userProgress.infiniteLevels) userProgress.infiniteLevels = {};
-            userProgress.infiniteLevels[ach.id] = claimedLvl + 1;
-            newlyUnlocked = true;
-            showAchievementToast(ach, claimedLvl + 1);
-        }
-    });
+            userProgress.infiniteLevels[ach.id] = currentUnlockedLvl;
+        });
+    }
 
-    if (newlyUnlocked) saveProgress();
-    updateAchievementBadge();
+    if (newlyUnlocked) {
+        saveProgress();
+        updateAchievementBadge();
+    }
 }
 
 function showAchievementToast(ach, level) {
@@ -2977,8 +3039,8 @@ function showAchievementToast(ach, level) {
     const toastName = document.getElementById('toast-name');
 
     if (toast && toastIcon && toastName) {
-        toastIcon.innerText = ach.icon;
-        toastName.innerText = `${ach.name} (مستوى ${level})`;
+        toastIcon.innerHTML = `<i class="${ach.icon || 'fa-solid fa-trophy'}"></i>`;
+        toastName.innerText = `${ach.title || ach.name} (مستوى ${toArabicNumerals(level)})`;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3500);
     }
@@ -2988,82 +3050,105 @@ function updateAchievementBadge() {
     const badge = document.getElementById('achievements-badge');
     if (!badge) return;
 
-    let unclaimedCount = 0;
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const clm = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        if (unl > clm) unclaimedCount += (unl - clm);
-    });
+    let claimableCount = 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const unlocked = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+            const claimed = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+            const maxLvl = ach.levels ? ach.levels.length : 1;
+            if (claimed < maxLvl && unlocked > claimed) {
+                claimableCount += (unlocked - claimed);
+            }
+        });
+    }
 
-    if (unclaimedCount > 0) {
+    if (claimableCount > 0) {
+        badge.innerText = toArabicNumerals(claimableCount);
         badge.style.display = 'flex';
-        badge.innerText = unclaimedCount;
     } else {
         badge.style.display = 'none';
     }
 }
 
 function renderAchievementsList() {
+    checkAllAchievements();
     const list = document.getElementById('achievements-list');
     const countDisplay = document.getElementById('ach-unlocked-count');
 
-    let totalClaimedLevels = 0;
-    INFINITE_ACHIEVEMENTS.forEach(a => {
-        totalClaimedLevels += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
-    });
+    let totalClaimed = 0;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(a => {
+            totalClaimed += ((userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[a.id]) || 0);
+        });
+    }
 
-    if (countDisplay) countDisplay.innerText = `إجمالي المستويات المحققة: ${totalClaimedLevels}`;
+    if (countDisplay) countDisplay.innerText = `إجمالي المستويات المكتملة: ${toArabicNumerals(totalClaimed)}`;
     if (!list) return;
     list.innerHTML = '';
 
-    INFINITE_ACHIEVEMENTS.forEach(ach => {
-        const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
-        const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
-        const currentVal = userProgress[ach.stat] || 0;
-        const isMaxed = claimedLvl >= ach.maxLevel;
+    if (typeof INFINITE_ACHIEVEMENTS !== 'undefined' && Array.isArray(INFINITE_ACHIEVEMENTS)) {
+        INFINITE_ACHIEVEMENTS.forEach(ach => {
+            const unlockedLvl = (userProgress.infiniteLevels && userProgress.infiniteLevels[ach.id]) || 0;
+            const claimedLvl = (userProgress.claimedInfiniteLevels && userProgress.claimedInfiniteLevels[ach.id]) || 0;
+            const { isMaxed, lvlData, maxLvl } = getAchievementCurrentLevelData(ach, claimedLvl);
 
-        const currentTargetGoal = isMaxed ? getAchGoal(ach, ach.maxLevel - 1) : getAchGoal(ach, claimedLvl);
-        const currentReward = isMaxed ? 0 : getAchReward(ach, claimedLvl);
-        const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / currentTargetGoal) * 100));
-        const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
+            const currentVal = typeof ach.getProgress === 'function' ? ach.getProgress(userProgress) : 0;
+            const targetGoal = lvlData.target;
+            const progressPercent = isMaxed ? 100 : Math.min(100, Math.round((currentVal / targetGoal) * 100));
+            const canClaim = !isMaxed && (unlockedLvl > claimedLvl);
 
-        const card = document.createElement('div');
-        card.className = `achievement-card ${canClaim ? 'completed' : ''}`;
+            const descText = typeof ach.desc === 'function' ? ach.desc(toArabicNumerals(targetGoal)) : (ach.desc || '');
 
-        card.innerHTML = `
-            <div class="ach-icon-box">${ach.icon}</div>
-            <div class="ach-info-box">
-                <div class="ach-title-row">
-                    <h4>${ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${claimedLvl + 1})`}</small></h4>
-                    ${isMaxed ? '' : `<div class="ach-reward"><i class="fa-solid fa-coins"></i> +${currentReward}</div>`}
+            const card = document.createElement('div');
+            card.className = `achievement-card ${canClaim ? 'completed' : ''} ${isMaxed ? 'maxed' : ''}`;
+
+            let claimBtnHtml = '';
+            if (isMaxed) {
+                claimBtnHtml = `<span class="ach-maxed-badge">مكتمل بالكامل 👑</span>`;
+            } else if (canClaim) {
+                claimBtnHtml = `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}')"><i class="fa-solid fa-gift"></i> استلام (${lvlData.rewardName || (lvlData.reward + ' عملة')})</button>`;
+            } else {
+                claimBtnHtml = `<span class="ach-reward-preview"><i class="fa-solid fa-gift"></i> الجائزة: ${lvlData.rewardName || (lvlData.reward + ' عملة')}</span>`;
+            }
+
+            card.innerHTML = `
+                <div class="ach-icon-box" style="color: ${ach.color || 'var(--accent-yellow)'};">
+                    <i class="${ach.icon || 'fa-solid fa-trophy'}"></i>
                 </div>
-                <div class="ach-desc">${ach.desc}</div>
-                <div class="ach-progress-container">
-                    <div class="ach-progress-bar" style="width: ${progressPercent}%;"></div>
+                <div class="ach-info-box">
+                    <div class="ach-title-row">
+                        <h4>${ach.title || ach.name} <small style="font-size: 0.75rem; color: var(--accent-purple); font-weight: bold;">${isMaxed ? '(مكتمل)' : `(مستوى ${toArabicNumerals(claimedLvl + 1)} من ${toArabicNumerals(maxLvl)})`}</small></h4>
+                        ${claimBtnHtml}
+                    </div>
+                    <div class="ach-desc">${descText}</div>
+                    <div class="ach-progress-container">
+                        <div class="ach-progress-bar" style="width: ${progressPercent}%; background: ${ach.color || 'var(--accent-green)'};"></div>
+                    </div>
                 </div>
-            </div>
-            ${isMaxed
-                ? `<span style="font-size: 1.1rem;">🏆</span>`
-                : canClaim
-                    ? `<button class="ach-claim-btn" onclick="claimAchievementReward('${ach.id}', ${currentReward})">استلام</button>`
-                    : `<span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 45px; text-align: left;">${currentVal}/${currentTargetGoal}</span>`}
-        `;
+                <span style="font-size: 0.8rem; color: var(--accent-yellow); font-weight: bold; min-width: 50px; text-align: left;">${toArabicNumerals(Math.min(currentVal, targetGoal))}/${toArabicNumerals(targetGoal)}</span>
+            `;
 
-        list.appendChild(card);
-    });
+            list.appendChild(card);
+        });
+    }
 }
 
-function claimAchievementReward(achId, rewardAmount) {
+function claimAchievementReward(achId) {
     const ach = INFINITE_ACHIEVEMENTS.find(a => a.id === achId);
+    if (!ach) return;
+
     if (!userProgress.claimedInfiniteLevels) userProgress.claimedInfiniteLevels = {};
     const claimedLvl = userProgress.claimedInfiniteLevels[achId] || 0;
-    if (ach && claimedLvl >= ach.maxLevel) return;
+    const { isMaxed, lvlData } = getAchievementCurrentLevelData(ach, claimedLvl);
+    if (isMaxed) return;
 
     userProgress.claimedInfiniteLevels[achId] = claimedLvl + 1;
-    userProgress.coins = (userProgress.coins || 0) + rewardAmount;
-    
+    userProgress.coins = (userProgress.coins || 0) + (lvlData.reward || 50);
+
     saveProgress();
     if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
+
+    showCustomAlert(`🎉 مبروك! استلمت مكافأة [ ${ach.title || ach.name} ]: ${lvlData.rewardName || (lvlData.reward + ' عملة ذهبية')}!`, 'إنجاز مكتمل!', '🏆');
 
     checkAllAchievements();
     updateHeaderStats();
@@ -3459,6 +3544,7 @@ function initAuthAndApp() {
                     
                     if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                     if (typeof checkDailyStatus === 'function') checkDailyStatus();
                     if (typeof checkWheelStatus === 'function') checkWheelStatus();
@@ -3474,6 +3560,7 @@ function initAuthAndApp() {
                             updateUserProfileUI(currentUser);
                             if (typeof checkAndApplySeasonReset === 'function') checkAndApplySeasonReset();
                     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof applyCustomizationToHeader === 'function') applyCustomizationToHeader();
                     if (typeof checkPwaInstallBanner === 'function') checkPwaInstallBanner();
                             if (typeof checkDailyStatus === 'function') checkDailyStatus();
                             if (typeof checkWheelStatus === 'function') checkWheelStatus();

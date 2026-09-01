@@ -3387,3 +3387,133 @@ html, body {
     transform: scale(1.2);
     color: #fbbf24;
 }
+
+
+/* ==========================================
+   High-Impact Glowing Avatar Frames & Header
+   ========================================== */
+#ranked-info-modal {
+    z-index: 1000005 !important;
+}
+
+.user-avatar-frame-wrap {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    flex-shrink: 0;
+}
+
+.user-avatar-frame-wrap img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header-user-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 6px;
+    padding: 1px 6px;
+    line-height: 1.2;
+}
+
+/* Glowing High-End Avatar Frames */
+.frame-none {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.frame-neon-cyan {
+    border: 3.5px solid #00f0ff !important;
+    box-shadow: 0 0 14px #00f0ff, inset 0 0 10px rgba(0, 240, 255, 0.5) !important;
+}
+
+.frame-imperial-purple {
+    border: 3.5px solid #a855f7 !important;
+    box-shadow: 0 0 16px #a855f7, 0 0 25px rgba(168, 85, 247, 0.6) !important;
+}
+
+.frame-radiant-gold {
+    border: 3.5px solid #f59e0b !important;
+    box-shadow: 0 0 18px #f59e0b, 0 0 28px rgba(245, 158, 11, 0.7) !important;
+}
+
+.frame-flame-animated {
+    border: 3.5px solid #ef4444 !important;
+    box-shadow: 0 0 18px #f97316, 0 0 32px rgba(239, 68, 68, 0.85) !important;
+    animation: flamePulseAnim 1.6s infinite alternate ease-in-out !important;
+}
+
+@keyframes flamePulseAnim {
+    0% { box-shadow: 0 0 12px #ef4444, 0 0 22px rgba(239, 68, 68, 0.7); }
+    50% { box-shadow: 0 0 22px #f97316, 0 0 35px rgba(249, 115, 22, 0.85); }
+    100% { box-shadow: 0 0 14px #ef4444, 0 0 24px rgba(239, 68, 68, 0.7); }
+}
+
+.frame-diamond-crystal {
+    border: 3.5px solid #38bdf8 !important;
+    box-shadow: 0 0 20px #38bdf8, 0 0 35px rgba(56, 189, 248, 0.9) !important;
+    animation: diamondGlowAnim 2s infinite ease-in-out !important;
+}
+
+@keyframes diamondGlowAnim {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.03); filter: brightness(1.2); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.frame-challenger-apex {
+    border: 4px solid #fbbf24 !important;
+    box-shadow: 0 0 25px #fbbf24, 0 0 45px rgba(251, 191, 36, 0.95) !important;
+    animation: challengerShineAnim 2s infinite ease-in-out !important;
+}
+
+@keyframes challengerShineAnim {
+    0% { box-shadow: 0 0 18px #fbbf24; }
+    50% { box-shadow: 0 0 30px #f59e0b, 0 0 50px rgba(251, 191, 36, 1); }
+    100% { box-shadow: 0 0 18px #fbbf24; }
+}
+
+/* Save & Apply Button Sticky */
+.save-custom-btn-wrap {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-save-customization-sticky {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    border: 1.5px solid rgba(16, 185, 129, 0.5);
+    border-radius: 16px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 13px 18px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s ease, box-shadow 0.15s;
+}
+
+.btn-save-customization-sticky:active {
+    transform: scale(0.97);
+}

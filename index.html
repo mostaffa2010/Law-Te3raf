@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=34">
+    <link rel="stylesheet" href="./style.css?v=35">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -150,10 +150,15 @@
     <div id="main-menu" class="screen">
         <div class="header-bar">
             <div class="user-profile-widget" onclick="openPlayerProfileModal()">
-                <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar">
+                <div class="user-avatar-frame-wrap" id="header-avatar-frame-wrap">
+                    <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/4333/4333609.png" alt="Avatar">
+                </div>
                 <div class="user-name-box">
-                    <span id="user-name">لاعب</span>
-                    <span class="user-rank-pill" id="header-user-rank-pill">الحديدي</span>
+                    <div class="user-name-title-row">
+                        <span id="user-name">لاعب</span>
+                        <span class="header-user-title" id="header-user-title-display">🏷️ لاعب</span>
+                    </div>
+                    <span class="user-rank-pill" id="header-user-rank-pill">الحديدي ٣</span>
                 </div>
             </div>
             <div class="header-coins" onclick="openShopScreen()">
@@ -704,16 +709,16 @@
     </div>
 
         <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=34"></script>
-    <script src="./js/audio.js?v=34"></script>
-    <script src="./js/questions-engine.js?v=34"></script>
-    <script src="./js/ranked.js?v=34"></script>
-    <script src="./js/game.js?v=34"></script>
-    <script src="./js/pvp.js?v=34"></script>
-    <script src="./js/customization.js?v=34"></script>
-    <script src="./js/features.js?v=34"></script>
-    <script src="./js/auth-nav.js?v=34"></script>
-    <script src="./js/app.js?v=34"></script>
+    <script src="./js/config.js?v=35"></script>
+    <script src="./js/audio.js?v=35"></script>
+    <script src="./js/questions-engine.js?v=35"></script>
+    <script src="./js/ranked.js?v=35"></script>
+    <script src="./js/game.js?v=35"></script>
+    <script src="./js/pvp.js?v=35"></script>
+    <script src="./js/customization.js?v=35"></script>
+    <script src="./js/features.js?v=35"></script>
+    <script src="./js/auth-nav.js?v=35"></script>
+    <script src="./js/app.js?v=35"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -731,7 +736,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=27')
+          navigator.serviceWorker.register('./sw.js?v=35')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -923,6 +928,12 @@
                     <h4>🏷️ ألقاب الحساب (Titles)</h4>
                 </div>
                 <div class="custom-titles-box" id="custom-titles-list"></div>
+                
+                <div class="save-custom-btn-wrap">
+                    <button class="btn-save-customization-sticky" onclick="saveAndApplyCustomization()">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ وتطبيق المظهر الجديد 💾
+                    </button>
+                </div>
             </div>
         </div>
     </div>
