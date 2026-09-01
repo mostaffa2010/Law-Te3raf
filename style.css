@@ -4110,3 +4110,46 @@ img[src*="frame_challenger_crown"] {
 .btn-submit-suggest:active {
     transform: scale(0.97);
 }
+
+
+/* ==========================================
+   Custom In-Game Trigger & Top Z-Index Dialogs
+   ========================================== */
+#custom-modal, #custom-confirm-modal {
+    z-index: 10000030 !important;
+}
+
+#suggest-cat-picker-modal, #suggest-diff-picker-modal {
+    z-index: 10000020 !important;
+}
+
+#suggest-question-modal {
+    z-index: 10000010 !important;
+}
+
+.custom-in-game-trigger {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+    border: 1px solid var(--border-color);
+    font-weight: 700;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.custom-in-game-trigger:active {
+    border-color: var(--accent-yellow);
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.custom-in-game-trigger i {
+    font-size: 0.75rem;
+    color: var(--accent-yellow);
+}

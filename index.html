@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="./style.css?v=47">
+    <link rel="stylesheet" href="./style.css?v=48">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -730,18 +730,18 @@
     </div>
 
 <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=47"></script>
-    <script src="./js/audio.js?v=47"></script>
-    <script src="./js/questions-engine.js?v=47"></script>
-    <script src="./js/ranked.js?v=47"></script>
-    <script src="./js/effects.js?v=47"></script>
-    <script src="./js/game.js?v=47"></script>
-    <script src="./js/pvp.js?v=47"></script>
-    <script src="./js/community.js?v=47"></script>
-    <script src="./js/customization.js?v=47"></script>
-    <script src="./js/features.js?v=47"></script>
-    <script src="./js/auth-nav.js?v=47"></script>
-    <script src="./js/app.js?v=47"></script>
+    <script src="./js/config.js?v=48"></script>
+    <script src="./js/audio.js?v=48"></script>
+    <script src="./js/questions-engine.js?v=48"></script>
+    <script src="./js/ranked.js?v=48"></script>
+    <script src="./js/effects.js?v=48"></script>
+    <script src="./js/game.js?v=48"></script>
+    <script src="./js/pvp.js?v=48"></script>
+    <script src="./js/community.js?v=48"></script>
+    <script src="./js/customization.js?v=48"></script>
+    <script src="./js/features.js?v=48"></script>
+    <script src="./js/auth-nav.js?v=48"></script>
+    <script src="./js/app.js?v=48"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -759,7 +759,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=47')
+          navigator.serviceWorker.register('./sw.js?v=48')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -978,18 +978,18 @@
 
 
     <!-- ملفات الجافاسكريبت بالترتيب المنطقي السليم -->
-    <script src="./js/config.js?v=47"></script>
-    <script src="./js/audio.js?v=47"></script>
-    <script src="./js/questions-engine.js?v=47"></script>
-    <script src="./js/ranked.js?v=47"></script>
-    <script src="./js/effects.js?v=47"></script>
-    <script src="./js/game.js?v=47"></script>
-    <script src="./js/pvp.js?v=47"></script>
-    <script src="./js/community.js?v=47"></script>
-    <script src="./js/customization.js?v=47"></script>
-    <script src="./js/features.js?v=47"></script>
-    <script src="./js/auth-nav.js?v=47"></script>
-    <script src="./js/app.js?v=47"></script>
+    <script src="./js/config.js?v=48"></script>
+    <script src="./js/audio.js?v=48"></script>
+    <script src="./js/questions-engine.js?v=48"></script>
+    <script src="./js/ranked.js?v=48"></script>
+    <script src="./js/effects.js?v=48"></script>
+    <script src="./js/game.js?v=48"></script>
+    <script src="./js/pvp.js?v=48"></script>
+    <script src="./js/community.js?v=48"></script>
+    <script src="./js/customization.js?v=48"></script>
+    <script src="./js/features.js?v=48"></script>
+    <script src="./js/auth-nav.js?v=48"></script>
+    <script src="./js/app.js?v=48"></script>
 
     <!-- تسجيل Service Worker للـ PWA -->
     
@@ -1007,7 +1007,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=47')
+          navigator.serviceWorker.register('./sw.js?v=48')
             .then(reg => console.log('SW Registered successfully:', reg))
             .catch(err => console.log('SW Registration error:', err));
         });
@@ -1233,31 +1233,20 @@
                 <div class="suggest-row-2">
                     <div class="suggest-field">
                         <label>🎯 القسم / المجال:</label>
-                        <select id="suggest-cat-select">
-                            <option value="إسلاميات">🕌 إسلاميات</option>
-                            <option value="رياضة وكورة">⚽ رياضة وكورة</option>
-                            <option value="علوم وفضاء">🔬 علوم وفضاء</option>
-                            <option value="تاريخ">📜 تاريخ</option>
-                            <option value="جغرافيا">🗺️ جغرافيا</option>
-                            <option value="سينما وفن">🎬 سينما وفن</option>
-                            <option value="طبيعة وحيوانات">🐾 طبيعة وحيوانات</option>
-                            <option value="تكنولوجيا وألعاب">💻 تكنولوجيا وألعاب</option>
-                            <option value="أدب ولغات">📖 أدب ولغات</option>
-                            <option value="سيارات ومحركات">🚗 سيارات ومحركات</option>
-                            <option value="ألغاز وذكاء">🧩 ألغاز وذكاء</option>
-                            <option value="معلومات عامة" selected>🌍 معلومات عامة</option>
-                        </select>
+                        <div class="custom-in-game-trigger" id="suggest-cat-trigger" onclick="openSuggestCategoryPicker()">
+                            <span id="suggest-cat-selected-label">🌍 معلومات عامة</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <input type="hidden" id="suggest-cat-value" value="معلومات عامة">
                     </div>
 
                     <div class="suggest-field">
                         <label>⚖️ مستوى الصعوبة:</label>
-                        <select id="suggest-diff-select">
-                            <option value="2">سهل (مستوى 2)</option>
-                            <option value="4" selected>متوسط (مستوى 4)</option>
-                            <option value="6">فوق المتوسط (مستوى 6)</option>
-                            <option value="8">صعب (مستوى 8)</option>
-                            <option value="9">محترفين (مستوى 9)</option>
-                        </select>
+                        <div class="custom-in-game-trigger" id="suggest-diff-trigger" onclick="openSuggestDiffPicker()">
+                            <span id="suggest-diff-selected-label">متوسط (مستوى 4)</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <input type="hidden" id="suggest-diff-value" value="4">
                     </div>
                 </div>
 
@@ -1289,6 +1278,65 @@
                     <i class="fa-solid fa-paper-plane"></i> إرسال السؤال للمراجعة (+20 عملة) 🚀
                 </button>
             </div>
+        </div>
+    </div>
+
+
+    <!-- نافذة اختيار القسم المخصصة لاقتراح الأسئلة -->
+    <div id="suggest-cat-picker-modal" class="custom-modal-overlay" onclick="closeSuggestCategoryPicker()">
+        <div class="custom-modal-card pvp-category-modal-card" onclick="event.stopPropagation()">
+            <div class="custom-modal-icon">🎯</div>
+            <h3>اختر قسم السؤال</h3>
+            <p>حدد المجال الذي ينتمي إليه سؤالك المقترح:</p>
+            <div class="pvp-categories-list" id="suggest-cat-picker-list"></div>
+            <button class="btn-modal-close" style="margin-top: 15px;" onclick="closeSuggestCategoryPicker()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة اختيار الصعوبة المخصصة لاقتراح الأسئلة -->
+    <div id="suggest-diff-picker-modal" class="custom-modal-overlay" onclick="closeSuggestDiffPicker()">
+        <div class="custom-modal-card pvp-category-modal-card" onclick="event.stopPropagation()">
+            <div class="custom-modal-icon">⚖️</div>
+            <h3>مستوى صعوبة السؤال</h3>
+            <p>اختر تقدير الصعوبة المناسب لسؤالك:</p>
+            <div class="pvp-categories-list" id="suggest-diff-picker-list">
+                <div class="pvp-cat-option-item" onclick="selectSuggestDiff(2, 'سهل (مستوى 2)')">
+                    <div class="pvp-cat-option-info">
+                        <i class="fa-solid fa-seedling" style="color: #10b981;"></i>
+                        <span class="pvp-cat-option-name">سهل (مستوى 2)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+                </div>
+                <div class="pvp-cat-option-item selected" onclick="selectSuggestDiff(4, 'متوسط (مستوى 4)')">
+                    <div class="pvp-cat-option-info">
+                        <i class="fa-solid fa-fire" style="color: #f59e0b;"></i>
+                        <span class="pvp-cat-option-name">متوسط (مستوى 4)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+                </div>
+                <div class="pvp-cat-option-item" onclick="selectSuggestDiff(6, 'فوق المتوسط (مستوى 6)')">
+                    <div class="pvp-cat-option-info">
+                        <i class="fa-solid fa-bolt" style="color: #38bdf8;"></i>
+                        <span class="pvp-cat-option-name">فوق المتوسط (مستوى 6)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+                </div>
+                <div class="pvp-cat-option-item" onclick="selectSuggestDiff(8, 'صعب (مستوى 8)')">
+                    <div class="pvp-cat-option-info">
+                        <i class="fa-solid fa-skull" style="color: #ef4444;"></i>
+                        <span class="pvp-cat-option-name">صعب (مستوى 8)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+                </div>
+                <div class="pvp-cat-option-item" onclick="selectSuggestDiff(9, 'محترفين (مستوى 9)')">
+                    <div class="pvp-cat-option-info">
+                        <i class="fa-solid fa-crown" style="color: #fbbf24;"></i>
+                        <span class="pvp-cat-option-name">محترفين (مستوى 9)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+                </div>
+            </div>
+            <button class="btn-modal-close" style="margin-top: 15px;" onclick="closeSuggestDiffPicker()">إغلاق</button>
         </div>
     </div>
 

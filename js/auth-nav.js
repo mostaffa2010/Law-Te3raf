@@ -117,6 +117,8 @@ function handleNavigationBack() {
         { id: 'custom-confirm-modal', closeFn: () => closeCustomConfirm(false) },
         { id: 'custom-modal', closeFn: closeCustomAlert },
         { id: 'pvp-category-modal', closeFn: closePvpCategoryModal },
+        { id: 'suggest-cat-picker-modal', closeFn: closeSuggestCategoryPicker },
+        { id: 'suggest-diff-picker-modal', closeFn: closeSuggestDiffPicker },
         { id: 'suggest-question-modal', closeFn: closeSuggestQuestionModal }
     ];
 

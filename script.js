@@ -2671,6 +2671,21 @@ function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
 
 // js/community.js - إدارة اقتراح الأسئلة من اللاعبين والمجتمع
 
+const SUGGEST_CATEGORIES = [
+    { id: 'إسلاميات', name: 'إسلاميات', icon: 'fa-solid fa-mosque', color: '#10b981' },
+    { id: 'رياضة وكورة', name: 'رياضة وكورة', icon: 'fa-solid fa-futbol', color: '#38bdf8' },
+    { id: 'علوم وفضاء', name: 'علوم وفضاء', icon: 'fa-solid fa-atom', color: '#a855f7' },
+    { id: 'تاريخ', name: 'تاريخ', icon: 'fa-solid fa-landmark-dome', color: '#f59e0b' },
+    { id: 'جغرافيا', name: 'جغرافيا', icon: 'fa-solid fa-earth-americas', color: '#06b6d4' },
+    { id: 'سينما وفن', name: 'سينما وفن', icon: 'fa-solid fa-film', color: '#ec4899' },
+    { id: 'طبيعة وحيوانات', name: 'طبيعة وحيوانات', icon: 'fa-solid fa-paw', color: '#84cc16' },
+    { id: 'تكنولوجيا وألعاب', name: 'تكنولوجيا وألعاب', icon: 'fa-solid fa-gamepad', color: '#6366f1' },
+    { id: 'أدب ولغات', name: 'أدب ولغات', icon: 'fa-solid fa-book-open', color: '#14b8a6' },
+    { id: 'سيارات ومحركات', name: 'سيارات ومحركات', icon: 'fa-solid fa-car', color: '#ef4444' },
+    { id: 'ألغاز وذكاء', name: 'ألغاز وذكاء', icon: 'fa-solid fa-puzzle-piece', color: '#f97316' },
+    { id: 'معلومات عامة', name: 'معلومات عامة', icon: 'fa-solid fa-globe', color: '#eab308' }
+];
+
 function openSuggestQuestionModal() {
     const modal = document.getElementById('suggest-question-modal');
     if (!modal) return;
@@ -2691,10 +2706,80 @@ function closeSuggestQuestionModal() {
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
 
+// نافذة اختيار القسم المخصصة
+function openSuggestCategoryPicker() {
+    const modal = document.getElementById('suggest-cat-picker-modal');
+    const list = document.getElementById('suggest-cat-picker-list');
+    if (!modal || !list) return;
+
+    const currentVal = document.getElementById('suggest-cat-value').value || 'معلومات عامة';
+    list.innerHTML = '';
+
+    SUGGEST_CATEGORIES.forEach(cat => {
+        const isSelected = (cat.id === currentVal);
+        const item = document.createElement('div');
+        item.className = `pvp-cat-option-item ${isSelected ? 'selected' : ''}`;
+        item.onclick = () => selectSuggestCategory(cat.id, cat.name, cat.icon, cat.color);
+
+        item.innerHTML = `
+            <div class="pvp-cat-option-info">
+                <i class="${cat.icon}" style="color: ${cat.color};"></i>
+                <span class="pvp-cat-option-name">${cat.name}</span>
+            </div>
+            <i class="fa-solid fa-circle-dot pvp-cat-radio"></i>
+        `;
+        list.appendChild(item);
+    });
+
+    modal.classList.add('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function closeSuggestCategoryPicker() {
+    const modal = document.getElementById('suggest-cat-picker-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function selectSuggestCategory(catId, catName, catIcon, catColor) {
+    const valInput = document.getElementById('suggest-cat-value');
+    const labelElem = document.getElementById('suggest-cat-selected-label');
+
+    if (valInput) valInput.value = catId;
+    if (labelElem) labelElem.innerHTML = `<i class="${catIcon}" style="color: ${catColor}; margin-left: 6px;"></i> ${catName}`;
+
+    closeSuggestCategoryPicker();
+}
+
+// نافذة اختيار مستوى الصعوبة المخصصة
+function openSuggestDiffPicker() {
+    const modal = document.getElementById('suggest-diff-picker-modal');
+    if (!modal) return;
+
+    modal.classList.add('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function closeSuggestDiffPicker() {
+    const modal = document.getElementById('suggest-diff-picker-modal');
+    if (modal) modal.classList.remove('show');
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+}
+
+function selectSuggestDiff(diffVal, diffLabel) {
+    const valInput = document.getElementById('suggest-diff-value');
+    const labelElem = document.getElementById('suggest-diff-selected-label');
+
+    if (valInput) valInput.value = diffVal;
+    if (labelElem) labelElem.innerText = diffLabel;
+
+    closeSuggestDiffPicker();
+}
+
 async function submitSuggestedQuestion() {
     const qInput = document.getElementById('suggest-q-text');
-    const catInput = document.getElementById('suggest-cat-select');
-    const diffInput = document.getElementById('suggest-diff-select');
+    const catInput = document.getElementById('suggest-cat-value');
+    const diffInput = document.getElementById('suggest-diff-value');
     const opt1Input = document.getElementById('suggest-opt1');
     const opt2Input = document.getElementById('suggest-opt2');
     const opt3Input = document.getElementById('suggest-opt3');
@@ -2704,7 +2789,7 @@ async function submitSuggestedQuestion() {
 
     const qText = qInput ? qInput.value.trim() : '';
     const qCat = catInput ? catInput.value : 'معلومات عامة';
-    const qDiff = diffInput ? parseInt(diffInput.value) : 5;
+    const qDiff = diffInput ? parseInt(diffInput.value) : 4;
     const opt1 = opt1Input ? opt1Input.value.trim() : '';
     const opt2 = opt2Input ? opt2Input.value.trim() : '';
     const opt3 = opt3Input ? opt3Input.value.trim() : '';
@@ -2764,7 +2849,7 @@ async function submitSuggestedQuestion() {
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> إرسال السؤال للمراجعة';
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> إرسال السؤال للمراجعة (+20 عملة) 🚀';
         }
     }
 }
@@ -4148,6 +4233,8 @@ function handleNavigationBack() {
         { id: 'custom-confirm-modal', closeFn: () => closeCustomConfirm(false) },
         { id: 'custom-modal', closeFn: closeCustomAlert },
         { id: 'pvp-category-modal', closeFn: closePvpCategoryModal },
+        { id: 'suggest-cat-picker-modal', closeFn: closeSuggestCategoryPicker },
+        { id: 'suggest-diff-picker-modal', closeFn: closeSuggestDiffPicker },
         { id: 'suggest-question-modal', closeFn: closeSuggestQuestionModal }
     ];
 
