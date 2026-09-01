@@ -82,9 +82,9 @@ function loadQuestion() {
     const progressLabel = document.getElementById('question-progress-label');
     if (progressLabel) {
         if (gameState.mode === 'endless') {
-            progressLabel.innerHTML = `السؤال رقم <b>${gameState.currentIndex + 1}</b> (سلسلة صحيحة: ${gameState.correctCount})`;
+            progressLabel.innerHTML = `السؤال رقم <b>${toArabicNumerals(gameState.currentIndex + 1)}</b> (سلسلة صحيحة: ${toArabicNumerals(gameState.correctCount)})`;
         } else {
-            progressLabel.innerHTML = `السؤال <span id="current-q-num">${gameState.currentIndex + 1}</span> من <span id="total-q-num">${gameState.questions.length}</span>`;
+            progressLabel.innerHTML = `السؤال <span id="current-q-num">${toArabicNumerals(gameState.currentIndex + 1)}</span> من <span id="total-q-num">${toArabicNumerals(gameState.questions.length)}</span>`;
         }
     }
 
@@ -173,11 +173,11 @@ function startTimer() {
     gameState.timer = 15;
     const timerElem = document.getElementById('timer-count');
     if (!timerElem) return;
-    timerElem.innerText = gameState.timer;
+    timerElem.innerText = toArabicNumerals(gameState.timer);
 
     gameState.timerInterval = setInterval(() => {
         gameState.timer--;
-        timerElem.innerText = gameState.timer;
+        timerElem.innerText = toArabicNumerals(gameState.timer);
 
         if (gameState.timer <= 5 && gameState.timer > 0 && typeof AudioEngine !== 'undefined') {
             AudioEngine.playTick();

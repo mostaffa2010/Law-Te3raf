@@ -1,3 +1,11 @@
+// دالة تحويل الأرقام إلى الأرقام العربية الشرقية (٠، ١، ٢، ٣، ٤، ٥، ٦، ٧، ٨، ٩)
+function toArabicNumerals(num) {
+    if (num === undefined || num === null) return '';
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return num.toString().replace(/[0-9]/g, w => arabicDigits[+w]);
+}
+window.toArabicNumerals = toArabicNumerals;
+
 // الإعدادات الديناميكية ودوال جلب الأسعار الحية
 var APP_CONFIG = window.APP_CONFIG = {
     prices: {

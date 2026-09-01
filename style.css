@@ -119,13 +119,7 @@ html, body {
 /* ==========================================
    Screen Layout & Header
    ========================================== */
-.screen {
-    display: none;
-    width: 100%;
-    min-height: 100vh;
-    padding: calc(env(safe-area-inset-top, 15px) + 10px) 15px 25px 15px;
-    flex-direction: column;
-}
+
 
 .screen.active {
     display: flex;
@@ -4554,4 +4548,70 @@ img[src*="frame_challenger_crown"] {
 
 .btn-save-adm-action:active {
     transform: scale(0.97);
+}
+
+
+/* ==========================================
+   Smooth Transitions & Micro-Interactions
+   ========================================== */
+.screen {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* Glassmorphic Modal Transitions */
+.custom-modal-overlay {
+    display: none;
+    opacity: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.78);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity;
+}
+
+.custom-modal-overlay.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.custom-modal-card,
+.suggest-modal-card,
+.player-profile-card,
+.reactions-modal-card,
+.ranked-info-card,
+.image-zoom-card {
+    transform: translateY(22px) scale(0.94);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+    will-change: transform, opacity;
+}
+
+.custom-modal-overlay.show .custom-modal-card,
+.custom-modal-overlay.show .suggest-modal-card,
+.custom-modal-overlay.show .player-profile-card,
+.custom-modal-overlay.show .reactions-modal-card,
+.custom-modal-overlay.show .ranked-info-card,
+.custom-modal-overlay.show .image-zoom-card {
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+}
+
+/* Micro-Interactions on Interactive Elements */
+button, .mode-card, .menu-action-card, .custom-item-card, .pvp-action-card {
+    transition: transform 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.16s ease, filter 0.16s ease;
+}
+
+button:active, .mode-card:active, .menu-action-card:active {
+    transform: scale(0.96) !important;
 }
