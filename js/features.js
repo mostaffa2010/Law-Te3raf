@@ -597,7 +597,7 @@ function renderDailyQuests(list) {
                     </div>
                     <div class="ach-title-texts">
                         <h4>${quest.title}</h4>
-                        <span class="ach-level-badge daily-badge">مهمة يومية</span>
+                        
                     </div>
                 </div>
                 ${actionBtnHtml}
@@ -648,7 +648,7 @@ function renderWeeklyQuests(list) {
                     </div>
                     <div class="ach-title-texts">
                         <h4>${quest.title}</h4>
-                        <span class="ach-level-badge weekly-badge">مهمة أسبوعية</span>
+                        
                     </div>
                 </div>
                 ${actionBtnHtml}

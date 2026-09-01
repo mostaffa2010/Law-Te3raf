@@ -1196,7 +1196,7 @@ html, body {
     color: var(--text-secondary);
 }
 
-.daily-badge {
+.mode-card .daily-badge, #daily-status-badge {
     position: absolute;
     top: 16px;
     left: 16px;
@@ -1553,7 +1553,7 @@ html, body {
     color: var(--accent-yellow);
 }
 
-.ach-level-badge.daily-badge {
+.ach-level-badge.mode-card .daily-badge, #daily-status-badge {
     color: var(--accent-green);
 }
 
