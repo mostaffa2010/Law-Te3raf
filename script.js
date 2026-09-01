@@ -1376,7 +1376,7 @@ var EffectsEngine = window.EffectsEngine = {
         }
     },
 
-    // 1. انفجار كرات ملونة وشرارات صغيرة من زر الإجابة الصحيحة
+        // 1. انفجار كرات ملونة وشرارات ناعمة وصغيرة وشفافة (60% opacity)
     burstCorrectParticles(targetElem) {
         if (!targetElem) return;
 
@@ -1385,25 +1385,26 @@ var EffectsEngine = window.EffectsEngine = {
         const centerY = rect.top + rect.height / 2;
 
         const container = document.getElementById('floating-reactions-box') || document.body;
-        const colors = ['#10b981', '#f59e0b', '#00f0ff', '#ec4899', '#38bdf8', '#a855f7', '#ffffff'];
-        const numParticles = 32;
+        const colors = ['#10b981', '#f59e0b', '#00f0ff', '#ec4899', '#38bdf8'];
+        const numParticles = 14; // عدد خفيف وناعم (14 كرة فقط)
 
         for (let i = 0; i < numParticles; i++) {
             const particle = document.createElement('div');
             particle.className = 'burst-particle-dot';
 
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const size = Math.floor(Math.random() * 8) + 6; // 6px to 14px
+            const size = Math.floor(Math.random() * 4) + 4; // حجم أصغر (4px إلى 7px)
 
             const angle = Math.random() * Math.PI * 2;
-            const distance = Math.floor(Math.random() * 90) + 40; // 40px to 130px
+            const distance = Math.floor(Math.random() * 45) + 25; // انتشار لطيف (25px إلى 70px)
             const destX = Math.cos(angle) * distance;
-            const destY = Math.sin(angle) * distance - 20;
+            const destY = Math.sin(angle) * distance - 10;
 
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             particle.style.backgroundColor = color;
-            particle.style.boxShadow = `0 0 10px ${color}, 0 0 18px ${color}`;
+            particle.style.boxShadow = `0 0 6px ${color}`;
+            particle.style.opacity = '0.6';
             particle.style.left = `${centerX}px`;
             particle.style.top = `${centerY}px`;
             particle.style.setProperty('--dest-x', `${destX}px`);
@@ -1411,12 +1412,11 @@ var EffectsEngine = window.EffectsEngine = {
 
             container.appendChild(particle);
 
-            // حذف الكرات بعد انتهاء الأنيميشن
             setTimeout(() => {
                 if (particle && particle.parentNode) {
                     particle.parentNode.removeChild(particle);
                 }
-            }, 800);
+            }, 650);
         }
     },
 

@@ -3906,22 +3906,23 @@ img[src*="frame_challenger_crown"] {
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999999;
-    transform: translate(-50%, -50%) scale(0.4);
-    animation: burstParticleFly 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation: burstParticleFly 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes burstParticleFly {
     0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(0.4);
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(0.5);
     }
-    50% {
-        opacity: 0.95;
-        transform: translate(calc(-50% + var(--dest-x)), calc(-50% + var(--dest-y))) scale(1.25);
+    60% {
+        opacity: 0.6;
+        transform: translate(calc(-50% + var(--dest-x)), calc(-50% + var(--dest-y))) scale(1);
     }
     100% {
         opacity: 0;
-        transform: translate(calc(-50% + var(--dest-x) * 1.15), calc(-50% + var(--dest-y) + 30px)) scale(0.2);
+        transform: translate(calc(-50% + var(--dest-x) * 1.1), calc(-50% + var(--dest-y) + 15px)) scale(0.2);
     }
 }
 
