@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_champ" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="trophy_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_champ)" stroke="#fbbf24" stroke-width="3"/>
+  <!-- Laurel Wreath Leaves -->
+  <path d="M22 62 Q20 38 34 26 M78 62 Q80 38 66 26" stroke="#fbbf24" stroke-width="3" fill="none"/>
+  <!-- Glowing Trophy Cup -->
+  <path d="M34 28 L66 28 L60 52 C60 62 50 64 50 64 C50 64 40 62 40 52 Z" fill="url(#trophy_gold)" stroke="#78350f" stroke-width="2"/>
+  <!-- Trophy Handles -->
+  <path d="M34 32 C26 32 26 46 36 48 M66 32 C74 32 74 46 64 48" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+  <!-- Trophy Stand -->
+  <rect x="46" y="64" width="8" height="8" fill="#d97706"/>
+  <rect x="38" y="72" width="24" height="6" rx="2" fill="#78350f"/>
+  <!-- Star on Trophy -->
+  <polygon points="50,36 52,42 58,42 53,46 55,52 50,48 45,52 47,46 42,42 48,42" fill="#ffffff"/>
+</svg>

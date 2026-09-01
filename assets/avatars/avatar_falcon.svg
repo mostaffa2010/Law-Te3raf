@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_falcon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_falcon)" stroke="#10b981" stroke-width="2.5"/>
+  <!-- Falcon Head & Feathers -->
+  <path d="M30 50 Q36 22 56 22 Q72 22 74 44 Q74 64 56 78 Q42 76 34 66 Z" fill="#334155"/>
+  <!-- Golden Crest Feathers -->
+  <path d="M48 22 Q52 14 62 16 Q54 22 56 26" fill="#f59e0b"/>
+  <!-- Piercing Hawk Eye -->
+  <circle cx="56" cy="40" r="7" fill="#f59e0b"/>
+  <circle cx="56" cy="40" r="4" fill="#0f172a"/>
+  <circle cx="54" cy="38" r="1.5" fill="#ffffff"/>
+  <!-- Sharp Golden Hooked Beak -->
+  <path d="M64 42 Q80 44 82 54 Q72 58 62 52 Z" fill="#f59e0b" stroke="#78350f" stroke-width="1.5"/>
+</svg>

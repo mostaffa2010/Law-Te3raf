@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_pharaoh" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#1c1917"/>
+    </linearGradient>
+    <linearGradient id="gold_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_pharaoh)" stroke="#f59e0b" stroke-width="2"/>
+  <!-- Nemes Headcloth Stripes -->
+  <path d="M22 36 Q50 14 78 36 L72 74 L60 70 L58 48 L42 48 L40 70 L28 74 Z" fill="url(#gold_grad)"/>
+  <!-- Blue Inlay Stripes -->
+  <path d="M28 32 Q50 18 72 32 M25 44 L35 46 M65 46 L75 44 M26 56 L36 58 M64 58 L74 56" stroke="#0284c7" stroke-width="3"/>
+  <!-- Golden Mask Face -->
+  <ellipse cx="50" cy="50" rx="14" ry="18" fill="#fed7aa"/>
+  <!-- Kohl Lined Eyes -->
+  <path d="M40 48 Q44 45 47 48 M53 48 Q56 45 60 48" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+  <path d="M47 48 L49 50 M53 48 L51 50" stroke="#0f172a" stroke-width="1.5"/>
+  <!-- Royal Beard & Uraeus Cobra -->
+  <rect x="47" y="66" width="6" height="12" fill="#0284c7" stroke="#f59e0b" stroke-width="1"/>
+  <circle cx="50" cy="20" r="4" fill="#ef4444" stroke="#f59e0b" stroke-width="1.5"/>
+</svg>

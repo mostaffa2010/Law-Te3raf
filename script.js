@@ -2131,20 +2131,20 @@ function showFloatingReaction(emoji, senderName, senderAvatar, isMe) {
 
 // قائمة الأفاتارات (شخصيات مرسومة مميزة ذات طابع ألعاب وتحديات)
 var AVATARS_DB = window.AVATARS_DB = [
-    { id: 'av_default', name: 'المحارب الكلاسيكي', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333609.png', unlockDesc: 'مجاني للجميع' },
-    { id: 'av_ninja', name: 'النينجا الخفي', type: 'free', price: 0, src: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', unlockDesc: 'مجاني للجميع' },
+    { id: 'av_default', name: 'المحارب الفولاذي', type: 'free', price: 0, src: './assets/avatars/avatar_warrior.svg', unlockDesc: 'مجاني للجميع' },
+    { id: 'av_ninja', name: 'النينجا الخفي', type: 'free', price: 0, src: './assets/avatars/avatar_ninja.svg', unlockDesc: 'مجاني للجميع' },
     
     // أفاتارات المتجر (تُشترى بالعملات الذهبية)
-    { id: 'av_pharaoh', name: 'الفرعون الذهبي 👑', type: 'shop', price: 400, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333624.png', unlockDesc: 'متجر: 400 عملة' },
-    { id: 'av_astro', name: 'رائد الفضاء الكوني 🚀', type: 'shop', price: 700, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333633.png', unlockDesc: 'متجر: 700 عملة' },
-    { id: 'av_pirate', name: 'قبطان القراصنة 🏴‍☠️', type: 'shop', price: 1000, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333615.png', unlockDesc: 'متجر: 1,000 عملة' },
-    { id: 'av_wizard', name: 'ساحر المعرفة الأكبر 🧙‍♂️', type: 'shop', price: 1500, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333639.png', unlockDesc: 'متجر: 1,500 عملة' },
-    { id: 'av_emperor', name: 'إمبراطور الثقافة الذهبي 🏛️', type: 'shop', price: 2000, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333621.png', unlockDesc: 'متجر: 2,000 عملة' },
+    { id: 'av_pharaoh', name: 'الفرعون الذهبي', type: 'shop', price: 400, src: './assets/avatars/avatar_pharaoh.svg', unlockDesc: 'متجر: 400 عملة' },
+    { id: 'av_astro', name: 'رائد الفضاء الكوني', type: 'shop', price: 700, src: './assets/avatars/avatar_astronaut.svg', unlockDesc: 'متجر: 700 عملة' },
+    { id: 'av_pirate', name: 'قبطان القراصنة', type: 'shop', price: 1000, src: './assets/avatars/avatar_pirate.svg', unlockDesc: 'متجر: 1,000 عملة' },
+    { id: 'av_wizard', name: 'ساحر المعرفة الأكبر', type: 'shop', price: 1500, src: './assets/avatars/avatar_wizard.svg', unlockDesc: 'متجر: 1,500 عملة' },
+    { id: 'av_emperor', name: 'إمبراطور الثقافة', type: 'shop', price: 2000, src: './assets/avatars/avatar_emperor.svg', unlockDesc: 'متجر: 2,000 عملة' },
     
     // أفاتارات حصرية بالإنجازات الصعبة والرانك
-    { id: 'av_falcon', name: 'صقر المعرفة الأسطوري 🦅', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333645.png', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
-    { id: 'av_lightning', name: 'سيد الصاعقة والبرق ⚡', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333612.png', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
-    { id: 'av_warlord', name: 'ملك التحديات والرانك 👑', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: 'https://cdn-icons-png.flaticon.com/512/4333/4333627.png', unlockDesc: 'إنجاز: 100 فوز بالرانك' }
+    { id: 'av_falcon', name: 'صقر الأساطير', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, src: './assets/avatars/avatar_falcon.svg', unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
+    { id: 'av_lightning', name: 'سيد الصاعقة والبرق', type: 'achievement', reqAch: 'ach_speed', reqLvl: 4, src: './assets/avatars/avatar_lightning.svg', unlockDesc: 'إنجاز: 200 إجابة سريعة' },
+    { id: 'av_warlord', name: 'بطل التحديات والرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, src: './assets/avatars/avatar_champion.svg', unlockDesc: 'إنجاز: 100 فوز بالرانك' }
 ];
 
 // قائمة الإطارات المتوهجة والمتحركة
@@ -2170,16 +2170,16 @@ var TITLES_DB = window.TITLES_DB = [
     { id: 'title_knight', title: 'فارس الثقافة', type: 'free', unlockDesc: 'متاح للجميع' },
     { id: 'title_star_hunter', title: 'صياد النجوم', type: 'free', unlockDesc: 'متاح للجميع' },
     { id: 'title_mastermind', title: 'العقل المدبر', type: 'shop', price: 300, unlockDesc: 'متجر: 300 عملة' },
-    { id: 'title_speedster', title: 'صاعقة السرعة ⚡', type: 'achievement', reqAch: 'ach_speed', reqLvl: 3, unlockDesc: 'إنجاز: 150 إجابة سريعة' },
-    { id: 'title_gladiator', title: 'قاهر الرانك ⚔️', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 3, unlockDesc: 'إنجاز: 60 فوز بالرانك' },
-    { id: 'title_professor', title: 'البروفيسور 🎓', type: 'achievement', reqAch: 'ach_streak', reqLvl: 3, unlockDesc: 'إنجاز: سلسلة 7 انتصارات' },
-    { id: 'title_puzzle_king', title: 'ملك الألغاز 🧩', type: 'shop', price: 500, unlockDesc: 'متجر: 500 عملة' },
-    { id: 'title_sniper', title: 'قناص الإجابات 🎯', type: 'shop', price: 600, unlockDesc: 'متجر: 600 عملة' },
-    { id: 'title_warlord_title', title: 'سيد التحديات 🏆', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, unlockDesc: 'إنجاز: 100 فوز بالرانك' },
-    { id: 'title_encyclopedia', title: 'موسوعة المعرفة 📚', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
-    { id: 'title_invincible', title: 'عقل لا يُقهر 🛡️', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
-    { id: 'title_champion', title: 'بطل الأبطال 🌟', type: 'rank', reqRankTier: 'master', unlockDesc: 'بلوغ دوري أستاذ (Master)' },
-    { id: 'title_legend', title: 'الأسطورة الخالدة 👑', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
+    { id: 'title_speedster', title: 'صاعقة السرعة', type: 'achievement', reqAch: 'ach_speed', reqLvl: 3, unlockDesc: 'إنجاز: 150 إجابة سريعة' },
+    { id: 'title_gladiator', title: 'قاهر الرانك', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 3, unlockDesc: 'إنجاز: 60 فوز بالرانك' },
+    { id: 'title_professor', title: 'البروفيسور', type: 'achievement', reqAch: 'ach_streak', reqLvl: 3, unlockDesc: 'إنجاز: سلسلة 7 انتصارات' },
+    { id: 'title_puzzle_king', title: 'ملك الألغاز', type: 'shop', price: 500, unlockDesc: 'متجر: 500 عملة' },
+    { id: 'title_sniper', title: 'قناص الإجابات', type: 'shop', price: 600, unlockDesc: 'متجر: 600 عملة' },
+    { id: 'title_warlord_title', title: 'سيد التحديات', type: 'achievement', reqAch: 'ach_pvp', reqLvl: 4, unlockDesc: 'إنجاز: 100 فوز بالرانك' },
+    { id: 'title_encyclopedia', title: 'موسوعة المعرفة', type: 'achievement', reqAch: 'ach_correct', reqLvl: 4, unlockDesc: 'إنجاز: 1,500 سؤال صحيح' },
+    { id: 'title_invincible', title: 'عقل لا يُقهر', type: 'achievement', reqAch: 'ach_streak', reqLvl: 4, unlockDesc: 'إنجاز: سلسلة 10 انتصارات' },
+    { id: 'title_champion', title: 'بطل الأبطال', type: 'rank', reqRankTier: 'master', unlockDesc: 'بلوغ دوري أستاذ' },
+    { id: 'title_legend', title: 'الأسطورة الخالدة', type: 'rank', reqRankTier: 'challenger', unlockDesc: 'بلوغ قمة تشالنجر الأسطوري' }
 ];
 
 let activeProfileTab = 'stats';
@@ -2459,7 +2459,7 @@ function renderTitlesList() {
         const row = document.createElement('div');
         row.className = `custom-title-row ${isSelected ? 'equipped' : ''} ${unlocked ? 'unlocked' : 'locked'}`;
         row.innerHTML = `
-            <div class="custom-title-name">🏷️ ${ti.title}</div>
+            <div class="custom-title-name">${ti.title}</div>
             ${actionBtnHtml}
         `;
         list.appendChild(row);
@@ -2601,7 +2601,7 @@ function applyCustomizationToHeader(avObj, frObj, titleStr) {
         headerAvatarBox.className = `user-avatar-frame-wrap ${frObj.className || ''}`;
     }
     if (headerTitleElem) {
-        headerTitleElem.innerText = `🏷️ ${titleStr}`;
+        headerTitleElem.innerText = `${titleStr}`;
     }
 }
 

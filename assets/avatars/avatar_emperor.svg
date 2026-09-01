@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg_emp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="crown_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg_emp)" stroke="#f59e0b" stroke-width="2.5"/>
+  <!-- Majestic Golden Crown -->
+  <path d="M30 32 L36 44 L50 28 L64 44 L70 32 L68 50 L32 50 Z" fill="url(#crown_gold)" stroke="#78350f" stroke-width="1.5"/>
+  <!-- Crown Jewels -->
+  <circle cx="30" cy="32" r="2.5" fill="#ef4444"/>
+  <circle cx="50" cy="28" r="3.5" fill="#38bdf8"/>
+  <circle cx="70" cy="32" r="2.5" fill="#ef4444"/>
+  <!-- Face -->
+  <ellipse cx="50" cy="58" rx="16" ry="18" fill="#fed7aa"/>
+  <!-- Regal Eyes & Beard -->
+  <path d="M42 54 L48 54 M52 54 L58 54" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42 62 Q50 68 58 62 Q56 76 50 78 Q44 76 42 62 Z" fill="#475569"/>
+  <!-- Royal Purple Robe Collar -->
+  <path d="M30 76 L50 66 L70 76 L66 84 L34 84 Z" fill="#701a75" stroke="#f59e0b" stroke-width="1.5"/>
+</svg>
