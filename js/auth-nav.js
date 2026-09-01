@@ -1,68 +1,8 @@
 // js/auth-nav.js - إدارة الحسابات، تسجيل الدخول، والتنقل بين الشاشات
 
-if (typeof auth !== 'undefined' && auth) {
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            updateUserProfileUI(user);
-            await loadCloudProgress(user.uid);
-            
-            updateHeaderStats();
-            checkDailyStatus();
-            checkWheelStatus();
-            checkAllAchievements();
-            drawWheel();
-
-            switchScreen('main-menu', false);
-        } else {
-            // فحص هل يوجد مستخدم ضيف محفوظ محلياً
-            const localGuest = localStorage.getItem('local_offline_guest');
-            if (localGuest) {
-                try {
-                    currentUser = JSON.parse(localGuest);
-                    updateUserProfileUI(currentUser);
-                    updateHeaderStats();
-                    checkDailyStatus();
-                    checkWheelStatus();
-                    checkAllAchievements();
-                    drawWheel();
-                    switchScreen('main-menu', false);
-                } catch(e) {
-                    currentUser = null;
-                    switchScreen('auth-screen', false);
-                }
-            } else {
-                currentUser = null;
-                switchScreen('auth-screen', false);
-            }
-        }
-        hideSplashScreenNow();
-    });
-} else {
-    // حالة العمل بدون فايربيس تماماً
-    const localGuest = localStorage.getItem('local_offline_guest');
-    if (localGuest) {
-        try {
-            currentUser = JSON.parse(localGuest);
-            updateUserProfileUI(currentUser);
-            updateHeaderStats();
-            checkDailyStatus();
-            checkWheelStatus();
-            checkAllAchievements();
-            drawWheel();
-            switchScreen('main-menu', false);
-        } catch(e) {
-            switchScreen('auth-screen', false);
-        }
-    } else {
-        switchScreen('auth-screen', false);
-    }
-    setTimeout(hideSplashScreenNow, 500);
-}
-
 function loginWithGoogle() {
     if (!navigator.onLine || typeof auth === 'undefined' || !auth) {
-        showCustomAlert('أنت غير متصل بالإنترنت حالياً. يمكنك استخدام خيار "اللعب كضيف" لمتابعة اللعب أوفلاين!', 'غير متصل', '📶');
+        showCustomAlert('أنت غير متصل بالإنترنت حالياً. يرجى الاتصال بالإنترنت لتسجيل الدخول.', 'غير متصل', '📶');
         return;
     }
 
@@ -79,32 +19,31 @@ function loginWithGoogle() {
 function loginAsGuest() {
     if (typeof auth !== 'undefined' && auth && navigator.onLine) {
         auth.signInAnonymously().catch(() => {
-            setupLocalOfflineGuest();
+            setupLocalGuest();
         });
     } else {
-        setupLocalOfflineGuest();
+        setupLocalGuest();
     }
 }
 
-function setupLocalOfflineGuest() {
-    const offlineUid = localStorage.getItem('law_offline_uid') || ('guest_' + Math.floor(10000 + Math.random() * 90000));
-    localStorage.setItem('law_offline_uid', offlineUid);
+function setupLocalGuest() {
+    const guestUid = localStorage.getItem('law_offline_uid') || ('guest_' + Math.floor(10000 + Math.random() * 90000));
+    localStorage.setItem('law_offline_uid', guestUid);
     
     currentUser = {
-        uid: offlineUid,
+        uid: guestUid,
         displayName: 'ضيف اللعبة',
         isAnonymous: true,
-        isOffline: true,
         photoURL: 'https://cdn-icons-png.flaticon.com/512/847/847969.png'
     };
     
     localStorage.setItem('local_offline_guest', JSON.stringify(currentUser));
     updateUserProfileUI(currentUser);
-    updateHeaderStats();
-    checkDailyStatus();
-    checkWheelStatus();
-    checkAllAchievements();
-    drawWheel();
+    if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (typeof checkDailyStatus === 'function') checkDailyStatus();
+    if (typeof checkWheelStatus === 'function') checkWheelStatus();
+    if (typeof checkAllAchievements === 'function') checkAllAchievements();
+    if (typeof drawWheel === 'function') drawWheel();
     
     switchScreen('main-menu', false);
     hideSplashScreenNow();
@@ -147,25 +86,25 @@ function switchScreen(screenId, pushToHistory = true) {
     clearInterval(gameState.timerInterval);
     document.querySelectorAll('.screen').forEach(s => {
         s.classList.remove('active');
-        s.style.display = ''; // ضمان إخفاء أي شاشة
+        s.style.display = '';
     });
     
     const target = document.getElementById(screenId);
     if (target) {
         target.classList.add('active');
         gameState.currentScreen = screenId;
-        window.scrollTo(0, 0); // التمرير لأعلى الشاشة فوراً
+        window.scrollTo(0, 0);
     }
 
     if (pushToHistory) {
         history.pushState({ screen: screenId }, "", `#${screenId}`);
     }
 
-    updateHeaderStats();
-    if (screenId === 'achievements-screen') renderAchievementsList();
-    if (screenId === 'wheel-screen') drawWheel();
+    if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (screenId === 'achievements-screen' && typeof renderAchievementsList === 'function') renderAchievementsList();
+    if (screenId === 'wheel-screen' && typeof drawWheel === 'function') drawWheel();
     if (screenId === 'settings-screen') loadSettingsValues();
-    if (screenId === 'shop-screen') updateShopDisplay();
+    if (screenId === 'shop-screen' && typeof updateShopDisplay === 'function') updateShopDisplay();
 }
 
 function handleNavigationBack() {
@@ -188,6 +127,8 @@ function handleNavigationBack() {
         );
     } else if (current === 'pvp-waiting-screen' || current === 'pvp-lobby-screen' || current === 'pvp-result-screen' || current === 'pvp-waiting-opponent-screen') {
         leavePvpRoom();
+    } else if (current === 'ranked-versus-screen' || current === 'ranked-result-screen' || current === 'ranked-waiting-opponent-screen') {
+        switchScreen('modes-screen', false);
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
     } else if (current === 'categories-screen' || current === 'result-screen') {
@@ -219,7 +160,12 @@ window.addEventListener('popstate', () => {
 
 function hideSplashScreenNow() {
     const splash = document.getElementById('splash-screen');
-    if (splash) splash.classList.add('hide');
+    if (splash) {
+        splash.classList.add('hide');
+        setTimeout(() => {
+            splash.style.display = 'none';
+        }, 500);
+    }
 }
 
 function openSettingsScreen() { 

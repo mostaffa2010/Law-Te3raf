@@ -1,3 +1,4 @@
+// js/app.js - نقطة البداية وتشغيل التطبيق بعد تحميل كافة الملفات
 
 function checkOnlineStatus() {
     const offlineScreen = document.getElementById('offline-screen');
@@ -24,24 +25,55 @@ function checkNetworkAndRetry() {
 window.addEventListener('online', checkOnlineStatus);
 window.addEventListener('offline', checkOnlineStatus);
 
-// js/app.js - نقطة البداية وتشغيل التطبيق
-
-document.addEventListener('DOMContentLoaded', async () => {
-    checkOnlineStatus();
-    history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS && !window.navigator.standalone) {
-        const banner = document.getElementById('pwa-install-banner');
-        if (banner) banner.style.display = 'flex';
-    }
-
-    // فحص المستخدم الحالي
-    if (!currentUser) {
-        const saved = localStorage.getItem('local_offline_guest');
-        if (saved) {
+function initAuthAndApp() {
+    if (typeof auth !== 'undefined' && auth) {
+        auth.onAuthStateChanged(async (user) => {
             try {
-                currentUser = JSON.parse(saved);
+                if (user) {
+                    currentUser = user;
+                    updateUserProfileUI(user);
+                    await loadCloudProgress(user.uid);
+                    
+                    if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                    if (typeof checkDailyStatus === 'function') checkDailyStatus();
+                    if (typeof checkWheelStatus === 'function') checkWheelStatus();
+                    if (typeof checkAllAchievements === 'function') checkAllAchievements();
+                    if (typeof drawWheel === 'function') drawWheel();
+
+                    switchScreen('main-menu', false);
+                } else {
+                    const localGuest = localStorage.getItem('local_offline_guest');
+                    if (localGuest) {
+                        try {
+                            currentUser = JSON.parse(localGuest);
+                            updateUserProfileUI(currentUser);
+                            if (typeof updateHeaderStats === 'function') updateHeaderStats();
+                            if (typeof checkDailyStatus === 'function') checkDailyStatus();
+                            if (typeof checkWheelStatus === 'function') checkWheelStatus();
+                            if (typeof checkAllAchievements === 'function') checkAllAchievements();
+                            if (typeof drawWheel === 'function') drawWheel();
+                            switchScreen('main-menu', false);
+                        } catch(e) {
+                            currentUser = null;
+                            switchScreen('auth-screen', false);
+                        }
+                    } else {
+                        currentUser = null;
+                        switchScreen('auth-screen', false);
+                    }
+                }
+            } catch (err) {
+                console.warn('Auth state processing error:', err);
+                switchScreen('auth-screen', false);
+            } finally {
+                hideSplashScreenNow();
+            }
+        });
+    } else {
+        const localGuest = localStorage.getItem('local_offline_guest');
+        if (localGuest) {
+            try {
+                currentUser = JSON.parse(localGuest);
                 updateUserProfileUI(currentUser);
                 switchScreen('main-menu', false);
             } catch(e) {
@@ -50,7 +82,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             switchScreen('auth-screen', false);
         }
+        hideSplashScreenNow();
     }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
+    checkOnlineStatus();
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS && !window.navigator.standalone) {
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) banner.style.display = 'flex';
+    }
+
+    initAuthAndApp();
 
     if (navigator.onLine) {
         try {
@@ -58,5 +104,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch(e) {}
     }
 
-    setTimeout(hideSplashScreenNow, 1000);
+    setTimeout(hideSplashScreenNow, 1200);
 });
