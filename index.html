@@ -32,6 +32,8 @@
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
+    <div id="floating-reactions-box" class="floating-reactions-box"></div>
+
 
     <!-- شاشة البداية (Splash Screen) -->
     <div id="splash-screen" class="splash-screen">
@@ -473,6 +475,21 @@
                 <span class="powerup-badge" id="badge-skip">30 عملة</span>
             </button>
         </div>
+
+        <!-- شريط التفاعلات والرياكشنات الحية (8 إيموجي) في أسفل الشاشة -->
+        <div class="reactions-dock" id="game-reactions-dock" style="display: none;">
+            <div class="reactions-bar-pills">
+                <button class="btn-emoji" onclick="sendLiveReaction('🔥')" title="حماس">🔥</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('😂')" title="ضحك">😂</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('👏')" title="تشجيع">👏</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('😱')" title="صدمة">😱</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('🧠')" title="ذكاء">🧠</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('🎯')" title="إصابة">🎯</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('😭')" title="بكاء">😭</button>
+                <button class="btn-emoji" onclick="sendLiveReaction('🚀')" title="سرعة">🚀</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- شاشة النتيجة العادية -->
