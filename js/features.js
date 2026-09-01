@@ -600,12 +600,30 @@ function updateShopDisplay() {
     const inv50 = document.getElementById('inv-5050');
     const invTime = document.getElementById('inv-time');
     const invSkip = document.getElementById('inv-skip');
+    const shopCoins = document.getElementById('shop-coins-display');
 
     const inv = userProgress.inventory || { hint5050: 0, addTime: 0, skip: 0 };
 
-    if (inv50) inv50.innerText = inv.hint5050 || 0;
-    if (invTime) invTime.innerText = inv.addTime || 0;
-    if (invSkip) invSkip.innerText = inv.skip || 0;
+    if (inv50) inv50.innerText = toArabicNumerals(inv.hint5050 || 0);
+    if (invTime) invTime.innerText = toArabicNumerals(inv.addTime || 0);
+    if (invSkip) invSkip.innerText = toArabicNumerals(inv.skip || 0);
+    if (shopCoins) shopCoins.innerText = toArabicNumerals(userProgress.coins || 0);
+
+    // تحديث أسعار أزرار متجر المساعدات بدقة
+    const p50 = (typeof getShopItemPrice === 'function') ? getShopItemPrice('hint5050') : 20;
+    const pTime = (typeof getShopItemPrice === 'function') ? getShopItemPrice('addTime') : 15;
+    const pSkip = (typeof getShopItemPrice === 'function') ? getShopItemPrice('skip') : 30;
+    const pReward = (typeof getShopItemPrice === 'function') ? getShopItemPrice('dailyFreeReward') : 30;
+
+    const btn50 = document.getElementById('btn-buy-5050');
+    const btnTime = document.getElementById('btn-buy-time');
+    const btnSkip = document.getElementById('btn-buy-skip');
+    const rewardDesc = document.getElementById('free-reward-desc');
+
+    if (btn50) btn50.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(p50)}`;
+    if (btnTime) btnTime.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(pTime)}`;
+    if (btnSkip) btnSkip.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(pSkip)}`;
+    if (rewardDesc) rewardDesc.innerText = `احصل على ${toArabicNumerals(pReward)} عملة ذهبية`;
 
     const isClaimedToday = (userProgress.lastFreeRewardDate === getTodayString());
     const rewardBtn = document.getElementById('claim-reward-btn');
@@ -615,18 +633,8 @@ function updateShopDisplay() {
     }
 }
 
-function getShopItemPrice(itemKey) {
-    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
-    if (itemKey === 'hint5050') return p.hint5050 || 20;
-    if (itemKey === 'addTime') return p.addTime || 15;
-    if (itemKey === 'skip') return p.skip || 30;
-    if (itemKey === 'dailyFreeReward') return p.dailyFreeReward || 30;
-    if (itemKey === 'wheelExtraSpin') return p.wheelExtraSpin || 25;
-    return 20;
-}
-
 function buyItem(itemKey, cost = null, quantity = 1) {
-    const itemCost = (cost !== null) ? cost : getShopItemPrice(itemKey);
+    const itemCost = (cost !== null) ? cost : ((typeof getShopItemPrice === 'function') ? getShopItemPrice(itemKey) : 20);
 
     if ((userProgress.coins || 0) < itemCost) {
         showCustomAlert('رصيدك من العملات غير كافٍ!', 'تنبيه', '🪙');

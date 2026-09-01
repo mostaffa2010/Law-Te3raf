@@ -685,3 +685,89 @@ function initLiveConfigListener() {
         db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
     });
 }
+
+// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة
+function applyLiveConfigUpdates() {
+    if (!window.APP_CONFIG) return;
+
+    // 1. تحديث شريط الإعلانات في القائمة الرئيسية
+    const banner = document.getElementById('global-live-announcement-banner');
+    const bannerText = document.getElementById('global-announcement-text');
+    if (banner && bannerText) {
+        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
+            bannerText.innerText = window.APP_CONFIG.announcement.trim();
+            banner.style.display = 'flex';
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+
+    // 2. تحديث أسعار متجر المساعدات
+    if (typeof updateShopDisplay === 'function') {
+        updateShopDisplay();
+    }
+
+    // 3. تحديث شاشات التخصيص إن كانت مفتوحة
+    const customSec = document.getElementById('profile-custom-section');
+    if (customSec && customSec.style.display !== 'none' && typeof renderCustomizationContent === 'function') {
+        renderCustomizationContent();
+    }
+}
+window.applyLiveConfigUpdates = applyLiveConfigUpdates;
+
+async function persistGlobalConfig(configData) {
+    try {
+        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+    } catch (e) {}
+
+    if (typeof db !== 'undefined' && db) {
+        try {
+            await db.collection('app_config').doc('settings').set(configData, { merge: true });
+        } catch (err1) {
+            console.warn("Retrying config save to users/global_config fallback:", err1);
+            try {
+                await db.collection('users').doc('global_config').set(configData, { merge: true });
+            } catch (err2) {
+                console.warn("Firestore config save fallback locally:", err2);
+            }
+        }
+    }
+}
+
+function initLiveConfigListener() {
+    try {
+        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
+        if (cachedConfig) {
+            const parsed = JSON.parse(cachedConfig);
+            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
+            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
+            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
+            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
+            applyLiveConfigUpdates();
+        }
+    } catch (e) {}
+
+    if (typeof db === 'undefined' || !db) return;
+
+    const handleConfigDoc = (doc) => {
+        if (doc && doc.exists) {
+            const data = doc.data();
+            if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
+            if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
+            if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
+            if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
+
+            try {
+                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+            } catch (e) {}
+
+            applyLiveConfigUpdates();
+        }
+    };
+
+    try {
+        db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
+            db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
+        });
+    } catch (e) {}
+}

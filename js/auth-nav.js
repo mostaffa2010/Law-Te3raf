@@ -40,6 +40,7 @@ function setupLocalGuest() {
     localStorage.setItem('local_offline_guest', JSON.stringify(currentUser));
     updateUserProfileUI(currentUser);
     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (typeof applyLiveConfigUpdates === 'function') applyLiveConfigUpdates();
     if (typeof checkDailyStatus === 'function') checkDailyStatus();
     if (typeof checkWheelStatus === 'function') checkWheelStatus();
     if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -101,6 +102,7 @@ function switchScreen(screenId, pushToHistory = true) {
     }
 
     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (typeof applyLiveConfigUpdates === 'function') applyLiveConfigUpdates();
     if (screenId === 'achievements-screen' && typeof renderAchievementsList === 'function') renderAchievementsList();
     if (screenId === 'wheel-screen' && typeof drawWheel === 'function') drawWheel();
     if (screenId === 'settings-screen') loadSettingsValues();

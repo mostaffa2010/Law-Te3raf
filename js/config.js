@@ -1,4 +1,4 @@
-// الإعدادات الديناميكية القابلة للتعديل المباشر من لوحة المشرف
+// الإعدادات الديناميكية ودوال جلب الأسعار الحية
 var APP_CONFIG = window.APP_CONFIG = {
     prices: {
         hint5050: 20,
@@ -28,6 +28,26 @@ var APP_CONFIG = window.APP_CONFIG = {
     announcement: "",
     announcementActive: false
 };
+
+function getShopItemPrice(itemKey) {
+    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
+    if (itemKey === 'hint5050') return parseInt(p.hint5050) || 20;
+    if (itemKey === 'addTime') return parseInt(p.addTime) || 15;
+    if (itemKey === 'skip') return parseInt(p.skip) || 30;
+    if (itemKey === 'dailyFreeReward') return parseInt(p.dailyFreeReward) || 30;
+    if (itemKey === 'wheelExtraSpin') return parseInt(p.wheelExtraSpin) || 25;
+    return 20;
+}
+window.getShopItemPrice = getShopItemPrice;
+
+function getCustomItemPrice(itemId, defaultPrice = 0) {
+    const cp = (window.APP_CONFIG && window.APP_CONFIG.customPrices) || {};
+    if (cp && cp[itemId] !== undefined) {
+        return parseInt(cp[itemId]) || defaultPrice;
+    }
+    return defaultPrice;
+}
+window.getCustomItemPrice = getCustomItemPrice;
 
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 

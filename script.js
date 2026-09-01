@@ -1,6 +1,6 @@
 // script.js - النسخة الكاملة المجمعة المحدثة للعبة لَو تِعرَف
 
-// الإعدادات الديناميكية القابلة للتعديل المباشر من لوحة المشرف
+// الإعدادات الديناميكية ودوال جلب الأسعار الحية
 var APP_CONFIG = window.APP_CONFIG = {
     prices: {
         hint5050: 20,
@@ -30,6 +30,26 @@ var APP_CONFIG = window.APP_CONFIG = {
     announcement: "",
     announcementActive: false
 };
+
+function getShopItemPrice(itemKey) {
+    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
+    if (itemKey === 'hint5050') return parseInt(p.hint5050) || 20;
+    if (itemKey === 'addTime') return parseInt(p.addTime) || 15;
+    if (itemKey === 'skip') return parseInt(p.skip) || 30;
+    if (itemKey === 'dailyFreeReward') return parseInt(p.dailyFreeReward) || 30;
+    if (itemKey === 'wheelExtraSpin') return parseInt(p.wheelExtraSpin) || 25;
+    return 20;
+}
+window.getShopItemPrice = getShopItemPrice;
+
+function getCustomItemPrice(itemId, defaultPrice = 0) {
+    const cp = (window.APP_CONFIG && window.APP_CONFIG.customPrices) || {};
+    if (cp && cp[itemId] !== undefined) {
+        return parseInt(cp[itemId]) || defaultPrice;
+    }
+    return defaultPrice;
+}
+window.getCustomItemPrice = getCustomItemPrice;
 
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 
@@ -3500,6 +3520,92 @@ function initLiveConfigListener() {
     });
 }
 
+// دالة تطبيق التحديثات الحية فوراً على واجهات اللعبة
+function applyLiveConfigUpdates() {
+    if (!window.APP_CONFIG) return;
+
+    // 1. تحديث شريط الإعلانات في القائمة الرئيسية
+    const banner = document.getElementById('global-live-announcement-banner');
+    const bannerText = document.getElementById('global-announcement-text');
+    if (banner && bannerText) {
+        if (window.APP_CONFIG.announcementActive && window.APP_CONFIG.announcement && window.APP_CONFIG.announcement.trim() !== '') {
+            bannerText.innerText = window.APP_CONFIG.announcement.trim();
+            banner.style.display = 'flex';
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+
+    // 2. تحديث أسعار متجر المساعدات
+    if (typeof updateShopDisplay === 'function') {
+        updateShopDisplay();
+    }
+
+    // 3. تحديث شاشات التخصيص إن كانت مفتوحة
+    const customSec = document.getElementById('profile-custom-section');
+    if (customSec && customSec.style.display !== 'none' && typeof renderCustomizationContent === 'function') {
+        renderCustomizationContent();
+    }
+}
+window.applyLiveConfigUpdates = applyLiveConfigUpdates;
+
+async function persistGlobalConfig(configData) {
+    try {
+        localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+    } catch (e) {}
+
+    if (typeof db !== 'undefined' && db) {
+        try {
+            await db.collection('app_config').doc('settings').set(configData, { merge: true });
+        } catch (err1) {
+            console.warn("Retrying config save to users/global_config fallback:", err1);
+            try {
+                await db.collection('users').doc('global_config').set(configData, { merge: true });
+            } catch (err2) {
+                console.warn("Firestore config save fallback locally:", err2);
+            }
+        }
+    }
+}
+
+function initLiveConfigListener() {
+    try {
+        const cachedConfig = localStorage.getItem('law_ta3raf_app_config');
+        if (cachedConfig) {
+            const parsed = JSON.parse(cachedConfig);
+            if (parsed.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...parsed.prices };
+            if (parsed.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...parsed.customPrices };
+            if (parsed.announcement !== undefined) window.APP_CONFIG.announcement = parsed.announcement;
+            if (parsed.announcementActive !== undefined) window.APP_CONFIG.announcementActive = parsed.announcementActive;
+            applyLiveConfigUpdates();
+        }
+    } catch (e) {}
+
+    if (typeof db === 'undefined' || !db) return;
+
+    const handleConfigDoc = (doc) => {
+        if (doc && doc.exists) {
+            const data = doc.data();
+            if (data.prices) window.APP_CONFIG.prices = { ...window.APP_CONFIG.prices, ...data.prices };
+            if (data.customPrices) window.APP_CONFIG.customPrices = { ...window.APP_CONFIG.customPrices, ...data.customPrices };
+            if (data.announcement !== undefined) window.APP_CONFIG.announcement = data.announcement;
+            if (data.announcementActive !== undefined) window.APP_CONFIG.announcementActive = data.announcementActive;
+
+            try {
+                localStorage.setItem('law_ta3raf_app_config', JSON.stringify(window.APP_CONFIG));
+            } catch (e) {}
+
+            applyLiveConfigUpdates();
+        }
+    };
+
+    try {
+        db.collection('app_config').doc('settings').onSnapshot(handleConfigDoc, () => {
+            db.collection('users').doc('global_config').onSnapshot(handleConfigDoc, () => {});
+        });
+    } catch (e) {}
+}
+
 
 // js/customization.js - إدارة تخصيص الحساب والأفاتارات والإطارات والألقاب وبطاقة إحصائيات اللاعب
 
@@ -3803,7 +3909,8 @@ function renderAvatarsGrid() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingAvatar('${av.id}')">اختيار</button>`;
         } else if (av.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${av.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(av.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(av.id, av.price) : av.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${av.unlockDesc}</span>`;
         }
@@ -3836,7 +3943,8 @@ function renderFramesGrid() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingFrame('${fr.id}')">اختيار</button>`;
         } else if (fr.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${fr.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(fr.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(fr.id, fr.price) : fr.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${fr.unlockDesc}</span>`;
         }
@@ -3870,7 +3978,8 @@ function renderTitlesList() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingTitle('${ti.title}')">اختيار</button>`;
         } else if (ti.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyTitle('${ti.id}', '${ti.title}', ${ti.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(ti.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(ti.id, ti.price) : ti.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyTitle('${ti.id}', '${ti.title}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${ti.unlockDesc}</span>`;
         }
@@ -4633,12 +4742,30 @@ function updateShopDisplay() {
     const inv50 = document.getElementById('inv-5050');
     const invTime = document.getElementById('inv-time');
     const invSkip = document.getElementById('inv-skip');
+    const shopCoins = document.getElementById('shop-coins-display');
 
     const inv = userProgress.inventory || { hint5050: 0, addTime: 0, skip: 0 };
 
-    if (inv50) inv50.innerText = inv.hint5050 || 0;
-    if (invTime) invTime.innerText = inv.addTime || 0;
-    if (invSkip) invSkip.innerText = inv.skip || 0;
+    if (inv50) inv50.innerText = toArabicNumerals(inv.hint5050 || 0);
+    if (invTime) invTime.innerText = toArabicNumerals(inv.addTime || 0);
+    if (invSkip) invSkip.innerText = toArabicNumerals(inv.skip || 0);
+    if (shopCoins) shopCoins.innerText = toArabicNumerals(userProgress.coins || 0);
+
+    // تحديث أسعار أزرار متجر المساعدات بدقة
+    const p50 = (typeof getShopItemPrice === 'function') ? getShopItemPrice('hint5050') : 20;
+    const pTime = (typeof getShopItemPrice === 'function') ? getShopItemPrice('addTime') : 15;
+    const pSkip = (typeof getShopItemPrice === 'function') ? getShopItemPrice('skip') : 30;
+    const pReward = (typeof getShopItemPrice === 'function') ? getShopItemPrice('dailyFreeReward') : 30;
+
+    const btn50 = document.getElementById('btn-buy-5050');
+    const btnTime = document.getElementById('btn-buy-time');
+    const btnSkip = document.getElementById('btn-buy-skip');
+    const rewardDesc = document.getElementById('free-reward-desc');
+
+    if (btn50) btn50.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(p50)}`;
+    if (btnTime) btnTime.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(pTime)}`;
+    if (btnSkip) btnSkip.innerHTML = `<i class="fa-solid fa-coins"></i> ${toArabicNumerals(pSkip)}`;
+    if (rewardDesc) rewardDesc.innerText = `احصل على ${toArabicNumerals(pReward)} عملة ذهبية`;
 
     const isClaimedToday = (userProgress.lastFreeRewardDate === getTodayString());
     const rewardBtn = document.getElementById('claim-reward-btn');
@@ -4648,18 +4775,8 @@ function updateShopDisplay() {
     }
 }
 
-function getShopItemPrice(itemKey) {
-    const p = (window.APP_CONFIG && window.APP_CONFIG.prices) || {};
-    if (itemKey === 'hint5050') return p.hint5050 || 20;
-    if (itemKey === 'addTime') return p.addTime || 15;
-    if (itemKey === 'skip') return p.skip || 30;
-    if (itemKey === 'dailyFreeReward') return p.dailyFreeReward || 30;
-    if (itemKey === 'wheelExtraSpin') return p.wheelExtraSpin || 25;
-    return 20;
-}
-
 function buyItem(itemKey, cost = null, quantity = 1) {
-    const itemCost = (cost !== null) ? cost : getShopItemPrice(itemKey);
+    const itemCost = (cost !== null) ? cost : ((typeof getShopItemPrice === 'function') ? getShopItemPrice(itemKey) : 20);
 
     if ((userProgress.coins || 0) < itemCost) {
         showCustomAlert('رصيدك من العملات غير كافٍ!', 'تنبيه', '🪙');
@@ -4814,6 +4931,7 @@ function setupLocalGuest() {
     localStorage.setItem('local_offline_guest', JSON.stringify(currentUser));
     updateUserProfileUI(currentUser);
     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (typeof applyLiveConfigUpdates === 'function') applyLiveConfigUpdates();
     if (typeof checkDailyStatus === 'function') checkDailyStatus();
     if (typeof checkWheelStatus === 'function') checkWheelStatus();
     if (typeof checkAllAchievements === 'function') checkAllAchievements();
@@ -4875,6 +4993,7 @@ function switchScreen(screenId, pushToHistory = true) {
     }
 
     if (typeof updateHeaderStats === 'function') updateHeaderStats();
+    if (typeof applyLiveConfigUpdates === 'function') applyLiveConfigUpdates();
     if (screenId === 'achievements-screen' && typeof renderAchievementsList === 'function') renderAchievementsList();
     if (screenId === 'wheel-screen' && typeof drawWheel === 'function') drawWheel();
     if (screenId === 'settings-screen') loadSettingsValues();

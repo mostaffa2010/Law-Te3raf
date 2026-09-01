@@ -300,7 +300,8 @@ function renderAvatarsGrid() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingAvatar('${av.id}')">اختيار</button>`;
         } else if (av.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${av.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(av.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(av.id, av.price) : av.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyAvatar('${av.id}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${av.unlockDesc}</span>`;
         }
@@ -333,7 +334,8 @@ function renderFramesGrid() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingFrame('${fr.id}')">اختيار</button>`;
         } else if (fr.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${fr.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(fr.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(fr.id, fr.price) : fr.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyFrame('${fr.id}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${fr.unlockDesc}</span>`;
         }
@@ -367,7 +369,8 @@ function renderTitlesList() {
         } else if (unlocked) {
             actionBtnHtml = `<button class="btn-equip" onclick="selectPendingTitle('${ti.title}')">اختيار</button>`;
         } else if (ti.type === 'shop') {
-            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyTitle('${ti.id}', '${ti.title}', ${ti.price})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(ti.price)}</button>`;
+            const currentPrice = (typeof getCustomItemPrice === 'function') ? getCustomItemPrice(ti.id, ti.price) : ti.price;
+            actionBtnHtml = `<button class="btn-buy-custom" onclick="buyTitle('${ti.id}', '${ti.title}', ${currentPrice})"><i class="fa-solid fa-coins"></i> ${toArabicNumerals(currentPrice)}</button>`;
         } else {
             actionBtnHtml = `<span class="locked-req-tag"><i class="fa-solid fa-lock"></i> ${ti.unlockDesc}</span>`;
         }
