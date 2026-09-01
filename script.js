@@ -2139,9 +2139,36 @@ function installAppPWA() {
 }
 
 
+
+function checkOnlineStatus() {
+    const offlineScreen = document.getElementById('offline-screen');
+    if (!offlineScreen) return;
+
+    if (!navigator.onLine) {
+        offlineScreen.style.display = 'flex';
+    } else {
+        offlineScreen.style.display = 'none';
+    }
+}
+
+function checkNetworkAndRetry() {
+    if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
+    if (navigator.onLine) {
+        const offlineScreen = document.getElementById('offline-screen');
+        if (offlineScreen) offlineScreen.style.display = 'none';
+        location.reload();
+    } else {
+        showCustomAlert('لا زلت غير متصل بالإنترنت! يرجى تشغيل الـ Wi-Fi أو بيانات الهاتف والمحاولة مجدداً.', 'تنبيه الاتصال', '📶');
+    }
+}
+
+window.addEventListener('online', checkOnlineStatus);
+window.addEventListener('offline', checkOnlineStatus);
+
 // js/app.js - نقطة البداية وتشغيل التطبيق
 
 document.addEventListener('DOMContentLoaded', async () => {
+    checkOnlineStatus();
     history.replaceState({ screen: 'main-menu' }, "", "#main-menu");
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;

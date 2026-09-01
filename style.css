@@ -2018,3 +2018,83 @@ html, body {
     display: block;
     cursor: pointer;
 }
+
+
+/* ==========================================
+   Offline Screen Overlay
+   ========================================== */
+.offline-screen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(13, 17, 23, 0.96);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999999;
+    padding: 20px;
+    animation: popIn 0.3s ease;
+}
+
+.offline-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.2);
+    border-radius: 24px;
+    padding: 35px 25px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+}
+
+.offline-icon-box {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 18px;
+    background: rgba(239, 68, 68, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-red);
+    font-size: 36px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.offline-card h2 {
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.offline-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.btn-retry-network {
+    background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+    color: #000000;
+    border: none;
+    width: 100%;
+    padding: 13px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
+    transition: transform 0.2s;
+}
+
+.btn-retry-network:active {
+    transform: scale(0.96);
+}

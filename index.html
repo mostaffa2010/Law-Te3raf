@@ -45,6 +45,21 @@
         </div>
     </div>
 
+    <!-- شاشة انقطاع الإنترنت المخصصة (Offline Screen) -->
+    <div id="offline-screen" class="offline-screen-overlay" style="display: none;">
+        <div class="offline-card">
+            <div class="offline-icon-box">
+                <i class="fa-solid fa-wifi-slash"></i>
+            </div>
+            <h2>لا يوجد اتصال بالإنترنت</h2>
+            <p>تتطلب لعبة <b>لَو تِعرَف</b> اتصالاً نشطاً بالإنترنت لتحديث الأسئلة، تحميل الصور، ومزامنة التحديات المباشرة.</p>
+            <button class="btn-retry-network" onclick="checkNetworkAndRetry()">
+                <i class="fa-solid fa-rotate-right"></i> إعادة المحاولة
+            </button>
+        </div>
+    </div>
+
+
     <!-- نافذة التنبيه المخصصة للعبة -->
     <div id="custom-modal" class="custom-modal-overlay">
         <div class="custom-modal-card">
