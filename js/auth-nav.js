@@ -6,7 +6,6 @@ auth.onAuthStateChanged(async (user) => {
         updateUserProfileUI(user);
         await loadCloudProgress(user.uid);
         
-        renderLevelsGrid();
         updateHeaderStats();
         checkDailyStatus();
         checkWheelStatus();
@@ -80,7 +79,6 @@ function switchScreen(screenId, pushToHistory = true) {
 
     updateHeaderStats();
     if (screenId === 'achievements-screen') renderAchievementsList();
-    if (screenId === 'levels-screen') renderLevelsGrid();
     if (screenId === 'wheel-screen') drawWheel();
     if (screenId === 'settings-screen') loadSettingsValues();
     if (screenId === 'shop-screen') updateShopDisplay();
@@ -108,7 +106,7 @@ function handleNavigationBack() {
         leavePvpRoom();
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
-    } else if (current === 'levels-screen' || current === 'categories-screen' || current === 'result-screen') {
+    } else if (current === 'categories-screen' || current === 'result-screen') {
         switchScreen('modes-screen', false);
     } else if (current === 'review-screen') {
         switchScreen('result-screen', false);

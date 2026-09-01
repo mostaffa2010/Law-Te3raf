@@ -197,19 +197,13 @@
                 <div class="pvp-new-badge">جماعي 🔥</div>
             </div>
 
-            <div class="mode-card primary-mode" onclick="startLevelMode()">
-                <div class="mode-icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <div class="mode-info">
-                    <h4>رحلة المراحل</h4>
-                    <p>تدرج في الصعوبة واجمع النجوم لفتح المراحل القادمة.</p>
-                </div>
-            </div>
 
-            <div class="mode-card" onclick="startEndlessMode()">
+
+            <div class="mode-card primary-mode" onclick="startEndlessMode()">
                 <div class="mode-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;"><i class="fa-solid fa-fire"></i></div>
                 <div class="mode-info">
                     <h4>النمط اللانهائي</h4>
-                    <p>3 فرص فقط.. إلى أي مدى تستطيع الصمود بدون خطأ؟</p>
+                    <p>3 فرص فقط.. إلى أي مدى تستطيع الصمود وتحقيق أعلى رقم قياسي؟</p>
                 </div>
             </div>
 
@@ -351,11 +345,8 @@
         </div>
 
         <div class="lb-tabs-wrapper">
-            <button id="tab-lb-stars" class="lb-tab active" onclick="switchLeaderboardTab('stars')">
-                <i class="fa-solid fa-star"></i> أبطال المراحل
-            </button>
-            <button id="tab-lb-endless" class="lb-tab" onclick="switchLeaderboardTab('endless')">
-                <i class="fa-solid fa-fire"></i> النمط اللانهائي
+            <button id="tab-lb-endless" class="lb-tab active" onclick="switchLeaderboardTab('endless')">
+                <i class="fa-solid fa-fire"></i> أبطال النمط اللانهائي
             </button>
             <button id="tab-lb-pvp" class="lb-tab" onclick="switchLeaderboardTab('pvp')">
                 <i class="fa-solid fa-users-rays"></i> تحدي الأصدقاء
@@ -381,13 +372,7 @@
         </div>
     </div>
 
-    <!-- شاشة رحلة المراحل -->
-    <div id="levels-screen" class="screen">
-        <div class="header-bar">
-            <button class="btn-back" onclick="handleNavigationBack()"><i class="fa-solid fa-arrow-right"></i></button>
-            <h3>رحلة المراحل</h3>
-            <div style="width: 35px;"></div>
-        </div>
+    
 
         <div class="levels-scroll-container">
             <div id="levels-grid" class="levels-grid"></div>
@@ -466,9 +451,7 @@
             <h2 id="result-title">مبروك الفوز!</h2>
             <p id="result-message">لقد اجتزت هذه المرحلة بنجاح!</p>
 
-            <div class="result-stars" id="res-stars-wrapper">
-                <span id="res-stars">⭐⭐⭐</span>
-            </div>
+
 
             <div class="result-stats-row">
                 <div class="stat-box">

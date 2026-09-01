@@ -25,12 +25,10 @@ if (typeof firebase.analytics === 'function') {
 
 // المتغيرات العامة للحالة
 let currentUser = null;
-let structuredLevelsBank = [];
 
 let gameState = {
     currentScreen: 'auth-screen',
-    mode: 'levels',
-    currentLevel: 1,
+    mode: 'endless',
     selectedCategory: '',
     questions: [],
     currentIndex: 0,
@@ -44,7 +42,7 @@ let gameState = {
     usedPowerupInSession: false,
     sessionCorrectStreak: 0,
     sessionMistakes: [],
-    leaderboardTab: 'stars',
+    leaderboardTab: 'endless',
     pvpRoomId: null,
     isPvpHost: false,
     pvpUnsubscribe: null,
@@ -66,14 +64,12 @@ const WHEEL_SECTORS = [
 let isWheelSpinning = false;
 let wheelCurrentAngle = 0;
 
-// إعدادات الإنجازات اللانهائية
+// إعدادات الإنجازات (تمت إزالة إنجازات المراحل)
 const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
-    { id: 'ach_levels', name: 'قاهر المراحل', desc: 'تقدم في رحلة المراحل وافتح آفاقاً جديدة', icon: '🗺️', stat: 'unlockedLevel', baseGoal: 5, stepGoal: 5, baseReward: 20, stepReward: 8, maxLevel: 6 },
     { id: 'ach_streak', name: 'القناص الذي لا يخطئ', desc: 'أجب على أسئلة متتالية صحيحة في نفس الجلسة', icon: '🏹', stat: 'maxCorrectStreak', baseGoal: 5, stepGoal: 10, baseReward: 15, stepReward: 8, maxLevel: 5 },
     { id: 'ach_speed', name: 'سريع كالبرق', desc: 'أجب على الأسئلة في أقل من 3 ثوانٍ', icon: '⚡', stat: 'fastAnswersCount', baseGoal: 10, stepGoal: 20, baseReward: 15, stepReward: 8, maxLevel: 5 },
-    { id: 'ach_flawless', name: 'الأداء الأسطوري', desc: 'أنهِ مراحل بـ 3 نجوم كاملة بدون وسائل مساعدة', icon: '💎', stat: 'flawlessWins', baseGoal: 2, stepGoal: 5, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_endless', name: 'أسطورة الصمود', desc: 'حقق نقاطاً قياسية في المود اللانهائي', icon: '🔥', stat: 'highScore', baseGoal: 30, stepGoal: 40, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_daily', name: 'المثابر الحديدي', desc: 'حافظ على سلسلة التحدي اليومي', icon: '📅', stat: 'dailyStreak', baseGoal: 3, stepGoal: 5, baseReward: 25, stepReward: 12, maxLevel: 5 },
     { id: 'ach_shopper', name: 'تاجر الأدوات', desc: 'اشترِ وسائل مساعدة من المتجر لدعم رحلتك', icon: '🛍️', stat: 'itemsPurchased', baseGoal: 3, stepGoal: 5, baseReward: 15, stepReward: 8, maxLevel: 5 }
@@ -95,19 +91,11 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-// ثوابت المراحل والنمط اللانهائي
-const LEVEL_BUILD_SEED = 20260831;
+// ثوابت النمط اللانهائي
 const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
-const LEVEL_DIFFICULTY_TIERS = [
-    { min: 1, max: 5 },
-    { min: 3, max: 8 },
-    { min: 5, max: 10 },
-];
 
 // بيانات تقدم المستخدم المحفوظة
 let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
-    unlockedLevel: 1,
-    levelStars: {},
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -119,7 +107,6 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     totalCorrect: 0,
     maxCorrectStreak: 0,
     fastAnswersCount: 0,
-    flawlessWins: 0,
     pvpWins: 0,
     itemsPurchased: 0,
     infiniteLevels: {},
@@ -148,75 +135,6 @@ function closeCustomAlert() {
     if (modal) modal.classList.remove('show');
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
-
-function shuffleArray(array) {
-    let arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-function calculateTotalStars() {
-    let sum = 0;
-    if (userProgress.levelStars) {
-        for (let lvl in userProgress.levelStars) {
-            sum += (userProgress.levelStars[lvl] || 0);
-        }
-    }
-    return sum;
-}
-
-function getTodayString() {
-    const today = new Date();
-    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-}
-
-function getAchGoal(ach, level) { 
-    return ach.baseGoal + (level * ach.stepGoal); 
-}
-
-function getAchReward(ach, level) { 
-    return ach.baseReward + (level * ach.stepReward); 
-}
-
-function saveProgress() {
-    localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
-
-    if (currentUser && currentUser.uid) {
-        const totalStars = calculateTotalStars();
-        const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
-        const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-
-        db.collection('users').doc(currentUser.uid).set({
-            name: displayName,
-            photoURL: photoURL,
-            isAnonymous: currentUser.isAnonymous,
-            totalStars: totalStars,
-            unlockedLevel: userProgress.unlockedLevel || 1,
-            highScore: userProgress.highScore || 0,
-            pvpWins: userProgress.pvpWins || 0,
-            progress: userProgress,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
-    }
-}
-
-async function loadCloudProgress(uid) {
-    try {
-        const doc = await db.collection('users').doc(uid).get();
-        if (doc.exists && doc.data().progress) {
-            userProgress = { ...userProgress, ...doc.data().progress };
-            localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
-        } else {
-            saveProgress();
-        }
-    } catch (e) {
-        console.log('Error loading cloud progress:', e);
-    }
-}
-
 
 let currentConfirmCallback = null;
 let currentCancelCallback = null;
@@ -266,4 +184,60 @@ function closeCustomConfirm(isConfirmed) {
     }
     currentConfirmCallback = null;
     currentCancelCallback = null;
+}
+
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function getTodayString() {
+    const today = new Date();
+    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+}
+
+function getAchGoal(ach, level) { 
+    return ach.baseGoal + (level * ach.stepGoal); 
+}
+
+function getAchReward(ach, level) { 
+    return ach.baseReward + (level * ach.stepReward); 
+}
+
+function saveProgress() {
+    localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
+
+    if (currentUser && currentUser.uid) {
+        const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
+        const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+
+        db.collection('users').doc(currentUser.uid).set({
+            name: displayName,
+            photoURL: photoURL,
+            isAnonymous: currentUser.isAnonymous,
+            highScore: userProgress.highScore || 0,
+            pvpWins: userProgress.pvpWins || 0,
+            totalCorrect: userProgress.totalCorrect || 0,
+            progress: userProgress,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
+    }
+}
+
+async function loadCloudProgress(uid) {
+    try {
+        const doc = await db.collection('users').doc(uid).get();
+        if (doc.exists && doc.data().progress) {
+            userProgress = { ...userProgress, ...doc.data().progress };
+            localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
+        } else {
+            saveProgress();
+        }
+    } catch (e) {
+        console.log('Error loading cloud progress:', e);
+    }
 }

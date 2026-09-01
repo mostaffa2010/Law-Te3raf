@@ -27,12 +27,10 @@ if (typeof firebase.analytics === 'function') {
 
 // المتغيرات العامة للحالة
 let currentUser = null;
-let structuredLevelsBank = [];
 
 let gameState = {
     currentScreen: 'auth-screen',
-    mode: 'levels',
-    currentLevel: 1,
+    mode: 'endless',
     selectedCategory: '',
     questions: [],
     currentIndex: 0,
@@ -46,7 +44,7 @@ let gameState = {
     usedPowerupInSession: false,
     sessionCorrectStreak: 0,
     sessionMistakes: [],
-    leaderboardTab: 'stars',
+    leaderboardTab: 'endless',
     pvpRoomId: null,
     isPvpHost: false,
     pvpUnsubscribe: null,
@@ -68,14 +66,12 @@ const WHEEL_SECTORS = [
 let isWheelSpinning = false;
 let wheelCurrentAngle = 0;
 
-// إعدادات الإنجازات اللانهائية
+// إعدادات الإنجازات (تمت إزالة إنجازات المراحل)
 const INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
-    { id: 'ach_levels', name: 'قاهر المراحل', desc: 'تقدم في رحلة المراحل وافتح آفاقاً جديدة', icon: '🗺️', stat: 'unlockedLevel', baseGoal: 5, stepGoal: 5, baseReward: 20, stepReward: 8, maxLevel: 6 },
     { id: 'ach_streak', name: 'القناص الذي لا يخطئ', desc: 'أجب على أسئلة متتالية صحيحة في نفس الجلسة', icon: '🏹', stat: 'maxCorrectStreak', baseGoal: 5, stepGoal: 10, baseReward: 15, stepReward: 8, maxLevel: 5 },
     { id: 'ach_speed', name: 'سريع كالبرق', desc: 'أجب على الأسئلة في أقل من 3 ثوانٍ', icon: '⚡', stat: 'fastAnswersCount', baseGoal: 10, stepGoal: 20, baseReward: 15, stepReward: 8, maxLevel: 5 },
-    { id: 'ach_flawless', name: 'الأداء الأسطوري', desc: 'أنهِ مراحل بـ 3 نجوم كاملة بدون وسائل مساعدة', icon: '💎', stat: 'flawlessWins', baseGoal: 2, stepGoal: 5, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_endless', name: 'أسطورة الصمود', desc: 'حقق نقاطاً قياسية في المود اللانهائي', icon: '🔥', stat: 'highScore', baseGoal: 30, stepGoal: 40, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_daily', name: 'المثابر الحديدي', desc: 'حافظ على سلسلة التحدي اليومي', icon: '📅', stat: 'dailyStreak', baseGoal: 3, stepGoal: 5, baseReward: 25, stepReward: 12, maxLevel: 5 },
     { id: 'ach_shopper', name: 'تاجر الأدوات', desc: 'اشترِ وسائل مساعدة من المتجر لدعم رحلتك', icon: '🛍️', stat: 'itemsPurchased', baseGoal: 3, stepGoal: 5, baseReward: 15, stepReward: 8, maxLevel: 5 }
@@ -97,19 +93,11 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-// ثوابت المراحل والنمط اللانهائي
-const LEVEL_BUILD_SEED = 20260831;
+// ثوابت النمط اللانهائي
 const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
-const LEVEL_DIFFICULTY_TIERS = [
-    { min: 1, max: 5 },
-    { min: 3, max: 8 },
-    { min: 5, max: 10 },
-];
 
 // بيانات تقدم المستخدم المحفوظة
 let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
-    unlockedLevel: 1,
-    levelStars: {},
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -121,7 +109,6 @@ let userProgress = JSON.parse(localStorage.getItem('law_ta3raf_progress')) || {
     totalCorrect: 0,
     maxCorrectStreak: 0,
     fastAnswersCount: 0,
-    flawlessWins: 0,
     pvpWins: 0,
     itemsPurchased: 0,
     infiniteLevels: {},
@@ -150,75 +137,6 @@ function closeCustomAlert() {
     if (modal) modal.classList.remove('show');
     if (typeof AudioEngine !== 'undefined') AudioEngine.playClick();
 }
-
-function shuffleArray(array) {
-    let arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-function calculateTotalStars() {
-    let sum = 0;
-    if (userProgress.levelStars) {
-        for (let lvl in userProgress.levelStars) {
-            sum += (userProgress.levelStars[lvl] || 0);
-        }
-    }
-    return sum;
-}
-
-function getTodayString() {
-    const today = new Date();
-    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-}
-
-function getAchGoal(ach, level) { 
-    return ach.baseGoal + (level * ach.stepGoal); 
-}
-
-function getAchReward(ach, level) { 
-    return ach.baseReward + (level * ach.stepReward); 
-}
-
-function saveProgress() {
-    localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
-
-    if (currentUser && currentUser.uid) {
-        const totalStars = calculateTotalStars();
-        const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
-        const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
-
-        db.collection('users').doc(currentUser.uid).set({
-            name: displayName,
-            photoURL: photoURL,
-            isAnonymous: currentUser.isAnonymous,
-            totalStars: totalStars,
-            unlockedLevel: userProgress.unlockedLevel || 1,
-            highScore: userProgress.highScore || 0,
-            pvpWins: userProgress.pvpWins || 0,
-            progress: userProgress,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
-    }
-}
-
-async function loadCloudProgress(uid) {
-    try {
-        const doc = await db.collection('users').doc(uid).get();
-        if (doc.exists && doc.data().progress) {
-            userProgress = { ...userProgress, ...doc.data().progress };
-            localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
-        } else {
-            saveProgress();
-        }
-    } catch (e) {
-        console.log('Error loading cloud progress:', e);
-    }
-}
-
 
 let currentConfirmCallback = null;
 let currentCancelCallback = null;
@@ -270,8 +188,64 @@ function closeCustomConfirm(isConfirmed) {
     currentCancelCallback = null;
 }
 
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
 
-// js/questions-engine.js - محرك توليد المراحل، الأسئلة، والمزامنة السحابية
+function getTodayString() {
+    const today = new Date();
+    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+}
+
+function getAchGoal(ach, level) { 
+    return ach.baseGoal + (level * ach.stepGoal); 
+}
+
+function getAchReward(ach, level) { 
+    return ach.baseReward + (level * ach.stepReward); 
+}
+
+function saveProgress() {
+    localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
+
+    if (currentUser && currentUser.uid) {
+        const displayName = currentUser.isAnonymous ? 'ضيف اللعبة' : (currentUser.displayName || 'لاعب');
+        const photoURL = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+
+        db.collection('users').doc(currentUser.uid).set({
+            name: displayName,
+            photoURL: photoURL,
+            isAnonymous: currentUser.isAnonymous,
+            highScore: userProgress.highScore || 0,
+            pvpWins: userProgress.pvpWins || 0,
+            totalCorrect: userProgress.totalCorrect || 0,
+            progress: userProgress,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(err => console.log('Cloud Sync err:', err));
+    }
+}
+
+async function loadCloudProgress(uid) {
+    try {
+        const doc = await db.collection('users').doc(uid).get();
+        if (doc.exists && doc.data().progress) {
+            userProgress = { ...userProgress, ...doc.data().progress };
+            localStorage.setItem('law_ta3raf_progress', JSON.stringify(userProgress));
+        } else {
+            saveProgress();
+        }
+    } catch (e) {
+        console.log('Error loading cloud progress:', e);
+    }
+}
+
+
+// js/questions-engine.js - إدارة جلب الأسئلة من الشيت والنمط اللانهائي
 
 function getActiveQuestionsBank() {
     if (window.questionsBank && window.questionsBank.length > 0) {
@@ -312,172 +286,6 @@ function getEndlessQuestionQueue() {
     return [...shuffleArray(fresh), ...stale];
 }
 
-function mulberry32(seed) {
-    return function () {
-        seed |= 0; 
-        seed = (seed + 0x6D2B79F5) | 0;
-        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-}
-
-function deterministicShuffle(arr, rand) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(rand() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
-
-function assignQuestionsToTierLevels(questionsList, startLevelIndex, questionsPerLevel = 10) {
-    if (!questionsList || questionsList.length === 0) return [];
-
-    const numLevels = Math.floor(questionsList.length / questionsPerLevel);
-    if (numLevels === 0) return [];
-
-    const rand = mulberry32(LEVEL_BUILD_SEED);
-
-    const catBuckets = {};
-    questionsList.forEach(q => {
-        const cat = q.category || 'معلومات عامة';
-        if (!catBuckets[cat]) catBuckets[cat] = [];
-        catBuckets[cat].push(q);
-    });
-    const sortedCategories = Object.keys(catBuckets).sort();
-    sortedCategories.forEach(cat => {
-        catBuckets[cat] = deterministicShuffle(catBuckets[cat], rand);
-    });
-
-    const used = new Set();
-    const levels = Array.from({ length: numLevels }, () => []);
-    let catIndex = 0;
-
-    for (let lvl = 0; lvl < numLevels; lvl++) {
-        const tier = LEVEL_DIFFICULTY_TIERS[(startLevelIndex + lvl) % LEVEL_DIFFICULTY_TIERS.length];
-        let scanned = 0;
-        while (levels[lvl].length < questionsPerLevel && scanned < sortedCategories.length) {
-            const cat = sortedCategories[catIndex % sortedCategories.length];
-            catIndex++;
-            const match = catBuckets[cat].find(q =>
-                !used.has(q.id) && (q.difficulty || 1) >= tier.min && (q.difficulty || 1) <= tier.max
-            );
-            if (match) {
-                used.add(match.id);
-                levels[lvl].push(match);
-                scanned = 0;
-            } else {
-                scanned++;
-            }
-        }
-    }
-
-    const leftovers = deterministicShuffle(questionsList.filter(q => !used.has(q.id)), rand);
-    let leftoverPtr = 0;
-    for (let lvl = 0; lvl < numLevels && leftoverPtr < leftovers.length; lvl++) {
-        while (levels[lvl].length < questionsPerLevel && leftoverPtr < leftovers.length) {
-            const q = leftovers[leftoverPtr];
-            if (!used.has(q.id)) {
-                used.add(q.id);
-                levels[lvl].push(q);
-            }
-            leftoverPtr++;
-        }
-    }
-
-    return levels;
-}
-
-function buildDeterministicLevelsBank(questionsList, frozenSource, questionsPerLevel = 10) {
-    if (!questionsList || questionsList.length === 0) return [];
-
-    const questionsById = new Map();
-    questionsList.forEach(q => questionsById.set(q.id, q));
-
-    const source = Array.isArray(frozenSource) ? frozenSource : [];
-    const frozenLevels = [];
-    const usedIds = new Set();
-
-    source.forEach(idList => {
-        const levelQuestions = idList
-            .map(id => questionsById.get(id))
-            .filter(Boolean);
-        idList.forEach(id => usedIds.add(id));
-        frozenLevels.push(levelQuestions);
-    });
-
-    const newQuestions = questionsList.filter(q => !usedIds.has(q.id));
-    const newLevels = assignQuestionsToTierLevels(newQuestions, frozenLevels.length, questionsPerLevel);
-
-    return [...frozenLevels, ...newLevels];
-}
-
-async function syncLevelsBankWithCloud(liveQuestions, questionsPerLevel = 10) {
-    const docRef = db.collection('system').doc('levelsBank');
-
-    try {
-        const snap = await docRef.get();
-        const cloudFrozen = (snap.exists && Array.isArray(snap.data().levels)) ? snap.data().levels : [];
-
-        const usedIds = new Set();
-        cloudFrozen.forEach(idList => idList.forEach(id => usedIds.add(id)));
-        const newQuestionsCount = liveQuestions.filter(q => !usedIds.has(q.id)).length;
-
-        if (Math.floor(newQuestionsCount / questionsPerLevel) === 0) {
-            localStorage.setItem('cached_levels_bank', JSON.stringify(cloudFrozen));
-            return cloudFrozen;
-        }
-
-        const finalFrozen = await db.runTransaction(async (tx) => {
-            const freshSnap = await tx.get(docRef);
-            const freshFrozen = (freshSnap.exists && Array.isArray(freshSnap.data().levels)) ? freshSnap.data().levels : [];
-
-            const freshUsedIds = new Set();
-            freshFrozen.forEach(idList => idList.forEach(id => freshUsedIds.add(id)));
-
-            const freshNewQuestions = liveQuestions.filter(q => !freshUsedIds.has(q.id));
-            const newLevels = assignQuestionsToTierLevels(freshNewQuestions, freshFrozen.length, questionsPerLevel);
-
-            if (newLevels.length === 0) return freshFrozen;
-
-            const updated = [...freshFrozen, ...newLevels.map(lvl => lvl.map(q => q.id))];
-            tx.set(docRef, { levels: updated, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            return updated;
-        });
-
-        localStorage.setItem('cached_levels_bank', JSON.stringify(finalFrozen));
-        return finalFrozen;
-    } catch (err) {
-        const cached = localStorage.getItem('cached_levels_bank');
-        return cached ? JSON.parse(cached) : [];
-    }
-}
-
-function getExactLevelQuestions(levelNumber) {
-    const bank = getActiveQuestionsBank();
-    if (!structuredLevelsBank || structuredLevelsBank.length === 0) {
-        const cachedFrozen = JSON.parse(localStorage.getItem('cached_levels_bank') || '[]');
-        structuredLevelsBank = buildDeterministicLevelsBank(bank, cachedFrozen);
-    }
-
-    const index = levelNumber - 1;
-    if (structuredLevelsBank[index] && structuredLevelsBank[index].length > 0) {
-        return structuredLevelsBank[index];
-    }
-
-    return getSmartQuestions(10);
-}
-
-function getTotalAvailableLevels() {
-    const bank = getActiveQuestionsBank();
-    if (!structuredLevelsBank || structuredLevelsBank.length === 0) {
-        const cachedFrozen = JSON.parse(localStorage.getItem('cached_levels_bank') || '[]');
-        structuredLevelsBank = buildDeterministicLevelsBank(bank, cachedFrozen);
-    }
-    return Math.max(1, structuredLevelsBank.length);
-}
-
 async function loadQuestionsFromPublishedSheet() {
     try {
         const freshUrl = `${SHEET_CSV_URL}&t=${Date.now()}`;
@@ -490,20 +298,11 @@ async function loadQuestionsFromPublishedSheet() {
         if (parsedQuestions.length > 0) {
             window.questionsBank = parsedQuestions;
             localStorage.setItem('cached_questions_bank', JSON.stringify(parsedQuestions));
-
-            const frozenBank = await syncLevelsBankWithCloud(parsedQuestions);
-            structuredLevelsBank = buildDeterministicLevelsBank(parsedQuestions, frozenBank);
-            
-            if (gameState.currentScreen === 'levels-screen' || document.getElementById('levels-grid')) {
-                renderLevelsGrid();
-            }
         }
     } catch (err) {
         const cached = localStorage.getItem('cached_questions_bank');
         if (cached) {
             window.questionsBank = JSON.parse(cached);
-            const cachedFrozen = JSON.parse(localStorage.getItem('cached_levels_bank') || '[]');
-            structuredLevelsBank = buildDeterministicLevelsBank(window.questionsBank, cachedFrozen);
         }
     }
 }
@@ -571,7 +370,6 @@ auth.onAuthStateChanged(async (user) => {
         updateUserProfileUI(user);
         await loadCloudProgress(user.uid);
         
-        renderLevelsGrid();
         updateHeaderStats();
         checkDailyStatus();
         checkWheelStatus();
@@ -645,7 +443,6 @@ function switchScreen(screenId, pushToHistory = true) {
 
     updateHeaderStats();
     if (screenId === 'achievements-screen') renderAchievementsList();
-    if (screenId === 'levels-screen') renderLevelsGrid();
     if (screenId === 'wheel-screen') drawWheel();
     if (screenId === 'settings-screen') loadSettingsValues();
     if (screenId === 'shop-screen') updateShopDisplay();
@@ -673,7 +470,7 @@ function handleNavigationBack() {
         leavePvpRoom();
     } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
-    } else if (current === 'levels-screen' || current === 'categories-screen' || current === 'result-screen') {
+    } else if (current === 'categories-screen' || current === 'result-screen') {
         switchScreen('modes-screen', false);
     } else if (current === 'review-screen') {
         switchScreen('result-screen', false);
@@ -746,54 +543,6 @@ function resetAllProgress() {
 
 
 // js/game.js - المحرك الأساسي للجولات، الأسئلة، والمساعدات
-
-function startLevelMode() {
-    renderLevelsGrid();
-    switchScreen('levels-screen');
-}
-
-function renderLevelsGrid() {
-    const grid = document.getElementById('levels-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const totalLevels = getTotalAvailableLevels();
-
-    for (let i = 1; i <= totalLevels; i++) {
-        const isUnlocked = i <= userProgress.unlockedLevel;
-        const isCurrent = i === userProgress.unlockedLevel;
-        const stars = userProgress.levelStars[i] || 0;
-
-        const node = document.createElement('div');
-        node.className = `level-node ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}`;
-        
-        let starsHtml = stars > 0 ? `<div class="level-stars">${'⭐'.repeat(stars)}</div>` : '';
-        node.innerHTML = `<span>${i}</span>${starsHtml}`;
-
-        if (isUnlocked) node.onclick = () => startSpecificLevel(i);
-        grid.appendChild(node);
-    }
-}
-
-function startSpecificLevel(lvl) {
-    gameState.mode = 'levels';
-    gameState.currentLevel = lvl;
-    gameState.currentIndex = 0;
-    gameState.correctCount = 0;
-    gameState.wrongCount = 0;
-    gameState.lives = 3;
-    gameState.score = 0;
-    gameState.usedPowerupInSession = false;
-    gameState.sessionCorrectStreak = 0;
-    gameState.sessionMistakes = [];
-
-    const pwrBar = document.getElementById('game-powerups-bar');
-    if (pwrBar) pwrBar.style.display = 'flex';
-
-    gameState.questions = getExactLevelQuestions(lvl);
-    switchScreen('game-screen');
-    loadQuestion();
-}
 
 function startEndlessMode() {
     gameState.mode = 'endless';
@@ -965,12 +714,10 @@ function renderLivesDisplay() {
         return;
     }
 
-    const iconClass = gameState.mode === 'endless' ? 'fa-heart' : 'fa-star';
-    
     for (let i = 0; i < 3; i++) {
         const icon = document.createElement('i');
-        icon.className = `fa-solid ${iconClass} ${i < gameState.lives ? (gameState.mode === 'endless' ? '' : 'active-star') : 'opacity-muted'}`;
-        if (i >= gameState.lives && gameState.mode === 'endless') icon.style.opacity = '0.2';
+        icon.className = `fa-solid fa-heart ${i < gameState.lives ? '' : 'opacity-muted'}`;
+        if (i >= gameState.lives) icon.style.opacity = '0.2';
         container.appendChild(icon);
     }
 }
@@ -1057,7 +804,7 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
     renderLivesDisplay();
     revealCorrectAnswer();
 
-    if (gameState.mode === 'endless' && gameState.lives <= 0) {
+    if (gameState.lives <= 0 && gameState.mode !== 'pvp') {
         setTimeout(finishGameSession, 1200);
         return;
     }
@@ -1097,7 +844,6 @@ async function finishGameSession() {
     const resultIcon = document.getElementById('result-icon');
     const resultTitle = document.getElementById('result-title');
     const resultMessage = document.getElementById('result-message');
-    const starsWrapper = document.getElementById('res-stars-wrapper');
     const reviewBtn = document.getElementById('review-mistakes-btn');
 
     document.getElementById('res-correct').innerText = gameState.correctCount;
@@ -1112,35 +858,7 @@ async function finishGameSession() {
         }
     }
 
-    if (gameState.mode === 'levels') {
-        const isSuccess = gameState.lives > 0 && gameState.correctCount >= 7;
-        if (starsWrapper) starsWrapper.style.display = 'flex';
-        document.getElementById('res-stars').innerText = '⭐'.repeat(gameState.lives) || '❌';
-
-        if (isSuccess) {
-            if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-            resultIcon.innerText = '🏆';
-            resultTitle.innerText = 'مبروك الفوز!';
-            resultMessage.innerText = `اجتزت المرحلة بـ ${gameState.lives} نجوم!`;
-
-            if (gameState.lives === 3 && !gameState.usedPowerupInSession) {
-                userProgress.flawlessWins = (userProgress.flawlessWins || 0) + 1;
-            }
-
-            if (gameState.lives > (userProgress.levelStars[gameState.currentLevel] || 0)) {
-                userProgress.levelStars[gameState.currentLevel] = gameState.lives;
-            }
-            if (gameState.currentLevel === userProgress.unlockedLevel) {
-                userProgress.unlockedLevel++;
-            }
-        } else {
-            if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
-            resultIcon.innerText = '💔';
-            resultTitle.innerText = 'حاول مرة أخرى';
-            resultMessage.innerText = 'تحتاج للحفاظ على نجمة واحدة (7 إجابات صحيحة) للمرور.';
-        }
-    } else if (gameState.mode === 'endless') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
+    if (gameState.mode === 'endless') {
         if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
         resultIcon.innerText = '🔥';
         resultTitle.innerText = 'انتهت المحاولات!';
@@ -1151,7 +869,6 @@ async function finishGameSession() {
             resultMessage.innerText += ' 🌟 رقم قياسي جديد!';
         }
     } else if (gameState.mode === 'daily') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
         if (gameState.correctCount >= 7) {
             if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
             resultIcon.innerText = '👑';
@@ -1168,7 +885,6 @@ async function finishGameSession() {
             resultMessage.innerText = 'حاولت في التحدي ولكن لم تصل لـ 7 إجابات صحيحة.';
         }
     } else if (gameState.mode === 'category') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
         if (gameState.correctCount >= 7 && typeof AudioEngine !== 'undefined') AudioEngine.playWin();
         else if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
 
@@ -1179,7 +895,6 @@ async function finishGameSession() {
 
     saveProgress();
     checkAllAchievements();
-    renderLevelsGrid();
     updateHeaderStats();
 }
 
@@ -1214,8 +929,7 @@ function openReviewScreen() {
 }
 
 function restartGame() {
-    if (gameState.mode === 'levels') startSpecificLevel(gameState.currentLevel);
-    else if (gameState.mode === 'endless') startEndlessMode();
+    if (gameState.mode === 'endless') startEndlessMode();
     else if (gameState.mode === 'category') startCategoryMode(gameState.selectedCategory);
     else switchScreen('modes-screen');
 }
@@ -1303,7 +1017,6 @@ function useSkipQuestion() {
 
     proceedNext();
 }
-
 
 function openImageZoomModal(customSrc = null) {
     const modal = document.getElementById('image-zoom-modal');
@@ -1758,9 +1471,13 @@ function switchLeaderboardTab(tab) {
     gameState.leaderboardTab = tab;
     document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
     
-    if (tab === 'stars') document.getElementById('tab-lb-stars').classList.add('active');
-    else if (tab === 'endless') document.getElementById('tab-lb-endless').classList.add('active');
-    else if (tab === 'pvp') document.getElementById('tab-lb-pvp').classList.add('active');
+    if (tab === 'endless') {
+        const t = document.getElementById('tab-lb-endless');
+        if (t) t.classList.add('active');
+    } else if (tab === 'pvp') {
+        const t = document.getElementById('tab-lb-pvp');
+        if (t) t.classList.add('active');
+    }
 
     fetchAndRenderLeaderboard();
 }
@@ -1773,10 +1490,8 @@ async function fetchAndRenderLeaderboard() {
     listContainer.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الترتيب العالمي...</div>';
     if (podiumContainer) podiumContainer.innerHTML = '';
 
-    const tab = gameState.leaderboardTab;
-    let sortField = 'totalStars';
-    if (tab === 'endless') sortField = 'highScore';
-    else if (tab === 'pvp') sortField = 'pvpWins';
+    const tab = gameState.leaderboardTab || 'endless';
+    let sortField = (tab === 'pvp') ? 'pvpWins' : 'highScore';
 
     try {
         const snapshot = await db.collection('users')
@@ -1817,9 +1532,8 @@ async function fetchAndRenderLeaderboard() {
 }
 
 function formatLeaderboardScore(p, tab) {
-    if (tab === 'stars') return `${p.totalStars} ⭐`;
-    if (tab === 'endless') return `${p.highScore} نقطة`;
-    return `${p.pvpWins || 0} فوز ⚔️`;
+    if (tab === 'pvp') return `${p.pvpWins || 0} فوز ⚔️`;
+    return `${p.highScore || 0} نقطة`;
 }
 
 function renderLeaderboardUI(players, tab) {
@@ -1886,9 +1600,9 @@ function renderLeaderboardUI(players, tab) {
             const rank = idx + 4;
             const isMe = currentUser && (p.uid === currentUser.uid);
             const scoreText = formatLeaderboardScore(p, tab);
-            let subText = `إجمالي النجوم: ${p.totalStars}`;
-            if (tab === 'stars') subText = `وصل للمرحلة ${p.unlockedLevel}`;
-            else if (tab === 'pvp') subText = `انتصارات الغرف: ${p.pvpWins || 0}`;
+            let subText = (tab === 'pvp') 
+                ? `انتصارات الغرف: ${p.pvpWins || 0}`
+                : `أعلى سكور صمود: ${p.highScore || 0}`;
 
             const card = document.createElement('div');
             card.className = `lb-item-card ${isMe ? 'is-current-user' : ''}`;
@@ -1925,15 +1639,12 @@ function updateMyRankFooter(players, tab) {
     if (nameElem) nameElem.innerText = currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت');
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
-    if (tab === 'stars') {
-        if (subElem) subElem.innerText = `وصلت للمرحلة ${userProgress.unlockedLevel || 1}`;
-        if (valElem) valElem.innerText = `${calculateTotalStars()} ⭐`;
-    } else if (tab === 'endless') {
-        if (subElem) subElem.innerText = `أعلى سكور صمود`;
-        if (valElem) valElem.innerText = `${userProgress.highScore || 0} نقطة`;
-    } else if (tab === 'pvp') {
+    if (tab === 'pvp') {
         if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
         if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
+    } else {
+        if (subElem) subElem.innerText = `أعلى سكور صمود`;
+        if (valElem) valElem.innerText = `${userProgress.highScore || 0} نقطة`;
     }
 }
 

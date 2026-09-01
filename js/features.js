@@ -10,9 +10,13 @@ function switchLeaderboardTab(tab) {
     gameState.leaderboardTab = tab;
     document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
     
-    if (tab === 'stars') document.getElementById('tab-lb-stars').classList.add('active');
-    else if (tab === 'endless') document.getElementById('tab-lb-endless').classList.add('active');
-    else if (tab === 'pvp') document.getElementById('tab-lb-pvp').classList.add('active');
+    if (tab === 'endless') {
+        const t = document.getElementById('tab-lb-endless');
+        if (t) t.classList.add('active');
+    } else if (tab === 'pvp') {
+        const t = document.getElementById('tab-lb-pvp');
+        if (t) t.classList.add('active');
+    }
 
     fetchAndRenderLeaderboard();
 }
@@ -25,10 +29,8 @@ async function fetchAndRenderLeaderboard() {
     listContainer.innerHTML = '<div class="lb-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> جاري تحميل الترتيب العالمي...</div>';
     if (podiumContainer) podiumContainer.innerHTML = '';
 
-    const tab = gameState.leaderboardTab;
-    let sortField = 'totalStars';
-    if (tab === 'endless') sortField = 'highScore';
-    else if (tab === 'pvp') sortField = 'pvpWins';
+    const tab = gameState.leaderboardTab || 'endless';
+    let sortField = (tab === 'pvp') ? 'pvpWins' : 'highScore';
 
     try {
         const snapshot = await db.collection('users')
@@ -69,9 +71,8 @@ async function fetchAndRenderLeaderboard() {
 }
 
 function formatLeaderboardScore(p, tab) {
-    if (tab === 'stars') return `${p.totalStars} ⭐`;
-    if (tab === 'endless') return `${p.highScore} نقطة`;
-    return `${p.pvpWins || 0} فوز ⚔️`;
+    if (tab === 'pvp') return `${p.pvpWins || 0} فوز ⚔️`;
+    return `${p.highScore || 0} نقطة`;
 }
 
 function renderLeaderboardUI(players, tab) {
@@ -138,9 +139,9 @@ function renderLeaderboardUI(players, tab) {
             const rank = idx + 4;
             const isMe = currentUser && (p.uid === currentUser.uid);
             const scoreText = formatLeaderboardScore(p, tab);
-            let subText = `إجمالي النجوم: ${p.totalStars}`;
-            if (tab === 'stars') subText = `وصل للمرحلة ${p.unlockedLevel}`;
-            else if (tab === 'pvp') subText = `انتصارات الغرف: ${p.pvpWins || 0}`;
+            let subText = (tab === 'pvp') 
+                ? `انتصارات الغرف: ${p.pvpWins || 0}`
+                : `أعلى سكور صمود: ${p.highScore || 0}`;
 
             const card = document.createElement('div');
             card.className = `lb-item-card ${isMe ? 'is-current-user' : ''}`;
@@ -177,15 +178,12 @@ function updateMyRankFooter(players, tab) {
     if (nameElem) nameElem.innerText = currentUser.isAnonymous ? 'ضيف اللعبة (أنت)' : (currentUser.displayName || 'أنت');
     if (avatarElem) avatarElem.src = currentUser.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
 
-    if (tab === 'stars') {
-        if (subElem) subElem.innerText = `وصلت للمرحلة ${userProgress.unlockedLevel || 1}`;
-        if (valElem) valElem.innerText = `${calculateTotalStars()} ⭐`;
-    } else if (tab === 'endless') {
-        if (subElem) subElem.innerText = `أعلى سكور صمود`;
-        if (valElem) valElem.innerText = `${userProgress.highScore || 0} نقطة`;
-    } else if (tab === 'pvp') {
+    if (tab === 'pvp') {
         if (subElem) subElem.innerText = `انتصارات التحدي الجماعي`;
         if (valElem) valElem.innerText = `${userProgress.pvpWins || 0} فوز ⚔️`;
+    } else {
+        if (subElem) subElem.innerText = `أعلى سكور صمود`;
+        if (valElem) valElem.innerText = `${userProgress.highScore || 0} نقطة`;
     }
 }
 

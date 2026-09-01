@@ -1,53 +1,5 @@
 // js/game.js - المحرك الأساسي للجولات، الأسئلة، والمساعدات
 
-function startLevelMode() {
-    renderLevelsGrid();
-    switchScreen('levels-screen');
-}
-
-function renderLevelsGrid() {
-    const grid = document.getElementById('levels-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const totalLevels = getTotalAvailableLevels();
-
-    for (let i = 1; i <= totalLevels; i++) {
-        const isUnlocked = i <= userProgress.unlockedLevel;
-        const isCurrent = i === userProgress.unlockedLevel;
-        const stars = userProgress.levelStars[i] || 0;
-
-        const node = document.createElement('div');
-        node.className = `level-node ${isUnlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}`;
-        
-        let starsHtml = stars > 0 ? `<div class="level-stars">${'⭐'.repeat(stars)}</div>` : '';
-        node.innerHTML = `<span>${i}</span>${starsHtml}`;
-
-        if (isUnlocked) node.onclick = () => startSpecificLevel(i);
-        grid.appendChild(node);
-    }
-}
-
-function startSpecificLevel(lvl) {
-    gameState.mode = 'levels';
-    gameState.currentLevel = lvl;
-    gameState.currentIndex = 0;
-    gameState.correctCount = 0;
-    gameState.wrongCount = 0;
-    gameState.lives = 3;
-    gameState.score = 0;
-    gameState.usedPowerupInSession = false;
-    gameState.sessionCorrectStreak = 0;
-    gameState.sessionMistakes = [];
-
-    const pwrBar = document.getElementById('game-powerups-bar');
-    if (pwrBar) pwrBar.style.display = 'flex';
-
-    gameState.questions = getExactLevelQuestions(lvl);
-    switchScreen('game-screen');
-    loadQuestion();
-}
-
 function startEndlessMode() {
     gameState.mode = 'endless';
     gameState.currentIndex = 0;
@@ -218,12 +170,10 @@ function renderLivesDisplay() {
         return;
     }
 
-    const iconClass = gameState.mode === 'endless' ? 'fa-heart' : 'fa-star';
-    
     for (let i = 0; i < 3; i++) {
         const icon = document.createElement('i');
-        icon.className = `fa-solid ${iconClass} ${i < gameState.lives ? (gameState.mode === 'endless' ? '' : 'active-star') : 'opacity-muted'}`;
-        if (i >= gameState.lives && gameState.mode === 'endless') icon.style.opacity = '0.2';
+        icon.className = `fa-solid fa-heart ${i < gameState.lives ? '' : 'opacity-muted'}`;
+        if (i >= gameState.lives) icon.style.opacity = '0.2';
         container.appendChild(icon);
     }
 }
@@ -310,7 +260,7 @@ function handleMistake(selectedIndex = null, isTimeout = false) {
     renderLivesDisplay();
     revealCorrectAnswer();
 
-    if (gameState.mode === 'endless' && gameState.lives <= 0) {
+    if (gameState.lives <= 0 && gameState.mode !== 'pvp') {
         setTimeout(finishGameSession, 1200);
         return;
     }
@@ -350,7 +300,6 @@ async function finishGameSession() {
     const resultIcon = document.getElementById('result-icon');
     const resultTitle = document.getElementById('result-title');
     const resultMessage = document.getElementById('result-message');
-    const starsWrapper = document.getElementById('res-stars-wrapper');
     const reviewBtn = document.getElementById('review-mistakes-btn');
 
     document.getElementById('res-correct').innerText = gameState.correctCount;
@@ -365,35 +314,7 @@ async function finishGameSession() {
         }
     }
 
-    if (gameState.mode === 'levels') {
-        const isSuccess = gameState.lives > 0 && gameState.correctCount >= 7;
-        if (starsWrapper) starsWrapper.style.display = 'flex';
-        document.getElementById('res-stars').innerText = '⭐'.repeat(gameState.lives) || '❌';
-
-        if (isSuccess) {
-            if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
-            resultIcon.innerText = '🏆';
-            resultTitle.innerText = 'مبروك الفوز!';
-            resultMessage.innerText = `اجتزت المرحلة بـ ${gameState.lives} نجوم!`;
-
-            if (gameState.lives === 3 && !gameState.usedPowerupInSession) {
-                userProgress.flawlessWins = (userProgress.flawlessWins || 0) + 1;
-            }
-
-            if (gameState.lives > (userProgress.levelStars[gameState.currentLevel] || 0)) {
-                userProgress.levelStars[gameState.currentLevel] = gameState.lives;
-            }
-            if (gameState.currentLevel === userProgress.unlockedLevel) {
-                userProgress.unlockedLevel++;
-            }
-        } else {
-            if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
-            resultIcon.innerText = '💔';
-            resultTitle.innerText = 'حاول مرة أخرى';
-            resultMessage.innerText = 'تحتاج للحفاظ على نجمة واحدة (7 إجابات صحيحة) للمرور.';
-        }
-    } else if (gameState.mode === 'endless') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
+    if (gameState.mode === 'endless') {
         if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
         resultIcon.innerText = '🔥';
         resultTitle.innerText = 'انتهت المحاولات!';
@@ -404,7 +325,6 @@ async function finishGameSession() {
             resultMessage.innerText += ' 🌟 رقم قياسي جديد!';
         }
     } else if (gameState.mode === 'daily') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
         if (gameState.correctCount >= 7) {
             if (typeof AudioEngine !== 'undefined') AudioEngine.playWin();
             resultIcon.innerText = '👑';
@@ -421,7 +341,6 @@ async function finishGameSession() {
             resultMessage.innerText = 'حاولت في التحدي ولكن لم تصل لـ 7 إجابات صحيحة.';
         }
     } else if (gameState.mode === 'category') {
-        if (starsWrapper) starsWrapper.style.display = 'none';
         if (gameState.correctCount >= 7 && typeof AudioEngine !== 'undefined') AudioEngine.playWin();
         else if (typeof AudioEngine !== 'undefined') AudioEngine.playGameOver();
 
@@ -432,7 +351,6 @@ async function finishGameSession() {
 
     saveProgress();
     checkAllAchievements();
-    renderLevelsGrid();
     updateHeaderStats();
 }
 
@@ -467,8 +385,7 @@ function openReviewScreen() {
 }
 
 function restartGame() {
-    if (gameState.mode === 'levels') startSpecificLevel(gameState.currentLevel);
-    else if (gameState.mode === 'endless') startEndlessMode();
+    if (gameState.mode === 'endless') startEndlessMode();
     else if (gameState.mode === 'category') startCategoryMode(gameState.selectedCategory);
     else switchScreen('modes-screen');
 }
@@ -556,7 +473,6 @@ function useSkipQuestion() {
 
     proceedNext();
 }
-
 
 function openImageZoomModal(customSrc = null) {
     const modal = document.getElementById('image-zoom-modal');

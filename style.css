@@ -1200,60 +1200,6 @@ html, body {
 }
 
 /* ==========================================
-   Levels Grid
-   ========================================== */
-.levels-scroll-container {
-    flex: 1;
-    overflow-y: auto;
-    padding-bottom: 30px;
-}
-
-.levels-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    max-width: 450px;
-    margin: 0 auto;
-}
-
-.level-node {
-    aspect-ratio: 1;
-    background: var(--bg-card);
-    border: 2px solid var(--border-color);
-    border-radius: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 900;
-    cursor: pointer;
-    position: relative;
-}
-
-.level-node.locked {
-    opacity: 0.35;
-    cursor: not-allowed;
-}
-
-.level-node.unlocked {
-    border-color: rgba(99, 102, 241, 0.5);
-    color: #fff;
-}
-
-.level-node.current {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark));
-    border-color: var(--accent-yellow);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
-}
-
-.level-stars {
-    font-size: 0.65rem;
-    position: absolute;
-    bottom: 6px;
-}
-
-/* ==========================================
    Categories Grid
    ========================================== */
 .categories-grid {
