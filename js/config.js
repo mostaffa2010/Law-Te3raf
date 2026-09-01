@@ -1,9 +1,9 @@
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
+var SHEET_CSV_URL = window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
 
 // إعدادات Firebase
-const firebaseConfig = {
+var firebaseConfig = window.firebaseConfig = {
     apiKey: "AIzaSyDELtkkAkxym1CospHaGdLt6TNCEKZAc1A",
     authDomain: "law-te3raf.firebaseapp.com",
     projectId: "law-te3raf",
@@ -37,9 +37,10 @@ if (typeof firebase !== 'undefined') {
 }
 
 // المتغيرات العامة للحالة
-let currentUser = null;
+var currentUser = null;
+window.currentUser = currentUser;
 
-let gameState = {
+var gameState = window.gameState = {
     currentScreen: 'auth-screen',
     mode: 'endless',
     selectedCategory: '',
@@ -63,7 +64,7 @@ let gameState = {
 };
 
 // إعدادات عجلة الحظ
-const WHEEL_SECTORS = [
+var WHEEL_SECTORS = window.WHEEL_SECTORS = [
     { label: "15 عملة", type: "coins", value: 15, color: "#3b82f6" },
     { label: "50:50", type: "item", value: "hint5050", color: "#8b5cf6" },
     { label: "30 عملة", type: "coins", value: 30, color: "#10b981" },
@@ -74,11 +75,13 @@ const WHEEL_SECTORS = [
     { label: "20 عملة", type: "coins", value: 20, color: "#6366f1" }
 ];
 
-let isWheelSpinning = false;
-let wheelCurrentAngle = 0;
+var isWheelSpinning = false;
+window.isWheelSpinning = isWheelSpinning;
+var wheelCurrentAngle = 0;
+window.wheelCurrentAngle = wheelCurrentAngle;
 
 // إعدادات الإنجازات
-const INFINITE_ACHIEVEMENTS = [
+var INFINITE_ACHIEVEMENTS = window.INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
     { id: 'ach_streak', name: 'القناص الذي لا يخطئ', desc: 'أجب على أسئلة متتالية صحيحة في نفس الجلسة', icon: '🏹', stat: 'maxCorrectStreak', baseGoal: 5, stepGoal: 10, baseReward: 15, stepReward: 8, maxLevel: 5 },
@@ -89,7 +92,7 @@ const INFINITE_ACHIEVEMENTS = [
 ];
 
 // أيقونات وتنسيقات الأقسام
-const CATEGORY_STYLES = {
+var CATEGORY_STYLES = window.CATEGORY_STYLES = {
     'إسلاميات': { icon: 'fa-solid fa-kaaba', color: '#10b981' },
     'رياضة وكورة': { icon: 'fa-solid fa-futbol', color: '#3b82f6' },
     'علوم وفضاء': { icon: 'fa-solid fa-atom', color: '#8b5cf6' },
@@ -104,10 +107,10 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
+var ENDLESS_REPEAT_COOLDOWN_MS = window.ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
 
 // البنية الافتراضية الشاملة لتقدم المستخدم
-const DEFAULT_USER_PROGRESS = {
+var DEFAULT_USER_PROGRESS = window.DEFAULT_USER_PROGRESS = {
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -132,7 +135,7 @@ const DEFAULT_USER_PROGRESS = {
     highestRankTier: 'iron'
 };
 
-let userProgress = { ...DEFAULT_USER_PROGRESS };
+var userProgress = window.userProgress = { ...DEFAULT_USER_PROGRESS };
 
 function ensureUserProgressIntegrity() {
     if (!userProgress || typeof userProgress !== 'object') {

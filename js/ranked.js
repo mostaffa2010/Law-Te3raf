@@ -1,6 +1,6 @@
 // js/ranked.js - محرك دوريات التصنيف (Ranked Leagues) والبحث السريع عن منافس أونلاين 1v1
 
-const RANKS_CONFIG = [
+var RANKS_CONFIG = window.RANKS_CONFIG = [
     { id: 'iron', name: 'الحديدي', tier: 1, starsToPromote: 3, color: '#94a3b8', bgGradient: 'linear-gradient(135deg, #475569, #334155)', icon: 'fa-solid fa-shield', protectLoss: true },
     { id: 'bronze', name: 'البرونزي', tier: 2, starsToPromote: 3, color: '#cd7f32', bgGradient: 'linear-gradient(135deg, #b45309, #78350f)', icon: 'fa-solid fa-shield-halved', protectLoss: true },
     { id: 'silver', name: 'الفضي', tier: 3, starsToPromote: 4, color: '#e2e8f0', bgGradient: 'linear-gradient(135deg, #94a3b8, #64748b)', icon: 'fa-solid fa-shield-heart', protectLoss: false },
@@ -21,7 +21,7 @@ let opponentSimTimeout = null;
 let isPlayerWaitingForOpponent = false;
 
 // أسماء رمزية وصور لمنافسي الرانك الأذكياء
-const SMART_RIVALS_POOL = [
+var SMART_RIVALS_POOL = window.SMART_RIVALS_POOL = [
     { name: "أحمد الشناوي", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" },
     { name: "سارة محمود", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135789.png" },
     { name: "عمر الفاروق", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png" },

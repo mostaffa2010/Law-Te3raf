@@ -1,6 +1,6 @@
 // js/audio.js - محرك المؤثرات الصوتية والاهتزاز الهادئ للعبة "لَو تِعرَف"
 
-const AudioEngine = {
+var AudioEngine = window.AudioEngine = {
     ctx: null,
 
     isSoundEnabled() {

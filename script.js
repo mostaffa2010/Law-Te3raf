@@ -2,10 +2,10 @@
 
 // js/config.js - إعدادات النظام، التهيئة، والمتغيرات العامة
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
+var SHEET_CSV_URL = window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmve4Q3DU8ITcd4p6CYlEUiP4fvwLGRAevzmiBHwluw_J7k_NTa9pLWoxrHKme0cmlrQqZ2wA8VwlC/pub?output=csv";
 
 // إعدادات Firebase
-const firebaseConfig = {
+var firebaseConfig = window.firebaseConfig = {
     apiKey: "AIzaSyDELtkkAkxym1CospHaGdLt6TNCEKZAc1A",
     authDomain: "law-te3raf.firebaseapp.com",
     projectId: "law-te3raf",
@@ -39,9 +39,10 @@ if (typeof firebase !== 'undefined') {
 }
 
 // المتغيرات العامة للحالة
-let currentUser = null;
+var currentUser = null;
+window.currentUser = currentUser;
 
-let gameState = {
+var gameState = window.gameState = {
     currentScreen: 'auth-screen',
     mode: 'endless',
     selectedCategory: '',
@@ -65,7 +66,7 @@ let gameState = {
 };
 
 // إعدادات عجلة الحظ
-const WHEEL_SECTORS = [
+var WHEEL_SECTORS = window.WHEEL_SECTORS = [
     { label: "15 عملة", type: "coins", value: 15, color: "#3b82f6" },
     { label: "50:50", type: "item", value: "hint5050", color: "#8b5cf6" },
     { label: "30 عملة", type: "coins", value: 30, color: "#10b981" },
@@ -76,11 +77,13 @@ const WHEEL_SECTORS = [
     { label: "20 عملة", type: "coins", value: 20, color: "#6366f1" }
 ];
 
-let isWheelSpinning = false;
-let wheelCurrentAngle = 0;
+var isWheelSpinning = false;
+window.isWheelSpinning = isWheelSpinning;
+var wheelCurrentAngle = 0;
+window.wheelCurrentAngle = wheelCurrentAngle;
 
 // إعدادات الإنجازات
-const INFINITE_ACHIEVEMENTS = [
+var INFINITE_ACHIEVEMENTS = window.INFINITE_ACHIEVEMENTS = [
     { id: 'ach_pvp', name: 'سيد التحديات الأونلاين', desc: 'اهزم أصدقاءك في مباريات وتحديات الغرف', icon: '⚔️', stat: 'pvpWins', baseGoal: 1, stepGoal: 3, baseReward: 20, stepReward: 10, maxLevel: 5 },
     { id: 'ach_correct', name: 'موسوعة المعرفة', desc: 'أجب على أسئلة صحيحة عبر كل الأنماط', icon: '🧠', stat: 'totalCorrect', baseGoal: 25, stepGoal: 50, baseReward: 15, stepReward: 10, maxLevel: 6 },
     { id: 'ach_streak', name: 'القناص الذي لا يخطئ', desc: 'أجب على أسئلة متتالية صحيحة في نفس الجلسة', icon: '🏹', stat: 'maxCorrectStreak', baseGoal: 5, stepGoal: 10, baseReward: 15, stepReward: 8, maxLevel: 5 },
@@ -91,7 +94,7 @@ const INFINITE_ACHIEVEMENTS = [
 ];
 
 // أيقونات وتنسيقات الأقسام
-const CATEGORY_STYLES = {
+var CATEGORY_STYLES = window.CATEGORY_STYLES = {
     'إسلاميات': { icon: 'fa-solid fa-kaaba', color: '#10b981' },
     'رياضة وكورة': { icon: 'fa-solid fa-futbol', color: '#3b82f6' },
     'علوم وفضاء': { icon: 'fa-solid fa-atom', color: '#8b5cf6' },
@@ -106,10 +109,10 @@ const CATEGORY_STYLES = {
     'معلومات عامة': { icon: 'fa-solid fa-lightbulb', color: '#eab308' }
 };
 
-const ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
+var ENDLESS_REPEAT_COOLDOWN_MS = window.ENDLESS_REPEAT_COOLDOWN_MS = 5 * 24 * 60 * 60 * 1000;
 
 // البنية الافتراضية الشاملة لتقدم المستخدم
-const DEFAULT_USER_PROGRESS = {
+var DEFAULT_USER_PROGRESS = window.DEFAULT_USER_PROGRESS = {
     coins: 50,
     highScore: 0,
     dailyStreak: 0,
@@ -134,7 +137,7 @@ const DEFAULT_USER_PROGRESS = {
     highestRankTier: 'iron'
 };
 
-let userProgress = { ...DEFAULT_USER_PROGRESS };
+var userProgress = window.userProgress = { ...DEFAULT_USER_PROGRESS };
 
 function ensureUserProgressIntegrity() {
     if (!userProgress || typeof userProgress !== 'object') {
@@ -429,7 +432,7 @@ function getSmartQuestions(count = 10, categoryFilter = null) {
 
 // js/ranked.js - محرك دوريات التصنيف (Ranked Leagues) والبحث السريع عن منافس أونلاين 1v1
 
-const RANKS_CONFIG = [
+var RANKS_CONFIG = window.RANKS_CONFIG = [
     { id: 'iron', name: 'الحديدي', tier: 1, starsToPromote: 3, color: '#94a3b8', bgGradient: 'linear-gradient(135deg, #475569, #334155)', icon: 'fa-solid fa-shield', protectLoss: true },
     { id: 'bronze', name: 'البرونزي', tier: 2, starsToPromote: 3, color: '#cd7f32', bgGradient: 'linear-gradient(135deg, #b45309, #78350f)', icon: 'fa-solid fa-shield-halved', protectLoss: true },
     { id: 'silver', name: 'الفضي', tier: 3, starsToPromote: 4, color: '#e2e8f0', bgGradient: 'linear-gradient(135deg, #94a3b8, #64748b)', icon: 'fa-solid fa-shield-heart', protectLoss: false },
@@ -450,7 +453,7 @@ let opponentSimTimeout = null;
 let isPlayerWaitingForOpponent = false;
 
 // أسماء رمزية وصور لمنافسي الرانك الأذكياء
-const SMART_RIVALS_POOL = [
+var SMART_RIVALS_POOL = window.SMART_RIVALS_POOL = [
     { name: "أحمد الشناوي", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" },
     { name: "سارة محمود", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135789.png" },
     { name: "عمر الفاروق", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png" },
@@ -2555,9 +2558,7 @@ function installAppPWA() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     if (isIOS) {
-        showCustomAlert('لتثبيت اللعبة على الآيفون:
-1. اضغط على زر المشاركة (Share ⎋) أسفل المتصفح.
-2. اختر "إضافة إلى الصفحة الرئيسية" (Add to Home Screen) ➕.', 'تثبيت اللعبة على الآيفون', '📲');
+        showCustomAlert("لتثبيت اللعبة على الآيفون: اضغط على زر المشاركة (Share) أسفل المتصفح ثم اختر إضافة إلى الصفحة الرئيسية.", "تثبيت اللعبة", "📲");
         return;
     }
 
@@ -2571,9 +2572,7 @@ function installAppPWA() {
             deferredInstallPrompt = null;
         });
     } else {
-        showCustomAlert('لتثبيت التطبيق على هاتفك:
-1. اضغط على قائمة المتصفح (الثلاث نقاط ⋮ في الأعلى).
-2. اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية" 📲.', 'تثبيت التطبيق', '💡');
+        showCustomAlert("لتثبيت التطبيق على هاتفك: اضغط على قائمة المتصفح (الثلاث نقاط أعلى المتصفح) ثم اختر تثبيت التطبيق أو إضافة للشاشة الرئيسية.", "تثبيت التطبيق", "💡");
     }
 }
 

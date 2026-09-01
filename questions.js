@@ -1,6 +1,6 @@
 // questions.js - بنك الأسئلة الاحتياطي للعمل بدون إنترنت (50 سؤال)
 
-const questionsBank = [
+var questionsBank = window.questionsBank = [
   // --- إسلاميات ---
   {
     id: 1,
