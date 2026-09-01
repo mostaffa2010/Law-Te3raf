@@ -2,16 +2,18 @@
   <defs>
     <linearGradient id="cyber_g" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00f0ff"/>
-      <stop offset="100%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
     </linearGradient>
   </defs>
   <!-- Cyber Outer Hexagon Corners -->
-  <polygon points="60,4 96,16 116,60 96,104 60,116 24,104 4,60 24,16" fill="none" stroke="url(#cyber_g)" stroke-width="2.5" stroke-dasharray="8,4"/>
-  <!-- Glowing Inner Ring -->
-  <circle cx="60" cy="60" r="49" fill="none" stroke="#00f0ff" stroke-width="3"/>
+  <polygon points="60,3 97,15 117,60 97,105 60,117 23,105 3,60 23,15" fill="none" stroke="url(#cyber_g)" stroke-width="2.5" stroke-dasharray="8,4"/>
+  <!-- Perfectly Fitted Inner Ring -->
+  <circle cx="60" cy="60" r="49" fill="none" stroke="#00f0ff" stroke-width="3.5"/>
   <!-- Corner Tech Brackets -->
-  <path d="M20 20 L30 12 M100 20 L90 12 M20 100 L30 108 M100 100 L90 108" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+  <path d="M19 19 L30 11 M101 19 L90 11 M19 101 L30 109 M101 101 L90 109" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
   <!-- Top & Bottom Pulse Nodes -->
   <circle cx="60" cy="11" r="3.5" fill="#00f0ff"/>
   <circle cx="60" cy="109" r="3.5" fill="#00f0ff"/>
+  <circle cx="11" cy="60" r="3" fill="#ec4899"/>
+  <circle cx="109" cy="60" r="3" fill="#ec4899"/>
 </svg>

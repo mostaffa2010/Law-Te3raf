@@ -108,8 +108,29 @@ function switchScreen(screenId, pushToHistory = true) {
 }
 
 function handleNavigationBack() {
+    // 1. أولاً: التحقق من أي نافذة منبثقة مفتوحة (Modals) وإغلاقها دون مغادرة الشاشة
+    const openModals = [
+        { id: 'ranked-info-modal', closeFn: closeRankedInfoModal },
+        { id: 'player-profile-modal', closeFn: closePlayerProfileModal },
+        { id: 'reactions-modal-overlay', closeFn: () => { const m = document.getElementById('reactions-modal-overlay'); if (m) m.classList.remove('show'); } },
+        { id: 'image-zoom-modal', closeFn: closeImageZoomModal },
+        { id: 'custom-confirm-modal', closeFn: () => closeCustomConfirm(false) },
+        { id: 'custom-modal', closeFn: closeCustomAlert },
+        { id: 'pvp-category-modal', closeFn: closePvpCategoryModal }
+    ];
+
+    for (const modalObj of openModals) {
+        const elem = document.getElementById(modalObj.id);
+        if (elem && elem.classList.contains('show')) {
+            modalObj.closeFn();
+            history.pushState({ screen: gameState.currentScreen || 'main-menu' }, "", `#${gameState.currentScreen || 'main-menu'}`);
+            return;
+        }
+    }
+
     const current = gameState.currentScreen;
 
+    // 2. إذا كان اللاعب داخل جولة لعب (game-screen)
     if (current === 'game-screen') {
         showCustomConfirm(
             'هل تريد حقاً مغادرة الجولة الحالية؟ ستفقد تقدمك في هذه الجولة.',
@@ -125,21 +146,44 @@ function handleNavigationBack() {
             'البقاء في اللعبة',
             '🚪'
         );
-    } else if (current === 'pvp-waiting-screen' || current === 'pvp-lobby-screen' || current === 'pvp-result-screen' || current === 'pvp-waiting-opponent-screen') {
+        return;
+    }
+
+    // 3. شاشات الأونلاين والغرف
+    if (current === 'pvp-waiting-screen' || current === 'pvp-lobby-screen' || current === 'pvp-result-screen' || current === 'pvp-waiting-opponent-screen') {
         leavePvpRoom();
-    } else if (current === 'ranked-versus-screen' || current === 'ranked-result-screen' || current === 'ranked-waiting-opponent-screen') {
+        return;
+    }
+
+    // 4. شاشات الرانك والمواجهة
+    if (current === 'ranked-versus-screen' || current === 'ranked-result-screen' || current === 'ranked-waiting-opponent-screen') {
         switchScreen('modes-screen', false);
-    } else if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
+        return;
+    }
+
+    // 5. الشاشات الفرعية -> الرجوع للقائمة الرئيسية
+    if (current === 'modes-screen' || current === 'leaderboard-screen' || current === 'wheel-screen' || current === 'achievements-screen' || current === 'shop-screen' || current === 'settings-screen') {
         switchScreen('main-menu', false);
-    } else if (current === 'result-screen') {
+        history.pushState({ screen: 'main-menu' }, "", "#main-menu");
+        return;
+    }
+
+    if (current === 'result-screen') {
         switchScreen('modes-screen', false);
-    } else if (current === 'review-screen') {
+        return;
+    }
+
+    if (current === 'review-screen') {
         switchScreen('result-screen', false);
-    } else if (current === 'main-menu') {
+        return;
+    }
+
+    // 6. إذا كان في القائمة الرئيسية وضغط رجوع، تأكيد الخروج بدلاً من الخروج المفاجئ
+    if (current === 'main-menu') {
         showCustomConfirm(
             'هل ترغب في إغلاق اللعبة والخروج؟',
             () => {
-                history.back();
+                window.close();
             },
             () => {
                 history.pushState({ screen: 'main-menu' }, "", "#main-menu");
@@ -149,13 +193,20 @@ function handleNavigationBack() {
             'إلغاء',
             '👋'
         );
-    } else {
-        switchScreen('main-menu', false);
+        return;
     }
+
+    switchScreen('main-menu', false);
 }
 
-window.addEventListener('popstate', () => {
+// مراقبة زر الرجوع في الهاتف (Hardware Back Button)
+window.addEventListener('popstate', (event) => {
     handleNavigationBack();
+});
+
+// دفع حالة أولية في سجل المتصفح لمنع الخروج المفاجئ
+window.addEventListener('load', () => {
+    history.pushState({ screen: 'main-menu' }, "", "#main-menu");
 });
 
 function hideSplashScreenNow() {

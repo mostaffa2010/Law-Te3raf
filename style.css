@@ -3694,3 +3694,101 @@ html, body {
 .btn-pvp-join-action:active {
     transform: scale(0.97);
 }
+
+
+/* ==========================================
+   Pixel-Perfect Glowing SVG Frames & Sizing
+   ========================================== */
+.user-avatar-frame-wrap, .prof-avatar-frame-box, .frame-preview-box {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.user-avatar-frame-wrap {
+    width: 48px !important;
+    height: 48px !important;
+}
+
+.prof-avatar-frame-box {
+    width: 72px !important;
+    height: 72px !important;
+}
+
+.frame-preview-box {
+    width: 66px !important;
+    height: 66px !important;
+    margin: 0 auto !important;
+}
+
+.avatar-face-img {
+    width: 82% !important;
+    height: 82% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    display: block !important;
+    margin: auto !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.avatar-frame-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    object-fit: contain !important;
+    z-index: 2 !important;
+    transition: filter 0.3s ease !important;
+}
+
+/* Glowing drop-shadows per frame */
+img[src*="frame_cyber_neon"] {
+    filter: drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 12px rgba(0, 240, 255, 0.55)) !important;
+}
+
+img[src*="frame_royal_laurel"] {
+    filter: drop-shadow(0 0 6px #f59e0b) drop-shadow(0 0 12px rgba(245, 158, 11, 0.55)) !important;
+}
+
+img[src*="frame_dragon_fire"] {
+    filter: drop-shadow(0 0 8px #f97316) drop-shadow(0 0 16px rgba(239, 68, 68, 0.65)) !important;
+}
+
+img[src*="frame_inferno_flame"] {
+    filter: drop-shadow(0 0 10px #ef4444) drop-shadow(0 0 20px rgba(249, 115, 22, 0.8)) !important;
+    animation: flameGlowPulse 1.8s infinite alternate ease-in-out !important;
+}
+
+img[src*="frame_diamond_crystal"] {
+    filter: drop-shadow(0 0 8px #38bdf8) drop-shadow(0 0 18px rgba(56, 189, 248, 0.75)) !important;
+    animation: diamondGlowPulse 2s infinite ease-in-out !important;
+}
+
+img[src*="frame_challenger_crown"] {
+    filter: drop-shadow(0 0 10px #fbbf24) drop-shadow(0 0 24px rgba(251, 191, 36, 0.85)) !important;
+    animation: challengerGlowPulse 2s infinite ease-in-out !important;
+}
+
+@keyframes flameGlowPulse {
+    0% { filter: drop-shadow(0 0 8px #ef4444) drop-shadow(0 0 14px rgba(239, 68, 68, 0.6)); }
+    100% { filter: drop-shadow(0 0 14px #f97316) drop-shadow(0 0 26px rgba(249, 115, 22, 0.85)); }
+}
+
+@keyframes diamondGlowPulse {
+    0% { filter: drop-shadow(0 0 8px #38bdf8) drop-shadow(0 0 14px rgba(56, 189, 248, 0.6)); }
+    50% { filter: drop-shadow(0 0 14px #00f0ff) drop-shadow(0 0 24px rgba(0, 240, 255, 0.85)); }
+    100% { filter: drop-shadow(0 0 8px #38bdf8) drop-shadow(0 0 14px rgba(56, 189, 248, 0.6)); }
+}
+
+@keyframes challengerGlowPulse {
+    0% { filter: drop-shadow(0 0 8px #fbbf24) drop-shadow(0 0 16px rgba(251, 191, 36, 0.65)); }
+    50% { filter: drop-shadow(0 0 16px #f59e0b) drop-shadow(0 0 30px rgba(251, 191, 36, 0.95)); }
+    100% { filter: drop-shadow(0 0 8px #fbbf24) drop-shadow(0 0 16px rgba(251, 191, 36, 0.65)); }
+}

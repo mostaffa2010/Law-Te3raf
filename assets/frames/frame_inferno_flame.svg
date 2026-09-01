@@ -6,16 +6,17 @@
       <stop offset="100%" stop-color="#facc15"/>
     </linearGradient>
   </defs>
-  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#lava_g)" stroke-width="4.5" stroke-dasharray="14,3"/>
+  <!-- Perfectly Fitted Lava Ring -->
+  <circle cx="60" cy="60" r="49" fill="none" stroke="url(#lava_g)" stroke-width="4.5" stroke-dasharray="14,3"/>
   <!-- Radiating Plasma Flares -->
-  <circle cx="60" cy="60" r="54" fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.75"/>
   <!-- 8 Fiery Tongue Embers -->
   <polygon points="60,2 63,10 57,10" fill="#fde047"/>
   <polygon points="60,118 63,110 57,110" fill="#fde047"/>
   <polygon points="2,60 10,63 10,57" fill="#fde047"/>
   <polygon points="118,60 110,63 110,57" fill="#fde047"/>
-  <polygon points="18,18 26,23 23,26" fill="#f97316"/>
-  <polygon points="102,18 94,23 97,26" fill="#f97316"/>
-  <polygon points="18,102 26,97 23,94" fill="#f97316"/>
-  <polygon points="102,102 94,97 97,94" fill="#f97316"/>
+  <polygon points="17,17 25,22 22,25" fill="#f97316"/>
+  <polygon points="103,17 95,22 98,25" fill="#f97316"/>
+  <polygon points="17,103 25,98 22,95" fill="#f97316"/>
+  <polygon points="103,103 95,98 98,95" fill="#f97316"/>
 </svg>

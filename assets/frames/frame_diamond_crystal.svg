@@ -6,16 +6,16 @@
       <stop offset="100%" stop-color="#0284c7"/>
     </linearGradient>
   </defs>
-  <!-- Inner Crystal Ring -->
-  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#ice_cyan)" stroke-width="3.5"/>
-  <circle cx="60" cy="60" r="52" fill="none" stroke="#e0f2fe" stroke-width="1" stroke-dasharray="6,6"/>
+  <!-- Perfectly Fitted Inner Crystal Ring -->
+  <circle cx="60" cy="60" r="49" fill="none" stroke="url(#ice_cyan)" stroke-width="4"/>
+  <circle cx="60" cy="60" r="53" fill="none" stroke="#e0f2fe" stroke-width="1" stroke-dasharray="6,6"/>
   <!-- 8 Diamond Gemstones -->
-  <polygon points="60,4 66,10 60,16 54,10" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
-  <polygon points="60,104 66,110 60,116 54,110" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
-  <polygon points="4,60 10,66 16,60 10,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
-  <polygon points="104,60 110,66 116,60 110,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
-  <polygon points="20,20 26,24 22,28 16,24" fill="#38bdf8"/>
-  <polygon points="100,20 104,24 98,28 94,24" fill="#38bdf8"/>
-  <polygon points="20,100 26,96 22,92 16,96" fill="#38bdf8"/>
-  <polygon points="100,100 104,96 98,92 94,96" fill="#38bdf8"/>
+  <polygon points="60,3 66,9 60,15 54,9" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="60,105 66,111 60,117 54,111" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="3,60 9,66 15,60 9,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="105,60 111,66 117,60 111,54" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+  <polygon points="19,19 25,23 21,27 15,23" fill="#38bdf8"/>
+  <polygon points="101,19 105,23 99,27 95,23" fill="#38bdf8"/>
+  <polygon points="19,101 25,97 21,93 15,97" fill="#38bdf8"/>
+  <polygon points="101,101 105,97 99,93 95,97" fill="#38bdf8"/>
 </svg>

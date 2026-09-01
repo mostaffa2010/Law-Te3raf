@@ -6,16 +6,16 @@
       <stop offset="100%" stop-color="#fde047"/>
     </linearGradient>
   </defs>
-  <!-- Fiery Base Ring -->
-  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#fire_g)" stroke-width="4"/>
+  <!-- Perfectly Fitted Fiery Base Ring -->
+  <circle cx="60" cy="60" r="49" fill="none" stroke="url(#fire_g)" stroke-width="4.5"/>
   <!-- Left Dragon Wing Spikes -->
-  <path d="M12 40 Q2 55 12 70 Q6 55 14 48 Z" fill="url(#fire_g)"/>
-  <path d="M16 26 Q4 40 18 50 Q10 38 18 32 Z" fill="url(#fire_g)"/>
+  <path d="M11 40 Q1 55 11 70 Q5 55 13 48 Z" fill="url(#fire_g)"/>
+  <path d="M15 26 Q3 40 17 50 Q9 38 17 32 Z" fill="url(#fire_g)"/>
   <!-- Right Dragon Wing Spikes -->
-  <path d="M108 40 Q118 55 108 70 Q114 55 106 48 Z" fill="url(#fire_g)"/>
-  <path d="M104 26 Q116 40 102 50 Q110 38 102 32 Z" fill="url(#fire_g)"/>
+  <path d="M109 40 Q119 55 109 70 Q115 55 107 48 Z" fill="url(#fire_g)"/>
+  <path d="M105 26 Q117 40 103 50 Q111 38 103 32 Z" fill="url(#fire_g)"/>
   <!-- Top Leaping Flames -->
-  <path d="M60 4 Q68 18 64 24 Q60 16 56 24 Q52 18 60 4 Z" fill="url(#fire_g)"/>
-  <path d="M46 14 Q52 24 48 28 Q44 22 46 14 Z" fill="#f97316"/>
-  <path d="M74 14 Q68 24 72 28 Q76 22 74 14 Z" fill="#f97316"/>
+  <path d="M60 3 Q68 17 64 23 Q60 15 56 23 Q52 17 60 3 Z" fill="url(#fire_g)"/>
+  <path d="M45 13 Q51 23 47 27 Q43 21 45 13 Z" fill="#f97316"/>
+  <path d="M75 13 Q69 23 73 27 Q77 21 75 13 Z" fill="#f97316"/>
 </svg>
