@@ -282,7 +282,7 @@ function showRankedVersusScreen(opponent) {
 
 function launchRankedGameSession() {
     gameState.mode = 'ranked';
-    gameState.questions = getSmartQuestions(10); // 5 أسئلة سريعة ومكثفة
+    gameState.questions = getSmartQuestions(10); // 10 أسئلة سريعة ومكثفة
     gameState.currentIndex = 0;
     gameState.correctCount = 0;
     gameState.wrongCount = 0;
