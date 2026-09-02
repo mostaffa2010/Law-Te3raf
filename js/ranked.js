@@ -574,8 +574,32 @@ function finishRankedMatchSession() {
         currentRankedOpponent.answeredIndex++;
     }
 
-    const isWinner = (gameState.score > currentRankedOpponent.score) || 
-                     (gameState.score === currentRankedOpponent.score && gameState.correctCount >= currentRankedOpponent.correctCount);
+    // المعيار الأساسي العادل: من يجيب على أسئلة صحيحة أكثر هو الفائز دائماً
+    // الاحتكام للسرعة والسكور فقط وفقط عند التعادل في عدد الإجابات الصحيحة
+    let isWinner = false;
+    let isDraw = false;
+    let winReason = 'correct_count'; // 'correct_count' | 'speed_tiebreak' | 'draw'
+
+    if (gameState.correctCount > currentRankedOpponent.correctCount) {
+        isWinner = true;
+        winReason = 'correct_count';
+    } else if (gameState.correctCount < currentRankedOpponent.correctCount) {
+        isWinner = false;
+        winReason = 'correct_count';
+    } else {
+        // تعادل تام في عدد الإجابات الصحيحة -> الاحتكام للسرعة ومجموع النقاط
+        if (gameState.score > currentRankedOpponent.score) {
+            isWinner = true;
+            winReason = 'speed_tiebreak';
+        } else if (gameState.score < currentRankedOpponent.score) {
+            isWinner = false;
+            winReason = 'speed_tiebreak';
+        } else {
+            isDraw = true;
+            isWinner = false;
+            winReason = 'draw';
+        }
+    }
 
     const rankBefore = getUserCurrentRank();
     const divBefore = userProgress.rankDivision || rankBefore.divisions;
@@ -666,13 +690,13 @@ function finishRankedMatchSession() {
     checkAllAchievements();
     updateHeaderStats();
 
-    renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus);
+    renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus, winReason, isDraw);
     if (isWinner && typeof EffectsEngine !== 'undefined') {
         EffectsEngine.launchVictoryFireworks();
     }
 }
 
-function renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus) {
+function renderRankedResultScreen(isWinner, rankBefore, divBefore, starsBefore, isPromoted, isDemoted, winStreakBonus, winReason = 'correct_count', isDraw = false) {
     const oppWidget = document.getElementById('game-ranked-opp-bar');
     if (oppWidget) oppWidget.style.display = 'none';
 
